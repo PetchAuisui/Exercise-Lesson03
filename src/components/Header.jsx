@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, FileText, CheckCircle2, RotateCcw, Lightbulb, Printer, LogOut, UserCheck } from 'lucide-react';
+import { BookOpen, FileText, CheckCircle2, RotateCcw, Lightbulb, LogOut, UserCheck } from 'lucide-react';
 
 export default function Header({ 
   studentName, 
@@ -91,16 +91,6 @@ export default function Header({
             >
               <Lightbulb className="w-4 h-4 text-amber-600 shrink-0" />
               <span>เฉลย</span>
-            </button>
-
-            {/* Print Button */}
-            <button
-              onClick={() => window.print()}
-              title="พิมพ์ใบงาน (Print)"
-              className="px-3 py-1.5 text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 transition text-xs sm:text-sm font-medium flex items-center gap-1.5 shrink-0 whitespace-nowrap"
-            >
-              <Printer className="w-4 h-4 text-slate-600 shrink-0" />
-              <span className="hidden md:inline">พิมพ์</span>
             </button>
 
             {/* Reset Button */}
