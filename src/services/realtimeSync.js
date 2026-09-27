@@ -15,7 +15,8 @@ import {
   getStudentPassword, 
   setStudentPassword, 
   resetStudentPassword,
-  isPasswordChanged
+  isPasswordChanged,
+  STUDENTS_DATABASE
 } from '../data/students';
 
 /**
@@ -73,6 +74,61 @@ export function subscribeToClassroom(callback) {
   });
 
   return () => off(classroomRef, 'value', unsubscribe);
+}
+
+/**
+ * Clear test data for a single student (localStorage + Firebase)
+ */
+export async function clearSingleStudentData(studentId) {
+  if (!studentId || studentId === 'admin') return;
+
+  // Clear localStorage keys
+  localStorage.removeItem(`ws_code_${studentId}`);
+  localStorage.removeItem(`ws_last_login_${studentId}`);
+  localStorage.removeItem(`ws_first_login_${studentId}`);
+  localStorage.removeItem(`ws_code_updated_${studentId}`);
+  localStorage.removeItem(`ws_submitted_${studentId}`);
+  localStorage.removeItem(`ws_pwd_${studentId}`);
+  localStorage.removeItem(`ws_pwd_changed_${studentId}`);
+
+  // Clear Firebase node
+  const db = getFirebaseDB();
+  if (db) {
+    try {
+      const studentRef = ref(db, `students/${studentId}`);
+      await set(studentRef, null);
+    } catch (err) {
+      console.warn(`Failed to clear Firebase data for student ${studentId}:`, err);
+    }
+  }
+}
+
+/**
+ * Clear all test data for all students in the classroom (localStorage + Firebase)
+ */
+export async function clearAllStudentsData() {
+  // Clear localStorage keys for all students
+  STUDENTS_DATABASE.forEach(s => {
+    const id = s.id;
+    localStorage.removeItem(`ws_code_${id}`);
+    localStorage.removeItem(`ws_last_login_${id}`);
+    localStorage.removeItem(`ws_first_login_${id}`);
+    localStorage.removeItem(`ws_code_updated_${id}`);
+    localStorage.removeItem(`ws_submitted_${id}`);
+    localStorage.removeItem(`ws_pwd_${id}`);
+    localStorage.removeItem(`ws_pwd_changed_${id}`);
+  });
+
+  // Clear Firebase node
+  const db = getFirebaseDB();
+  if (db) {
+    try {
+      const studentsRef = ref(db, 'students');
+      await set(studentsRef, null);
+    } catch (err) {
+      console.warn('Failed to clear Firebase students data:', err);
+    }
+  }
 }
 
 /**
@@ -204,9 +260,25 @@ export function subscribeToAllStudents(callback) {
   const studentsRef = ref(db, 'students');
   const unsubscribe = onValue(studentsRef, (snapshot) => {
     const data = snapshot.val() || {};
+
+    // If student data was deleted or not in Firebase, purge local storage keys so cache does not persist
+    STUDENTS_DATABASE.forEach(s => {
+      const id = s.id;
+      if (!data[id]) {
+        localStorage.removeItem(`ws_code_${id}`);
+        localStorage.removeItem(`ws_last_login_${id}`);
+        localStorage.removeItem(`ws_first_login_${id}`);
+        localStorage.removeItem(`ws_code_updated_${id}`);
+        localStorage.removeItem(`ws_submitted_${id}`);
+        localStorage.removeItem(`ws_pwd_${id}`);
+        localStorage.removeItem(`ws_pwd_changed_${id}`);
+      }
+    });
+
     // Merge remote student data with localStorage
     Object.keys(data).forEach((id) => {
       const remote = data[id];
+      if (!remote) return;
       if (remote.code !== undefined && remote.code !== null) {
         localStorage.setItem(`ws_code_${id}`, remote.code);
       }
@@ -242,7 +314,7 @@ export function subscribeToAllStudents(callback) {
 }
 
 /**
- * Listen to single student data live (for student client to catch password reset by teacher)
+ * Listen to single student data live (for student client to catch password reset or wipe by teacher)
  */
 export function subscribeToStudentSelf(studentId, callback) {
   if (!studentId || studentId === 'admin') return () => {};
@@ -253,7 +325,18 @@ export function subscribeToStudentSelf(studentId, callback) {
   const studentRef = ref(db, `students/${studentId}`);
   const unsubscribe = onValue(studentRef, (snapshot) => {
     const data = snapshot.val();
-    if (!data) return;
+    if (!data) {
+      // Remote data was cleared
+      localStorage.removeItem(`ws_code_${studentId}`);
+      localStorage.removeItem(`ws_last_login_${studentId}`);
+      localStorage.removeItem(`ws_first_login_${studentId}`);
+      localStorage.removeItem(`ws_code_updated_${studentId}`);
+      localStorage.removeItem(`ws_submitted_${studentId}`);
+      localStorage.removeItem(`ws_pwd_${studentId}`);
+      localStorage.removeItem(`ws_pwd_changed_${studentId}`);
+      callback(null);
+      return;
+    }
 
     if (data.password) {
       localStorage.setItem(`ws_pwd_${studentId}`, data.password);
