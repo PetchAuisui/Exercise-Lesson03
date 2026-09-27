@@ -108,42 +108,42 @@ export default function StudentDetailModal({ student, isOpen, onClose, onResetPa
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-slate-100 border-b border-slate-200 px-6 pt-3 flex items-center justify-between flex-wrap gap-2 shrink-0">
-          <div className="flex items-center gap-2">
+        <div className="bg-slate-100 border-b border-slate-200 px-3 sm:px-6 pt-2 sm:pt-3 flex items-center justify-between flex-wrap gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto">
             <button
               onClick={() => setActiveTab('code')}
-              className={`px-4 py-2 rounded-t-lg font-bold text-xs sm:text-sm flex items-center gap-1.5 border-t border-x transition ${
+              className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-t-lg font-bold text-xs sm:text-sm flex items-center gap-1 sm:gap-1.5 border-t border-x transition shrink-0 ${
                 activeTab === 'code'
                   ? 'bg-white text-indigo-700 border-slate-200 shadow-xs'
                   : 'border-transparent text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Code2 className="w-4 h-4 text-amber-500" />
-              <span>โค้ด HTML ที่ส่ง ({lines.length} บรรทัด)</span>
+              <Code2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />
+              <span><span className="hidden sm:inline">โค้ด HTML ที่ส่ง</span><span className="sm:hidden">โค้ด</span> ({lines.length})</span>
             </button>
 
             <button
               onClick={() => setActiveTab('preview')}
-              className={`px-4 py-2 rounded-t-lg font-bold text-xs sm:text-sm flex items-center gap-1.5 border-t border-x transition ${
+              className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-t-lg font-bold text-xs sm:text-sm flex items-center gap-1 sm:gap-1.5 border-t border-x transition shrink-0 ${
                 activeTab === 'preview'
                   ? 'bg-white text-indigo-700 border-slate-200 shadow-xs'
                   : 'border-transparent text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Globe className="w-4 h-4 text-sky-500" />
-              <span>ผลลัพธ์หน้าเว็บ (Preview)</span>
+              <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-500" />
+              <span><span className="hidden sm:inline">ผลลัพธ์หน้าเว็บ</span><span className="sm:hidden">ผลลัพธ์</span> (Preview)</span>
             </button>
 
             <button
               onClick={() => setActiveTab('criteria')}
-              className={`px-4 py-2 rounded-t-lg font-bold text-xs sm:text-sm flex items-center gap-1.5 border-t border-x transition ${
+              className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-t-lg font-bold text-xs sm:text-sm flex items-center gap-1 sm:gap-1.5 border-t border-x transition shrink-0 ${
                 activeTab === 'criteria'
                   ? 'bg-white text-indigo-700 border-slate-200 shadow-xs'
                   : 'border-transparent text-slate-600 hover:text-slate-900'
               }`}
             >
-              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-              <span>ผลการตรวจ 5 ข้อ ({student.score}/5)</span>
+              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500" />
+              <span><span className="hidden sm:inline">ผลการตรวจ 5 ข้อ</span><span className="sm:hidden">ตรวจ</span> ({student.score}/5)</span>
             </button>
           </div>
 

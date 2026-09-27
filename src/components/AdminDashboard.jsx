@@ -156,35 +156,47 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
       
       {/* Admin Top Navigation */}
       <header className="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-30 shadow-md">
-        <div className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-3">
+        <div className="max-w-[1720px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-3 flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-3">
           
           {/* Left: Brand & Admin Identity */}
-          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-            <div className="p-2 sm:p-2.5 bg-gradient-to-tr from-amber-500 to-amber-600 text-slate-950 rounded-xl font-bold shadow-xs shrink-0">
-              <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h1 className="text-sm sm:text-base lg:text-lg font-bold text-white tracking-tight whitespace-nowrap truncate">
-                  ระบบผู้ดูแล (Admin Dashboard)
-                </h1>
-                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 whitespace-nowrap hidden sm:inline-block">
-                  อาจารย์ผู้สอน
-                </span>
+          <div className="flex items-center justify-between md:justify-start gap-2.5 sm:gap-3 min-w-0">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="p-1.5 sm:p-2.5 bg-gradient-to-tr from-amber-500 to-amber-600 text-slate-950 rounded-xl font-bold shadow-xs shrink-0">
+                <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <p className="text-xs text-slate-400 whitespace-nowrap truncate">
-                ใบงานที่ 1 • <span className="text-slate-300 font-mono">siwarpatauisui@gmail.com</span>
-              </p>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-sm sm:text-base lg:text-lg font-bold text-white tracking-tight truncate">
+                    ระบบผู้ดูแล (Admin Dashboard)
+                  </h1>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 whitespace-nowrap shrink-0">
+                    อาจารย์
+                  </span>
+                </div>
+                <p className="text-[11px] sm:text-xs text-slate-400 truncate">
+                  ใบงานที่ 1 • <span className="text-slate-300 font-mono">siwarpatauisui@gmail.com</span>
+                </p>
+              </div>
             </div>
+
+            {/* Logout on mobile header */}
+            <button
+              onClick={onLogout}
+              title="ออกจากระบบผู้ดูแล"
+              className="md:hidden px-2.5 py-1.5 bg-rose-950/70 hover:bg-rose-900 text-rose-300 hover:text-rose-100 rounded-xl border border-rose-800 transition text-xs font-semibold flex items-center gap-1 shrink-0 cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>ออก</span>
+            </button>
           </div>
 
           {/* Right: Master Classroom Controls & Logout */}
-          <div className="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap ml-auto">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-wrap sm:flex-nowrap justify-between md:justify-end">
             {/* Exercise Access Toggle Button (Teacher controls when students can start exercise) */}
             <button
               onClick={handleToggleExercise}
               title={exerciseEnabled ? 'คลิกเพื่อล็อกแบบฝึกหัด (นักเรียนจะเริ่มทำไม่ได้)' : 'คลิกเพื่อปลดล็อกแบบฝึกหัดให้นักเรียนเริ่มทำได้'}
-              className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 border shadow-xs shrink-0 whitespace-nowrap cursor-pointer ${
+              className={`flex-1 sm:flex-initial px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 border shadow-xs shrink-0 whitespace-nowrap cursor-pointer ${
                 exerciseEnabled
                   ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
                   : 'bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/30'
@@ -193,12 +205,12 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
               {exerciseEnabled ? (
                 <>
                   <Unlock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>แบบฝึกหัด: <span className="text-emerald-300">เปิดให้นักเรียนทำ</span></span>
+                  <span><span className="hidden sm:inline">แบบฝึกหัด: </span><span className="text-emerald-300">เปิดอยู่</span></span>
                 </>
               ) : (
                 <>
                   <Lock className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                  <span>แบบฝึกหัด: <span className="text-rose-300">ล็อกอยู่</span></span>
+                  <span><span className="hidden sm:inline">แบบฝึกหัด: </span><span className="text-rose-300">ล็อกอยู่</span></span>
                 </>
               )}
             </button>
@@ -207,7 +219,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
             <button
               onClick={handleToggleSolution}
               title={solutionEnabled ? 'คลิกเพื่อปิดเฉลยฝั่งนักเรียน' : 'คลิกเพื่อเปิดเฉลยให้นักเรียนเห็น'}
-              className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 border shadow-xs shrink-0 whitespace-nowrap cursor-pointer ${
+              className={`flex-1 sm:flex-initial px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 border shadow-xs shrink-0 whitespace-nowrap cursor-pointer ${
                 solutionEnabled
                   ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
                   : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white'
@@ -216,21 +228,21 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
               {solutionEnabled ? (
                 <>
                   <Unlock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>เฉลย: <span className="text-emerald-300">เปิดอยู่</span></span>
+                  <span><span className="hidden sm:inline">เฉลย: </span><span className="text-emerald-300">เปิดอยู่</span></span>
                 </>
               ) : (
                 <>
                   <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <span>เฉลย: <span className="text-amber-300">ปิดอยู่</span></span>
+                  <span><span className="hidden sm:inline">เฉลย: </span><span className="text-amber-300">ปิดอยู่</span></span>
                 </>
               )}
             </button>
 
-            {/* Logout Button */}
+            {/* Desktop Logout Button */}
             <button
               onClick={onLogout}
               title="ออกจากระบบผู้ดูแล"
-              className="px-2.5 sm:px-3 py-1.5 bg-rose-950/70 hover:bg-rose-900 text-rose-300 hover:text-rose-100 rounded-xl border border-rose-800 transition text-xs sm:text-sm font-semibold flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer"
+              className="hidden md:flex px-2.5 sm:px-3 py-1.5 bg-rose-950/70 hover:bg-rose-900 text-rose-300 hover:text-rose-100 rounded-xl border border-rose-800 transition text-xs sm:text-sm font-semibold items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>ออกจากระบบ</span>
@@ -241,80 +253,80 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-[1720px] w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      <main className="flex-1 max-w-[1720px] w-full mx-auto p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
         
-        {/* Metric Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Metric Summary Cards (2-col on mobile/tablet, 4-col on desktop) */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
           
           {/* Card 1: Total Students */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                นักศึกษาในระบบทั้งหมด
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-200 shadow-xs flex items-center justify-between">
+            <div className="min-w-0">
+              <p className="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider truncate">
+                นักศึกษาทั้งหมด
               </p>
-              <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-                {totalCount} <span className="text-sm font-semibold text-slate-500 font-normal">คน</span>
+              <h3 className="text-lg sm:text-2xl lg:text-3xl font-black text-slate-900 mt-0.5 sm:mt-1">
+                {totalCount} <span className="text-xs sm:text-sm font-semibold text-slate-500 font-normal">คน</span>
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
-                ห้องเรียนวิชา Basic Website Design
+              <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5 truncate">
+                Basic Website Design
               </p>
             </div>
-            <div className="w-12 h-12 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 shrink-0">
-              <Users className="w-6 h-6" />
+            <div className="w-8 h-8 sm:w-12 sm:h-12 bg-indigo-50 border border-indigo-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-indigo-600 shrink-0 ml-2">
+              <Users className="w-4 h-4 sm:w-6 sm:h-6" />
             </div>
           </div>
 
           {/* Card 2: Completed (5/5) */}
-          <div className="bg-white rounded-2xl p-5 border border-emerald-200/90 shadow-xs flex items-center justify-between bg-gradient-to-br from-white to-emerald-50/30">
-            <div>
-              <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wider">
-                เสร็จสมบูรณ์ (5/5 ข้อ)
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-emerald-200/90 shadow-xs flex items-center justify-between bg-gradient-to-br from-white to-emerald-50/30">
+            <div className="min-w-0">
+              <p className="text-[11px] sm:text-xs font-semibold text-emerald-700 uppercase tracking-wider truncate">
+                เสร็จสมบูรณ์ (5/5)
               </p>
-              <h3 className="text-2xl sm:text-3xl font-black text-emerald-600 mt-1">
-                {completedCount} <span className="text-sm font-semibold text-emerald-700/70 font-normal">คน</span>
+              <h3 className="text-lg sm:text-2xl lg:text-3xl font-black text-emerald-600 mt-0.5 sm:mt-1">
+                {completedCount} <span className="text-xs sm:text-sm font-semibold text-emerald-700/70 font-normal">คน</span>
               </h3>
-              <p className="text-xs text-emerald-600/80 mt-1">
-                ผ่านเกณฑ์ครบถ้วน 100%
+              <p className="text-[10px] sm:text-xs text-emerald-600/80 mt-0.5 truncate">
+                ผ่านครบ 100%
               </p>
             </div>
-            <div className="w-12 h-12 bg-emerald-100 border border-emerald-200 rounded-2xl flex items-center justify-center text-emerald-600 shrink-0">
-              <CheckCircle2 className="w-6 h-6" />
+            <div className="w-8 h-8 sm:w-12 sm:h-12 bg-emerald-100 border border-emerald-200 rounded-xl sm:rounded-2xl flex items-center justify-center text-emerald-600 shrink-0 ml-2">
+              <CheckCircle2 className="w-4 h-4 sm:w-6 sm:h-6" />
             </div>
           </div>
 
           {/* Card 3: In Progress */}
-          <div className="bg-white rounded-2xl p-5 border border-sky-200/90 shadow-xs flex items-center justify-between bg-gradient-to-br from-white to-sky-50/30">
-            <div>
-              <p className="text-xs font-semibold text-sky-700 uppercase tracking-wider">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-sky-200/90 shadow-xs flex items-center justify-between bg-gradient-to-br from-white to-sky-50/30">
+            <div className="min-w-0">
+              <p className="text-[11px] sm:text-xs font-semibold text-sky-700 uppercase tracking-wider truncate">
                 กำลังทำ (1-4 ข้อ)
               </p>
-              <h3 className="text-2xl sm:text-3xl font-black text-sky-600 mt-1">
-                {inProgressCount} <span className="text-sm font-semibold text-sky-700/70 font-normal">คน</span>
+              <h3 className="text-lg sm:text-2xl lg:text-3xl font-black text-sky-600 mt-0.5 sm:mt-1">
+                {inProgressCount} <span className="text-xs sm:text-sm font-semibold text-sky-700/70 font-normal">คน</span>
               </h3>
-              <p className="text-xs text-sky-600/80 mt-1">
-                เริ่มเขียนแล้วแต่ยังไม่ครบ 5 ข้อ
+              <p className="text-[10px] sm:text-xs text-sky-600/80 mt-0.5 truncate">
+                เริ่มเขียนแล้ว
               </p>
             </div>
-            <div className="w-12 h-12 bg-sky-100 border border-sky-200 rounded-2xl flex items-center justify-center text-sky-600 shrink-0">
-              <Clock className="w-6 h-6" />
+            <div className="w-8 h-8 sm:w-12 sm:h-12 bg-sky-100 border border-sky-200 rounded-xl sm:rounded-2xl flex items-center justify-center text-sky-600 shrink-0 ml-2">
+              <Clock className="w-4 h-4 sm:w-6 sm:h-6" />
             </div>
           </div>
 
           {/* Card 4: Not Started / Not Logged In */}
-          <div className="bg-white rounded-2xl p-5 border border-amber-200/90 shadow-xs flex items-center justify-between bg-gradient-to-br from-white to-amber-50/30">
-            <div>
-              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider">
-                ยังไม่เข้าระบบ / ยังไม่ทำ
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-amber-200/90 shadow-xs flex items-center justify-between bg-gradient-to-br from-white to-amber-50/30">
+            <div className="min-w-0">
+              <p className="text-[11px] sm:text-xs font-semibold text-amber-700 uppercase tracking-wider truncate">
+                ยังไม่เข้า / ยังไม่ทำ
               </p>
-              <h3 className="text-2xl sm:text-3xl font-black text-amber-600 mt-1">
-                {notLoggedInCount + notStartedCount} <span className="text-sm font-semibold text-amber-700/70 font-normal">คน</span>
+              <h3 className="text-lg sm:text-2xl lg:text-3xl font-black text-amber-600 mt-0.5 sm:mt-1">
+                {notLoggedInCount + notStartedCount} <span className="text-xs sm:text-sm font-semibold text-amber-700/70 font-normal">คน</span>
               </h3>
-              <p className="text-xs text-amber-600/80 mt-1">
-                ยังไม่เข้า ({notLoggedInCount}) • ยังไม่ทำ ({notStartedCount})
+              <p className="text-[10px] sm:text-xs text-amber-600/80 mt-0.5 truncate">
+                ไม่เข้า {notLoggedInCount} • ไม่ทำ {notStartedCount}
               </p>
             </div>
-            <div className="w-12 h-12 bg-amber-100 border border-amber-200 rounded-2xl flex items-center justify-center text-amber-600 shrink-0">
-              <UserX className="w-6 h-6" />
+            <div className="w-8 h-8 sm:w-12 sm:h-12 bg-amber-100 border border-amber-200 rounded-xl sm:rounded-2xl flex items-center justify-center text-amber-600 shrink-0 ml-2">
+              <UserX className="w-4 h-4 sm:w-6 sm:h-6" />
             </div>
           </div>
 
@@ -451,8 +463,12 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
           </div>
         </div>
 
-        {/* Students Table */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        {/* Students Table with Mobile Scroll Guide */}
+        <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <div className="lg:hidden px-3.5 py-2 bg-slate-50 border-b border-slate-200 text-xs text-slate-500 flex items-center justify-between">
+            <span className="font-semibold text-slate-700">รายชื่อนักศึกษา ({filteredStudents.length} คน)</span>
+            <span className="text-[11px] text-indigo-600 font-medium">👈 เลื่อนเพื่อดูคะแนน 👉</span>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wider">
