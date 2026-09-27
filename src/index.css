@@ -32,11 +32,13 @@
 /* VS Code Dark+ Authentic Syntax Highlighting */
 .code-editor-vscode,
 .code-editor-pre,
-.code-editor-pre code {
+.code-editor-pre code,
+.code-editor-textarea {
   color: #d4d4d4 !important;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
   white-space: pre-wrap !important;
-  word-break: break-all !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
 }
 
 /* 1. Base Punctuation: VS Code Gray #808080 */

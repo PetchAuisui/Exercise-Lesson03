@@ -68,6 +68,20 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
 
   const fontStack = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
 
+  const sharedEditorStyle = {
+    fontSize: `${fontSize}px`,
+    lineHeight: `${lineHeightPx}px`,
+    tabSize: 2,
+    fontFamily: fontStack,
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
+    boxSizing: 'border-box',
+    padding: '12px 14px',
+    margin: 0,
+    border: 0,
+  };
+
   return (
     <div className="rounded-xl shadow-lg overflow-hidden flex flex-col border border-[#3c3c3c] bg-[#1e1e1e] code-editor-vscode w-full min-h-[540px]">
       {/* VS Code Tab Bar */}
@@ -139,8 +153,8 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
       {/* Editor Body: Clean spacious coding area with at least 18+ lines */}
       <div 
         onClick={() => textareaRef.current?.focus()}
-        className="flex relative bg-[#1e1e1e] flex-1 cursor-text select-text min-h-[470px]"
-        style={{ height: `${totalBodyHeightPx}px` }}
+        className="flex relative bg-[#1e1e1e] flex-1 cursor-text select-text"
+        style={{ minHeight: `${totalBodyHeightPx}px` }}
       >
         {/* Line Numbers Gutter: VS Code style #858585 */}
         <div 
@@ -162,46 +176,38 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
           })}
         </div>
 
-        {/* Code Content Area: Exact 1:1 Overlay with Interactive Focus */}
-        <div className="relative flex-1 bg-[#1e1e1e] overflow-hidden h-full">
-          {/* Syntax Highlighted Background (Prism VS Code Dark+) */}
+        {/* Code Content Area: Pre in normal flow dictates height, Textarea overlays exactly */}
+        <div 
+          className="relative flex-1 bg-[#1e1e1e] overflow-x-auto"
+          style={{ minHeight: `${totalBodyHeightPx}px` }}
+        >
+          {/* Syntax Highlighted Background (Prism VS Code Dark+) in normal flow */}
           <pre
             ref={preRef}
             aria-hidden="true"
-            className="code-editor-pre absolute inset-0 p-3 m-0 overflow-hidden pointer-events-none z-0 select-none"
+            className="code-editor-pre pointer-events-none select-none relative"
             style={{ 
-              fontSize: `${fontSize}px`, 
-              lineHeight: `${lineHeightPx}px`,
-              tabSize: 2,
-              fontFamily: fontStack,
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-              overflowWrap: 'break-word',
+              ...sharedEditorStyle,
+              minHeight: `${totalBodyHeightPx}px`,
+              background: 'transparent',
             }}
-            dangerouslySetInnerHTML={{ __html: getHighlightedHtml() }}
+            dangerouslySetInnerHTML={{ __html: getHighlightedHtml() + '<br />' }}
           />
 
-          {/* Interactive Textarea with Perfect Input Handling */}
+          {/* Interactive Textarea with transparent text overlay so colored text shines through */}
           <textarea
             ref={textareaRef}
             value={code}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            onScroll={handleScroll}
             spellCheck="false"
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect="off"
             autoFocus
-            className="absolute inset-0 w-full h-full p-3 m-0 bg-transparent resize-none outline-none z-10 overflow-y-auto"
+            className="code-editor-textarea absolute top-0 left-0 w-full h-full bg-transparent resize-none outline-none z-10"
             style={{ 
-              fontSize: `${fontSize}px`, 
-              lineHeight: `${lineHeightPx}px`,
-              tabSize: 2,
-              fontFamily: fontStack,
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-              overflowWrap: 'break-word',
+              ...sharedEditorStyle,
               color: '#d4d4d4',
               WebkitTextFillColor: 'transparent',
               caretColor: '#569cd6',
