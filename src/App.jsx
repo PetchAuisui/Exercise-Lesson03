@@ -400,60 +400,60 @@ export default function App() {
           />
 
           {/* Workspace Mode Switcher (Full Width Code vs Full Width Preview) */}
-          <div className="flex items-center justify-between flex-wrap gap-3 bg-white p-2 rounded-xl border border-slate-200 shadow-xs">
-            <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-lg">
+          <div className="flex items-center justify-between flex-wrap gap-2.5 bg-white p-2 rounded-xl border border-slate-200 shadow-xs">
+            <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-slate-100 rounded-lg flex-1 sm:flex-initial">
               <button
                 onClick={() => setWorkspaceTab('code')}
-                className={`px-4 py-2 rounded-md font-bold text-sm sm:text-base flex items-center gap-2 transition cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-md font-bold text-xs sm:text-sm lg:text-base flex items-center justify-center gap-1.5 sm:gap-2 transition cursor-pointer ${
                   workspaceTab === 'code'
                     ? 'bg-slate-900 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
                 <Code2 className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>พื้นที่เขียนโค้ด (index.html)</span>
+                <span><span className="hidden sm:inline">เขียน</span>โค้ด (index.html)</span>
                 {isSubmitted && (
-                  <span className="text-xs bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-bold border border-amber-400/40">
+                  <span className="text-xs bg-amber-400/20 text-amber-300 px-1 py-0.2 rounded font-bold border border-amber-400/40">
                     🔒
                   </span>
                 )}
               </button>
               <button
                 onClick={() => setWorkspaceTab('preview')}
-                className={`px-4 py-2 rounded-md font-bold text-sm sm:text-base flex items-center gap-2 transition cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-md font-bold text-xs sm:text-sm lg:text-base flex items-center justify-center gap-1.5 sm:gap-2 transition cursor-pointer ${
                   workspaceTab === 'preview'
                     ? 'bg-indigo-600 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
                 <Globe className="w-4 h-4 text-sky-300 shrink-0" />
-                <span>ดูผลลัพธ์หน้าเว็บ (Browser Preview)</span>
+                <span><span className="hidden sm:inline">ดูผลลัพธ์</span><span className="sm:hidden">ผลลัพธ์</span>หน้าเว็บ</span>
               </button>
             </div>
 
             {/* Quick Submit & Status Controls in Workspace Toolbar */}
-            <div className="flex items-center gap-2.5 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
               {!isSubmitted ? (
                 <button
                   onClick={handleSubmitWork}
-                  className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-lg font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-xs transition cursor-pointer"
+                  className="px-3 sm:px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-lg font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-xs transition cursor-pointer"
                   title="เมื่อมั่นใจว่าโค้ดเสร็จแล้ว กดปุ่มนี้เพื่อส่งงาน ล็อกโค้ด และดูผลลัพธ์"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>ส่งงาน (เมื่อมั่นใจว่าโค้ดเสร็จแล้ว)</span>
+                  <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span>ส่งงาน <span className="hidden md:inline">(เมื่อมั่นใจว่าโค้ดเสร็จแล้ว)</span></span>
                 </button>
               ) : (
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="px-2 sm:px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-bold flex items-center gap-1 shadow-2xs">
                     <span>🔒</span>
-                    <span>ส่งงานแล้ว (โค้ดถูกล็อก)</span>
+                    <span>ส่งแล้ว</span>
                   </span>
                   <button
                     onClick={handleCancelSubmission}
-                    className="px-3 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded-lg text-xs font-bold transition cursor-pointer shadow-2xs"
+                    className="px-2.5 sm:px-3 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded-lg text-xs font-bold transition cursor-pointer shadow-2xs"
                     title="ยกเลิกการส่งงานเพื่อปลดล็อกและกลับมาแก้ไขโค้ด"
                   >
-                    ↩️ ยกเลิกส่งงานเพื่อแก้ไข
+                    ↩️ แก้ไข
                   </button>
                 </div>
               )}

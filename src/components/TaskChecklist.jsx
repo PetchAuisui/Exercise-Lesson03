@@ -33,28 +33,28 @@ export default function TaskChecklist({ validation, isOpen, onToggle }) {
       {isOpen && (
         <div className="p-4 sm:p-5 space-y-4">
           {/* จัดวางแบบ "บน - ล่าง" สำหรับ สถานการณ์ (บน) และ คำชี้แจง (ล่าง) เคียงข้างโครงสร้างไฟล์ */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 items-stretch">
             
             {/* คอลัมน์ซ้าย: จัดเรียง สถานการณ์ (บน) และ คำชี้แจง (ล่าง) */}
-            <div className="lg:col-span-7 flex flex-col gap-3 justify-between">
+            <div className="md:col-span-7 flex flex-col gap-3 justify-between">
               
               {/* กล่องบน: สถานการณ์ */}
-              <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-4 text-amber-950 shadow-2xs flex-1 flex flex-col justify-center">
-                <div className="font-bold mb-1.5 flex items-center gap-2 text-base sm:text-lg text-amber-950">
+              <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-3.5 sm:p-4 text-amber-950 shadow-2xs flex-1 flex flex-col justify-center">
+                <div className="font-bold mb-1 flex items-center gap-2 text-sm sm:text-base lg:text-lg text-amber-950">
                   <span>📌 สถานการณ์</span>
                 </div>
-                <p className="text-base sm:text-lg text-amber-900 leading-relaxed font-normal">
+                <p className="text-xs sm:text-sm lg:text-base text-amber-900 leading-relaxed font-normal">
                   คุณกำลังสร้างหน้าเว็บแนะนำสถานที่ท่องเที่ยว เขียน HTML ให้หน้าเว็บทำงานตามเงื่อนไขทั้ง 5 ข้อด้านล่าง
                 </p>
               </div>
 
               {/* กล่องล่าง: คำชี้แจง */}
-              <div className="bg-sky-50/80 border border-sky-200 rounded-xl p-4 text-sky-950 shadow-2xs flex-1 flex flex-col justify-center">
-                <div className="font-bold mb-1.5 flex items-center gap-2 text-base sm:text-lg text-sky-950">
-                  <FileCheck className="w-5 h-5 text-sky-600 shrink-0" />
+              <div className="bg-sky-50/80 border border-sky-200 rounded-xl p-3.5 sm:p-4 text-sky-950 shadow-2xs flex-1 flex flex-col justify-center">
+                <div className="font-bold mb-1 flex items-center gap-2 text-sm sm:text-base lg:text-lg text-sky-950">
+                  <FileCheck className="w-4 h-4 sm:w-5 sm:h-5 text-sky-600 shrink-0" />
                   <span>คำชี้แจง</span>
                 </div>
-                <p className="text-base sm:text-lg text-sky-900 leading-relaxed font-normal">
+                <p className="text-xs sm:text-sm lg:text-base text-sky-900 leading-relaxed font-normal">
                   เลือกใช้แท็กและ Attribute ที่เหมาะสม แล้วเขียนโค้ดด้วยตนเอง โดยไม่เติมคำลงในโครงสร้างที่เตรียมไว้
                 </p>
               </div>
@@ -62,7 +62,7 @@ export default function TaskChecklist({ validation, isOpen, onToggle }) {
             </div>
 
             {/* คอลัมน์ขวา: โครงสร้างโฟลเดอร์แบบ Tree */}
-            <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-4 text-slate-200 font-mono text-xs sm:text-sm shadow-md flex flex-col justify-between">
+            <div className="md:col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-3.5 sm:p-4 text-slate-200 font-mono text-xs sm:text-sm shadow-md flex flex-col justify-between">
               <div>
                 <div className="font-bold text-amber-400 font-thai text-sm sm:text-base flex items-center gap-2 mb-2 pb-1.5 border-b border-slate-800">
                   <FolderOpen className="w-4 h-4 text-amber-400 shrink-0" />

@@ -15,7 +15,11 @@ export default function CodeEditor({
   const preRef = useRef(null);
   const gutterRef = useRef(null);
   const [copied, setCopied] = useState(false);
-  const [fontSize, setFontSize] = useState(17);
+  const [fontSize, setFontSize] = useState(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 640) return 14;
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) return 15;
+    return 17;
+  });
 
   const lines = code.split('\n');
   const lineHeightPx = Math.round(fontSize * 1.55);
@@ -85,25 +89,25 @@ export default function CodeEditor({
     wordBreak: 'break-word',
     overflowWrap: 'break-word',
     boxSizing: 'border-box',
-    padding: '12px 14px',
+    padding: '10px 10px',
     margin: 0,
     border: 0,
   };
 
   return (
-    <div className="rounded-xl shadow-lg overflow-hidden flex flex-col border border-[#3c3c3c] bg-[#1e1e1e] code-editor-vscode w-full min-h-[540px]">
+    <div className="rounded-xl shadow-lg overflow-hidden flex flex-col border border-[#3c3c3c] bg-[#1e1e1e] code-editor-vscode w-full min-h-[500px]">
       {/* VS Code Tab Bar */}
       <div className="bg-[#252526] border-b border-[#2d2d2d] px-2 sm:px-3 pt-1.5 flex items-center justify-between text-sm flex-wrap gap-2 shrink-0">
         {/* Active File Tab */}
         <div className="flex items-center gap-1">
-          <div className="bg-[#1e1e1e] border-t-2 border-t-[#007acc] text-white px-3.5 py-1.5 rounded-t flex items-center gap-2 text-xs sm:text-sm font-medium select-none shadow-xs">
+          <div className="bg-[#1e1e1e] border-t-2 border-t-[#007acc] text-white px-2.5 sm:px-3.5 py-1.5 rounded-t flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium select-none shadow-xs">
             <Code2 className="w-4 h-4 text-[#e44d26] shrink-0" />
             <span className="tracking-wide">index.html</span>
-            <span className="text-[11px] text-[#858585] ml-1 font-mono">
-              ({lines.length}/14 บรรทัด)
+            <span className="text-[11px] text-[#858585] ml-0.5 sm:ml-1 font-mono">
+              ({lines.length}/14 <span className="hidden sm:inline">บรรทัด</span>)
             </span>
             {isLocked && (
-              <span className="ml-1.5 px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
+              <span className="ml-1 sm:ml-1.5 px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
                 <span>🔒 ล็อก</span>
               </span>
             )}
@@ -111,16 +115,16 @@ export default function CodeEditor({
         </div>
 
         {/* Action buttons */}
-        <div className="flex items-center gap-1.5 pb-1">
+        <div className="flex items-center gap-1 sm:gap-1.5 pb-1">
           {/* Switch to Preview Button */}
           {onSwitchToPreview && (
             <button
               onClick={onSwitchToPreview}
               title="สลับไปดูผลลัพธ์หน้าเว็บ (Browser Preview)"
-              className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded border border-indigo-500 transition flex items-center gap-1.5 text-xs font-semibold shadow-xs mr-1 cursor-pointer"
+              className="px-2.5 sm:px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded border border-indigo-500 transition flex items-center gap-1 text-xs font-semibold shadow-xs mr-0.5 sm:mr-1 cursor-pointer"
             >
               <Globe className="w-3.5 h-3.5" />
-              <span>ดูผลลัพธ์หน้าเว็บ (Preview)</span>
+              <span><span className="hidden sm:inline">ดูผลลัพธ์ </span>Preview</span>
             </button>
           )}
 
@@ -199,7 +203,7 @@ export default function CodeEditor({
         {/* Line Numbers Gutter: VS Code style #858585 */}
         <div 
           ref={gutterRef}
-          className="w-12 sm:w-14 py-3 select-none font-mono text-right pr-3.5 shrink-0 border-r border-[#2d2d2d] bg-[#1e1e1e] overflow-hidden"
+          className="w-9 sm:w-12 lg:w-14 py-3 select-none font-mono text-right pr-2 sm:pr-3.5 shrink-0 border-r border-[#2d2d2d] bg-[#1e1e1e] overflow-hidden"
           style={{ fontSize: `${fontSize}px`, lineHeight: `${lineHeightPx}px`, fontFamily: fontStack }}
         >
           {Array.from({ length: lineCount }).map((_, idx) => {
