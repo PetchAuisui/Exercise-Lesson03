@@ -17,7 +17,10 @@ import {
   BookOpen,
   Lock,
   Unlock,
-  KeyRound
+  KeyRound,
+  Wifi,
+  WifiOff,
+  Database
 } from 'lucide-react';
 import { 
   getAllStudentsProgress, 
@@ -28,7 +31,15 @@ import {
   setExercisePermission
 } from '../utils/adminStorage';
 import { resetStudentPassword } from '../data/students';
+import { 
+  syncClassroomPermission, 
+  syncStudentPasswordReset,
+  subscribeToAllStudents,
+  subscribeToClassroom 
+} from '../services/realtimeSync';
+import { getFirebaseConfig } from '../services/firebase';
 import StudentDetailModal from './StudentDetailModal';
+import FirebaseConfigModal from './FirebaseConfigModal';
 
 export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewSlides }) {
   const [studentsProgress, setStudentsProgress] = useState([]);
@@ -38,21 +49,49 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [solutionEnabled, setSolutionEnabled] = useState(getSolutionPermission);
   const [exerciseEnabled, setExerciseEnabled] = useState(getExercisePermission);
+  const [showFirebaseModal, setShowFirebaseModal] = useState(false);
+  const [firebaseConfig, setFirebaseConfig] = useState(getFirebaseConfig);
+
+  // Sync with Firebase config updates
+  useEffect(() => {
+    const handleConfigUpdate = () => {
+      setFirebaseConfig(getFirebaseConfig());
+    };
+    window.addEventListener('firebase-config-updated', handleConfigUpdate);
+    return () => window.removeEventListener('firebase-config-updated', handleConfigUpdate);
+  }, []);
+
+  // Listen to Realtime Database updates across tabs and across all devices
+  useEffect(() => {
+    const unsubClass = subscribeToClassroom(({ exerciseEnabled, solutionEnabled }) => {
+      setExerciseEnabled(exerciseEnabled);
+      setSolutionEnabled(solutionEnabled);
+    });
+
+    const unsubStudents = subscribeToAllStudents(() => {
+      loadData();
+    });
+
+    return () => {
+      unsubClass();
+      unsubStudents();
+    };
+  }, [firebaseConfig]);
 
   const handleToggleSolution = () => {
     const next = !solutionEnabled;
-    setSolutionPermission(next);
     setSolutionEnabled(next);
+    syncClassroomPermission('solutionEnabled', next);
   };
 
   const handleToggleExercise = () => {
     const next = !exerciseEnabled;
-    setExercisePermission(next);
     setExerciseEnabled(next);
+    syncClassroomPermission('exerciseEnabled', next);
   };
 
   // Reset student password back to default 'kmitl'
-  const handleResetPassword = (student) => {
+  const handleResetPassword = async (student) => {
     if (!student?.id) return;
     const confirmReset = window.confirm(
       `คุณต้องการรีเซ็ตรหัสผ่านของ "${student.name}" (รหัส: ${student.id}) กลับเป็น "kmitl" ใช่หรือไม่?\n\n` +
@@ -61,7 +100,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
     );
 
     if (confirmReset) {
-      resetStudentPassword(student.id);
+      await syncStudentPasswordReset(student.id);
       loadData();
       if (selectedStudent && selectedStudent.id === student.id) {
         setSelectedStudent(prev => prev ? { ...prev, hasChangedPassword: false } : null);
@@ -315,8 +354,35 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
               )}
             </div>
 
-            {/* Right: Refresh & CSV Export */}
+            {/* Right: Firebase Status, Settings, Refresh & CSV Export */}
             <div className="flex items-center gap-2 flex-wrap">
+              {/* Firebase Realtime Sync Status & Settings */}
+              <div className="flex items-center gap-1.5 pr-2 border-r border-slate-200">
+                {firebaseConfig && firebaseConfig.databaseURL ? (
+                  <span className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 shadow-2xs">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span className="hidden sm:inline">Firebase</span> Realtime Live
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1.5 shadow-2xs" title="ยังไม่ได้ตั้งค่า Firebase ข้อมูลจะซิงก์เฉพาะในเบราว์เซอร์นี้">
+                    <WifiOff className="w-3.5 h-3.5 text-amber-600" />
+                    <span>โหมดออฟไลน์</span>
+                  </span>
+                )}
+
+                <button
+                  onClick={() => setShowFirebaseModal(true)}
+                  title="ตั้งค่าเชื่อมต่อ Firebase Realtime Database สำหรับซิงก์ข้ามเครื่อง"
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 rounded-xl border border-slate-200 hover:border-indigo-200 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                >
+                  <Database className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>ตั้งค่า Firebase</span>
+                </button>
+              </div>
+
               <button
                 onClick={loadData}
                 disabled={isRefreshing}
@@ -324,7 +390,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
                 className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-indigo-600' : 'text-slate-500'}`} />
-                <span>{isRefreshing ? 'กำลังโหลด...' : 'รีเฟรชข้อมูล'}</span>
+                <span>{isRefreshing ? 'กำลังโหลด...' : 'รีเฟรช'}</span>
               </button>
 
               <button
@@ -588,6 +654,16 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
         isOpen={!!selectedStudent}
         onClose={() => setSelectedStudent(null)}
         onResetPassword={handleResetPassword}
+      />
+
+      {/* Firebase Realtime Database Configuration Modal */}
+      <FirebaseConfigModal
+        isOpen={showFirebaseModal}
+        onClose={() => setShowFirebaseModal(false)}
+        onConfigSaved={() => {
+          setFirebaseConfig(getFirebaseConfig());
+          loadData();
+        }}
       />
 
     </div>

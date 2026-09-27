@@ -20,6 +20,15 @@ import {
   submitStudentWork,
   cancelStudentSubmission
 } from './utils/adminStorage';
+import { 
+  subscribeToClassroom, 
+  subscribeToStudentSelf, 
+  syncStudentLogin, 
+  syncStudentCode, 
+  syncStudentSubmission, 
+  syncStudentPasswordChange 
+} from './services/realtimeSync';
+import { initFirebase } from './services/firebase';
 
 export default function App() {
   // Authentication State
@@ -59,6 +68,35 @@ export default function App() {
     }
     return false;
   });
+
+  // Initialize Firebase app once
+  useEffect(() => {
+    initFirebase();
+  }, []);
+
+  // Listen to Realtime Classroom settings (Exercise lock & Solution toggle)
+  useEffect(() => {
+    const unsub = subscribeToClassroom(({ exerciseEnabled, solutionEnabled }) => {
+      setExerciseEnabled(exerciseEnabled);
+      setSolutionEnabled(solutionEnabled);
+    });
+    return () => unsub();
+  }, []);
+
+  // Listen to single student live updates (e.g. teacher resets password or changes lock)
+  useEffect(() => {
+    if (currentStudent?.id && currentStudent.role === 'student') {
+      const unsub = subscribeToStudentSelf(currentStudent.id, (data) => {
+        if (data.hasChangedPassword !== undefined) {
+          setMustChangePassword(!data.hasChangedPassword);
+        }
+        if (data.isSubmitted !== undefined) {
+          setIsSubmitted(data.isSubmitted);
+        }
+      });
+      return () => unsub();
+    }
+  }, [currentStudent?.id, currentStudent?.role]);
 
   // Sync solution permission, exercise unlock, submission, and password state across tabs
   useEffect(() => {
@@ -116,10 +154,14 @@ export default function App() {
     }
   }, [currentStudent?.id, currentStudent?.role]);
 
-  // Save student code per account & record activity
+  // Save student code per account & sync to Firebase in real-time (debounced)
   useEffect(() => {
     if (currentStudent?.id && currentStudent?.role !== 'admin') {
       recordStudentCodeUpdate(currentStudent.id, code);
+      const timer = setTimeout(() => {
+        syncStudentCode(currentStudent.id, code);
+      }, 700);
+      return () => clearTimeout(timer);
     }
   }, [code, currentStudent?.id, currentStudent?.role]);
 
@@ -128,6 +170,7 @@ export default function App() {
     localStorage.setItem('ws_auth_student', JSON.stringify(student));
     setCurrentStudent(student);
     if (student.role === 'student') {
+      syncStudentLogin(student.id);
       setMustChangePassword(!isPasswordChanged(student.id));
     } else {
       setMustChangePassword(false);
@@ -179,6 +222,7 @@ export default function App() {
     );
     if (confirmSubmit) {
       submitStudentWork(currentStudent.id);
+      syncStudentSubmission(currentStudent.id, true);
       setIsSubmitted(true);
       setWorkspaceTab('preview');
     }
@@ -192,6 +236,7 @@ export default function App() {
     );
     if (confirmCancel) {
       cancelStudentSubmission(currentStudent.id);
+      syncStudentSubmission(currentStudent.id, false);
       setIsSubmitted(false);
     }
   };
@@ -206,7 +251,8 @@ export default function App() {
     return (
       <ForcePasswordChangeModal
         student={currentStudent}
-        onPasswordChanged={() => {
+        onPasswordChanged={async (newPwd) => {
+          await syncStudentPasswordChange(currentStudent.id, newPwd);
           setMustChangePassword(false);
         }}
         onLogout={handleLogout}
