@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, XCircle, Info, ChevronDown, ChevronUp, Folder, FolderOpen, FileCode, FileText, Image as ImageIcon } from 'lucide-react';
+import { CheckCircle2, XCircle, Info, ChevronDown, ChevronUp, Folder, FolderOpen, FileCode, FileText, Image as ImageIcon, FileCheck } from 'lucide-react';
 
 export default function TaskChecklist({ validation, isOpen, onToggle }) {
   const { criteria, passedCount, totalCount } = validation;
@@ -32,32 +32,40 @@ export default function TaskChecklist({ validation, isOpen, onToggle }) {
 
       {isOpen && (
         <div className="p-4 sm:p-5 space-y-4">
-          {/* สถานการณ์ และ โครงสร้างไฟล์ Directory Tree (จัดให้พอดีกันทั้งสองฝั่ง) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+          {/* แยกเป็น 3 กล่องชัดเจน: สถานการณ์ | คำชี้แจง | โครงสร้างไฟล์ */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 items-stretch">
             
-            {/* สถานการณ์และคำชี้แจง (7 cols) */}
-            <div className="lg:col-span-7 bg-amber-50/80 border border-amber-200 rounded-xl p-4 sm:p-5 text-base sm:text-lg text-amber-950 shadow-2xs flex flex-col justify-center space-y-2">
-              <div className="font-bold flex items-center gap-2 text-base sm:text-lg text-amber-950">
-                <span>📌 สถานการณ์:</span>
+            {/* กล่องที่ 1: สถานการณ์ */}
+            <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-4 sm:p-5 text-amber-950 shadow-2xs flex flex-col justify-start">
+              <div className="font-bold mb-2 flex items-center gap-2 text-base sm:text-lg text-amber-950">
+                <span>📌 สถานการณ์</span>
               </div>
-              <p className="text-base sm:text-lg text-amber-950 leading-relaxed">
+              <p className="text-base sm:text-lg text-amber-900 leading-relaxed font-normal">
                 คุณกำลังสร้างหน้าเว็บแนะนำสถานที่ท่องเที่ยว เขียน HTML ให้หน้าเว็บทำงานตามเงื่อนไขทั้ง 5 ข้อด้านล่าง
-              </p>
-              <p className="text-base sm:text-lg text-amber-950 leading-relaxed">
-                <strong className="font-bold text-amber-950">คำชี้แจง:</strong> เลือกใช้แท็กและ Attribute ที่เหมาะสม แล้วเขียนโค้ดด้วยตนเอง โดยไม่เติมคำลงในโครงสร้างที่เตรียมไว้
               </p>
             </div>
 
-            {/* โครงสร้างโฟลเดอร์แบบ Tree (5 cols) */}
-            <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-4 text-slate-200 font-mono text-xs sm:text-sm shadow-md flex flex-col justify-between">
+            {/* กล่องที่ 2: คำชี้แจง */}
+            <div className="bg-sky-50/80 border border-sky-200 rounded-xl p-4 sm:p-5 text-sky-950 shadow-2xs flex flex-col justify-start">
+              <div className="font-bold mb-2 flex items-center gap-2 text-base sm:text-lg text-sky-950">
+                <FileCheck className="w-5 h-5 text-sky-600 shrink-0" />
+                <span>คำชี้แจง</span>
+              </div>
+              <p className="text-base sm:text-lg text-sky-900 leading-relaxed font-normal">
+                เลือกใช้แท็กและ Attribute ที่เหมาะสม แล้วเขียนโค้ดด้วยตนเอง โดยไม่เติมคำลงในโครงสร้างที่เตรียมไว้
+              </p>
+            </div>
+
+            {/* กล่องที่ 3: โครงสร้างโฟลเดอร์แบบ Tree */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 text-slate-200 font-mono text-xs sm:text-sm shadow-md flex flex-col justify-between md:col-span-2 xl:col-span-1">
               <div>
                 <div className="font-bold text-amber-400 font-thai text-sm sm:text-base flex items-center gap-2 mb-2 pb-1.5 border-b border-slate-800">
                   <FolderOpen className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>โครงสร้างไฟล์ (Project Directory Tree)</span>
+                  <span>โครงสร้างไฟล์ (Project Tree)</span>
                 </div>
                 
                 {/* Directory Tree Structure */}
-                <div className="space-y-1 font-mono leading-tight pl-1">
+                <div className="space-y-1 font-mono leading-tight pl-1 text-xs sm:text-sm">
                   {/* Root */}
                   <div className="flex items-center gap-1.5 text-slate-300 font-semibold">
                     <Folder className="w-4 h-4 text-amber-400 shrink-0" />
