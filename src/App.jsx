@@ -7,7 +7,9 @@ import CodeEditor from './components/CodeEditor';
 import BrowserPreview from './components/BrowserPreview';
 import SolutionModal from './components/SolutionModal';
 import LoginScreen from './components/LoginScreen';
+import AdminDashboard from './components/AdminDashboard';
 import { validateHtmlCode, SAMPLE_SOLUTION } from './utils/htmlValidator';
+import { recordStudentCodeUpdate } from './utils/adminStorage';
 
 export default function App() {
   // Authentication State
@@ -25,7 +27,7 @@ export default function App() {
 
   // Code starts completely empty ("") - student must write from scratch
   const [code, setCode] = useState(() => {
-    if (currentStudent?.id) {
+    if (currentStudent?.id && currentStudent?.role !== 'admin') {
       return localStorage.getItem(`ws_code_${currentStudent.id}`) || '';
     }
     return '';
@@ -38,20 +40,20 @@ export default function App() {
 
   // When student switches/logs in, load their code or empty string
   useEffect(() => {
-    if (currentStudent?.id) {
+    if (currentStudent?.id && currentStudent?.role !== 'admin') {
       const savedCode = localStorage.getItem(`ws_code_${currentStudent.id}`) || '';
       setCode(savedCode);
     } else {
       setCode('');
     }
-  }, [currentStudent?.id]);
+  }, [currentStudent?.id, currentStudent?.role]);
 
-  // Save student code per account
+  // Save student code per account & record activity
   useEffect(() => {
-    if (currentStudent?.id) {
-      localStorage.setItem(`ws_code_${currentStudent.id}`, code);
+    if (currentStudent?.id && currentStudent?.role !== 'admin') {
+      recordStudentCodeUpdate(currentStudent.id, code);
     }
-  }, [code, currentStudent?.id]);
+  }, [code, currentStudent?.id, currentStudent?.role]);
 
   // Handle Login Success
   const handleLoginSuccess = (student) => {
@@ -95,6 +97,11 @@ export default function App() {
   // If not logged in, show Login Screen
   if (!currentStudent) {
     return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  // If Admin logged in, show Admin Dashboard
+  if (currentStudent.role === 'admin') {
+    return <AdminDashboard onLogout={handleLogout} />;
   }
 
   return (
