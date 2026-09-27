@@ -44,9 +44,9 @@ export default function CodeEditor({ code, onChange, onClear }) {
   const fontStack = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
 
   return (
-    <div className="rounded-xl shadow-lg overflow-hidden flex flex-col border border-[#3c3c3c] bg-[#1e1e1e] code-editor-vscode">
+    <div className="rounded-xl shadow-lg overflow-hidden flex flex-col border border-[#3c3c3c] bg-[#1e1e1e] code-editor-vscode h-full">
       {/* VS Code Tab Bar */}
-      <div className="bg-[#252526] border-b border-[#2d2d2d] px-2 sm:px-3 pt-1.5 flex items-center justify-between text-sm flex-wrap gap-2">
+      <div className="bg-[#252526] border-b border-[#2d2d2d] px-2 sm:px-3 pt-1.5 flex items-center justify-between text-sm flex-wrap gap-2 shrink-0">
         {/* Active File Tab */}
         <div className="flex items-center gap-1">
           <div className="bg-[#1e1e1e] border-t-2 border-t-[#007acc] text-white px-3.5 py-1.5 rounded-t flex items-center gap-2 text-xs sm:text-sm font-medium select-none shadow-xs">
@@ -101,7 +101,7 @@ export default function CodeEditor({ code, onChange, onClear }) {
 
       {/* Editor Body: Strictly sized to 14 lines (No excess empty void below!) */}
       <div 
-        className="flex overflow-hidden relative select-text bg-[#1e1e1e]"
+        className="flex overflow-hidden relative select-text bg-[#1e1e1e] flex-1 min-h-0"
         style={{ height: `${totalBodyHeightPx}px` }}
       >
         {/* Line Numbers Gutter: VS Code style #858585 */}

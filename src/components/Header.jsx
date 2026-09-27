@@ -1,12 +1,11 @@
 import React from 'react';
-import { BookOpen, FileText, CheckCircle2, RotateCcw, Lightbulb, LogOut, UserCheck } from 'lucide-react';
+import { BookOpen, FileText, CheckCircle2, Lightbulb, LogOut, UserCheck } from 'lucide-react';
 
 export default function Header({ 
   studentName, 
   studentId, 
   viewMode, 
   setViewMode, 
-  onReset, 
   onShowSolution,
   onLogout,
   passedCount,
@@ -91,15 +90,6 @@ export default function Header({
             >
               <Lightbulb className="w-4 h-4 text-amber-600 shrink-0" />
               <span>เฉลย</span>
-            </button>
-
-            {/* Reset Button */}
-            <button
-              onClick={onReset}
-              title="รีเซ็ตโค้ดใหม่ (เริ่มต้นใหม่ตั้งแต่ต้น)"
-              className="p-2 text-slate-600 hover:bg-slate-100 rounded-xl border border-slate-200 transition shrink-0"
-            >
-              <RotateCcw className="w-4 h-4" />
             </button>
 
             {/* Logout Button */}

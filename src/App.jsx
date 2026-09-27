@@ -82,12 +82,6 @@ export default function App() {
     prevPassedRef.current = validation.isAllPassed;
   }, [validation.isAllPassed]);
 
-  const handleReset = () => {
-    if (window.confirm('คุณต้องการรีเซ็ตโค้ดเพื่อเริ่มต้นเขียนใหม่ตั้งแต่ต้นใช่หรือไม่?')) {
-      setCode('');
-    }
-  };
-
   const handleClear = () => {
     if (window.confirm('คุณต้องการล้างโค้ดทั้งหมดในพื้นที่เขียนใช่หรือไม่?')) {
       setCode('');
@@ -113,7 +107,6 @@ export default function App() {
         setStudentId={() => {}}
         viewMode={viewMode}
         setViewMode={setViewMode}
-        onReset={handleReset}
         onShowSolution={() => setShowSolution(true)}
         onLogout={handleLogout}
         passedCount={validation.passedCount}
@@ -131,10 +124,10 @@ export default function App() {
               onToggle={() => setChecklistOpen(!checklistOpen)}
             />
 
-            {/* Split Screen Workspace: Editor (Left) & Preview (Right) */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
+            {/* Split Screen Workspace: Editor (Left) & Preview (Right) - Exactly Equal Heights */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
               {/* Code Editor */}
-              <div className="flex flex-col">
+              <div className="flex flex-col h-full">
                 <CodeEditor
                   code={code}
                   onChange={setCode}
@@ -143,7 +136,7 @@ export default function App() {
               </div>
 
               {/* Live Browser Preview */}
-              <div className="flex flex-col">
+              <div className="flex flex-col h-full">
                 <BrowserPreview
                   code={code}
                   pageTitle={validation.extractedTitle}
