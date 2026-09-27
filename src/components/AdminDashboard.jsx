@@ -20,8 +20,7 @@ import {
   KeyRound,
   Wifi,
   WifiOff,
-  Database,
-  RotateCcw
+  Database
 } from 'lucide-react';
 import { 
   getAllStudentsProgress, 
@@ -36,9 +35,7 @@ import {
   syncClassroomPermission, 
   syncStudentPasswordReset,
   subscribeToAllStudents,
-  subscribeToClassroom,
-  clearAllStudentsData,
-  clearSingleStudentData
+  subscribeToClassroom 
 } from '../services/realtimeSync';
 import { getFirebaseConfig } from '../services/firebase';
 import StudentDetailModal from './StudentDetailModal';
@@ -109,42 +106,6 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
         setSelectedStudent(prev => prev ? { ...prev, hasChangedPassword: false } : null);
       }
       alert(`รีเซ็ตรหัสผ่านของ "${student.name}" กลับเป็น "kmitl" เรียบร้อยแล้ว`);
-    }
-  };
-
-  // Clear single student test data
-  const handleClearStudentData = async (student) => {
-    if (!student?.id) return;
-    const confirmClear = window.confirm(
-      `คุณต้องการล้างข้อมูลทดสอบของ "${student.name}" (รหัส: ${student.id}) ใช่หรือไม่?\n\n` +
-      `• โค้ดที่พิมพ์ไว้จะถูกลบทั้งหมด\n` +
-      `• สถานะจะกลับเป็น "ยังไม่เข้าระบบ"\n` +
-      `• รหัสผ่านจะถูกรีเซ็ตกลับเป็น "kmitl" (บังคับเปลี่ยนใหม่เมื่อเข้าสู่ระบบ)\n` +
-      `• ข้อมูลของคนนี้ใน Firebase จะถูกล้างทิ้งทันที`
-    );
-
-    if (confirmClear) {
-      await clearSingleStudentData(student.id);
-      loadData();
-      setSelectedStudent(null);
-      alert(`ล้างข้อมูลทดสอบของ "${student.name}" เรียบร้อยแล้ว`);
-    }
-  };
-
-  // Clear all students test data
-  const handleClearAllData = async () => {
-    const confirmClear = window.confirm(
-      `⚠️ คำเตือน: คุณต้องการล้างข้อมูลทดสอบของนักศึกษา "ทุกคนในห้อง" ใช่หรือไม่?\n\n` +
-      `• โค้ดทั้งหมดของทุกคนจะถูกลบ\n` +
-      `• สถานะของทุกคนจะกลับเป็น "ยังไม่เข้าระบบ"\n` +
-      `• รหัสผ่านของทุกคนจะถูกรีเซ็ตกลับเป็น "kmitl" (บังคับตั้งรหัสผ่านใหม่เมื่อเข้าสู่ระบบครั้งถัดไป)\n` +
-      `• ข้อมูลทั้งหมดใน Firebase Realtime Database จะถูกล้างให้สะอาด 100% พร้อมเริ่มคาบเรียนจริง`
-    );
-
-    if (confirmClear) {
-      await clearAllStudentsData();
-      loadData();
-      alert('✨ ล้างข้อมูลทดสอบของนักศึกษาทุกคนเรียบร้อยแล้ว! ห้องเรียนพร้อมเริ่มสอนใหม่แล้วครับ');
     }
   };
 
@@ -433,15 +394,6 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
               </button>
 
               <button
-                onClick={handleClearAllData}
-                title="ล้างข้อมูลทดสอบของนักศึกษาทุกคน (คืนค่าเป็นยังไม่เข้าระบบ, ลบโค้ด, รีเซ็ตรหัสผ่าน kmitl)"
-                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 active:bg-rose-200 rounded-xl border border-rose-200 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
-              >
-                <RotateCcw className="w-3.5 h-3.5 text-rose-600" />
-                <span>ล้างข้อมูลทดสอบทั้งหมด</span>
-              </button>
-
-              <button
                 onClick={handleExport}
                 title="ดาวน์โหลดคะแนนของทุกคนเป็นไฟล์ CSV / Excel"
                 className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition flex items-center gap-1.5 cursor-pointer"
@@ -680,7 +632,6 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
         isOpen={!!selectedStudent}
         onClose={() => setSelectedStudent(null)}
         onResetPassword={handleResetPassword}
-        onClearStudentData={handleClearStudentData}
       />
 
       {/* Firebase Realtime Database Configuration Modal */}

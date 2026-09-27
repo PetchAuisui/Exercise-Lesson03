@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { X, Code2, Globe, CheckCircle2, XCircle, Copy, Check, User, Calendar, ExternalLink, KeyRound, Trash2 } from 'lucide-react';
+import { X, Code2, Globe, CheckCircle2, XCircle, Copy, Check, User, Calendar, ExternalLink, KeyRound } from 'lucide-react';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-markup';
 
-export default function StudentDetailModal({ student, isOpen, onClose, onResetPassword, onClearStudentData }) {
+export default function StudentDetailModal({ student, isOpen, onClose, onResetPassword }) {
   const [activeTab, setActiveTab] = useState('code'); // 'code' | 'preview' | 'criteria'
   const [copied, setCopied] = useState(false);
 
@@ -94,17 +94,6 @@ export default function StudentDetailModal({ student, isOpen, onClose, onResetPa
               >
                 <KeyRound className="w-3.5 h-3.5 text-amber-400" />
                 <span>รีเซ็ตรหัสผ่าน</span>
-              </button>
-            )}
-
-            {onClearStudentData && (
-              <button
-                onClick={() => onClearStudentData(student)}
-                title="ล้างข้อมูลทดสอบของคนนี้ (คืนค่าเป็นยังไม่เข้าระบบ, ลบโค้ด, รีเซ็ตรหัสผ่าน)"
-                className="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-xl border border-rose-500/40 transition text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
-              >
-                <Trash2 className="w-3.5 h-3.5 text-rose-400" />
-                <span>ล้างข้อมูลคนนี้</span>
               </button>
             )}
 
