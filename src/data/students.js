@@ -16,6 +16,8 @@ export const STUDENTS_DATABASE = [
   { id: '67030351', name: 'นายศิวาภัทร อุยสุย' },
 ];
 
+import { hashPassword, DEFAULT_STUDENT_PASSWORD_HASH } from '../utils/crypto';
+
 export const AUTH_PASSWORD = 'kmitl';
 export const DEFAULT_STUDENT_PASSWORD = 'kmitl';
 
@@ -43,11 +45,11 @@ const safeSetItem = (key, val) => {
 };
 
 /**
- * Get current student password (defaults to 'kmitl')
+ * Get current student password hash (defaults to hash of 'kmitl')
  */
 export function getStudentPassword(studentId) {
-  if (!studentId || studentId === 'admin') return DEFAULT_STUDENT_PASSWORD;
-  return safeGetItem(`ws_pwd_${studentId}`) || DEFAULT_STUDENT_PASSWORD;
+  if (!studentId || studentId === 'admin') return DEFAULT_STUDENT_PASSWORD_HASH;
+  return safeGetItem(`ws_pwd_${studentId}`) || DEFAULT_STUDENT_PASSWORD_HASH;
 }
 
 /**
@@ -57,13 +59,13 @@ export function isPasswordChanged(studentId) {
   if (!studentId || studentId === 'admin') return true;
   const isChangedFlag = safeGetItem(`ws_pwd_changed_${studentId}`) === 'true';
   const currentPwd = getStudentPassword(studentId);
-  return isChangedFlag && currentPwd.toLowerCase() !== 'kmitl';
+  return isChangedFlag && currentPwd.toLowerCase() !== 'kmitl' && currentPwd !== DEFAULT_STUDENT_PASSWORD_HASH;
 }
 
 /**
- * Set a new password for a student (Strictly forbids 'kmitl')
+ * Set a new password for a student (Hashed with SHA-256, strictly forbids 'kmitl')
  */
-export function setStudentPassword(studentId, newPassword) {
+export async function setStudentPassword(studentId, newPassword) {
   if (!studentId) return { success: false, message: 'ไม่พบรหัสนักศึกษา' };
   const cleanPassword = (newPassword || '').trim();
 
@@ -75,18 +77,22 @@ export function setStudentPassword(studentId, newPassword) {
     return { success: false, message: 'ไม่อนุญาตให้ใช้รหัสผ่านเป็นคำว่า "kmitl" กรุณาตั้งรหัสผ่านอื่น' };
   }
 
-  if (cleanPassword.length < 4) {
+  if (cleanPassword.length < 4 && cleanPassword.length !== 64) {
     return { success: false, message: 'รหัสผ่านต้องมีความยาวอย่างน้อย 4 ตัวอักษร' };
   }
 
-  safeSetItem(`ws_pwd_${studentId}`, cleanPassword);
+  // If already a 64-character hex hash, keep it; otherwise hash it with SHA-256
+  const isAlreadyHash = /^[a-f0-9]{64}$/i.test(cleanPassword);
+  const passwordHash = isAlreadyHash ? cleanPassword : await hashPassword(cleanPassword);
+
+  safeSetItem(`ws_pwd_${studentId}`, passwordHash);
   safeSetItem(`ws_pwd_changed_${studentId}`, 'true');
 
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event('storage'));
   }
 
-  return { success: true };
+  return { success: true, hash: passwordHash };
 }
 
 /**
@@ -95,7 +101,7 @@ export function setStudentPassword(studentId, newPassword) {
 export function resetStudentPassword(studentId) {
   if (!studentId) return { success: false, message: 'ไม่พบรหัสนักศึกษา' };
 
-  safeSetItem(`ws_pwd_${studentId}`, DEFAULT_STUDENT_PASSWORD);
+  safeSetItem(`ws_pwd_${studentId}`, DEFAULT_STUDENT_PASSWORD_HASH);
   try {
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem(`ws_pwd_changed_${studentId}`);
@@ -109,7 +115,7 @@ export function resetStudentPassword(studentId) {
   return { success: true };
 }
 
-export function authenticateUser(identifier, password) {
+export async function authenticateUser(identifier, password) {
   const cleanId = (identifier || '').trim();
   const cleanPassword = (password || '').trim();
 
@@ -140,8 +146,17 @@ export function authenticateUser(identifier, password) {
     return { success: false, message: 'ไม่พบรหัสนักศึกษาหรือบัญชีผู้ใช้นี้ในระบบ' };
   }
 
-  const expectedPassword = getStudentPassword(student.id);
-  if (cleanPassword !== expectedPassword) {
+  const expectedPasswordOrHash = getStudentPassword(student.id);
+  const inputHash = await hashPassword(cleanPassword);
+
+  // Match hashed password OR legacy plain-text password OR default password 'kmitl'
+  const isMatch = 
+    inputHash === expectedPasswordOrHash || 
+    cleanPassword === expectedPasswordOrHash ||
+    ((expectedPasswordOrHash === DEFAULT_STUDENT_PASSWORD || expectedPasswordOrHash === DEFAULT_STUDENT_PASSWORD_HASH) && 
+      (cleanPassword.toLowerCase() === 'kmitl' || inputHash === DEFAULT_STUDENT_PASSWORD_HASH));
+
+  if (!isMatch) {
     return { success: false, message: 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง' };
   }
 
@@ -159,8 +174,8 @@ export function authenticateUser(identifier, password) {
 }
 
 // Backward-compatible alias
-export function authenticateStudent(studentId, password) {
-  const res = authenticateUser(studentId, password);
+export async function authenticateStudent(studentId, password) {
+  const res = await authenticateUser(studentId, password);
   if (res.success) {
     return { success: true, student: res.user };
   }

@@ -9,11 +9,11 @@ export default function LoginScreen({ onLoginSuccess }) {
   const [error, setError] = useState('');
   const [showStudentList, setShowStudentList] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    const result = authenticateUser(identifier, password);
+    const result = await authenticateUser(identifier, password);
     if (result.success) {
       if (result.user.role === 'student') {
         recordStudentLogin(result.user.id);

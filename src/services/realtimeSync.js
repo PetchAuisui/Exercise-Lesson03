@@ -18,6 +18,7 @@ import {
   isPasswordChanged,
   STUDENTS_DATABASE
 } from '../data/students';
+import { hashPassword, DEFAULT_STUDENT_PASSWORD_HASH } from '../utils/crypto';
 
 /**
  * Sync Classroom permissions to Firebase Realtime Database
@@ -202,12 +203,14 @@ export async function syncStudentSubmission(studentId, isSubmitted) {
 }
 
 /**
- * Sync Student Password Change in Firebase
+ * Sync Student Password Change in Firebase (Saved as SHA-256 Hash)
  */
 export async function syncStudentPasswordChange(studentId, newPassword) {
   if (!studentId || studentId === 'admin') return { success: false };
-  const res = setStudentPassword(studentId, newPassword);
+  const res = await setStudentPassword(studentId, newPassword);
   if (!res.success) return res;
+
+  const hash = res.hash || await hashPassword(newPassword);
 
   const db = getFirebaseDB();
   if (!db) return res;
@@ -215,7 +218,8 @@ export async function syncStudentPasswordChange(studentId, newPassword) {
   try {
     const studentRef = ref(db, `students/${studentId}`);
     await update(studentRef, {
-      password: newPassword,
+      passwordHash: hash,
+      password: null, // Wipe plain-text password from Firebase
       hasChangedPassword: true,
       passwordUpdatedAt: new Date().toISOString()
     });
@@ -227,7 +231,7 @@ export async function syncStudentPasswordChange(studentId, newPassword) {
 }
 
 /**
- * Teacher Reset Student Password in Firebase
+ * Teacher Reset Student Password in Firebase (Reset to hash of 'kmitl')
  */
 export async function syncStudentPasswordReset(studentId) {
   if (!studentId || studentId === 'admin') return { success: false };
@@ -239,7 +243,8 @@ export async function syncStudentPasswordReset(studentId) {
   try {
     const studentRef = ref(db, `students/${studentId}`);
     await update(studentRef, {
-      password: 'kmitl',
+      passwordHash: DEFAULT_STUDENT_PASSWORD_HASH,
+      password: null, // Wipe plain-text password from Firebase
       hasChangedPassword: false,
       passwordResetAt: new Date().toISOString()
     });
@@ -293,8 +298,13 @@ export function subscribeToAllStudents(callback) {
       } else if (remote.isSubmitted === false) {
         localStorage.removeItem(`ws_submitted_${id}`);
       }
-      if (remote.password) {
-        localStorage.setItem(`ws_pwd_${id}`, remote.password);
+      if (remote.passwordHash) {
+        localStorage.setItem(`ws_pwd_${id}`, remote.passwordHash);
+      } else if (remote.password) {
+        // Upgrade legacy plain text password to SHA-256 hash
+        hashPassword(remote.password).then(h => {
+          localStorage.setItem(`ws_pwd_${id}`, h);
+        });
       }
       if (remote.hasChangedPassword !== undefined) {
         if (remote.hasChangedPassword) {
@@ -338,8 +348,13 @@ export function subscribeToStudentSelf(studentId, callback) {
       return;
     }
 
-    if (data.password) {
-      localStorage.setItem(`ws_pwd_${studentId}`, data.password);
+    if (data.passwordHash) {
+      localStorage.setItem(`ws_pwd_${studentId}`, data.passwordHash);
+    } else if (data.password) {
+      // Upgrade legacy plain text password to SHA-256 hash
+      hashPassword(data.password).then(h => {
+        localStorage.setItem(`ws_pwd_${studentId}`, h);
+      });
     }
     if (data.hasChangedPassword !== undefined) {
       if (data.hasChangedPassword) {

@@ -9,7 +9,7 @@ export default function ForcePasswordChangeModal({ student, onPasswordChanged, o
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -36,7 +36,7 @@ export default function ForcePasswordChangeModal({ student, onPasswordChanged, o
       return;
     }
 
-    const result = setStudentPassword(student.id, cleanNew);
+    const result = await setStudentPassword(student.id, cleanNew);
     if (!result.success) {
       setError(result.message);
       return;
