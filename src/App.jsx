@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { Code2, Globe, ArrowLeft } from 'lucide-react';
+import { Code2, Globe, ArrowLeft, Send } from 'lucide-react';
 import Header from './components/Header';
 import TaskChecklist from './components/TaskChecklist';
 import CodeEditor from './components/CodeEditor';
@@ -9,7 +9,13 @@ import SolutionModal from './components/SolutionModal';
 import LoginScreen from './components/LoginScreen';
 import AdminDashboard from './components/AdminDashboard';
 import { validateHtmlCode, SAMPLE_SOLUTION } from './utils/htmlValidator';
-import { recordStudentCodeUpdate, getSolutionPermission } from './utils/adminStorage';
+import { 
+  recordStudentCodeUpdate, 
+  getSolutionPermission,
+  getStudentSubmission,
+  submitStudentWork,
+  cancelStudentSubmission
+} from './utils/adminStorage';
 
 export default function App() {
   // Authentication State
@@ -31,14 +37,34 @@ export default function App() {
   // Solution access controlled by teacher (default: false / locked)
   const [solutionEnabled, setSolutionEnabled] = useState(getSolutionPermission);
 
-  // Sync solution permission across tabs/windows
+  // Submission state for current student
+  const [isSubmitted, setIsSubmitted] = useState(() => {
+    if (currentStudent?.id) {
+      return !!getStudentSubmission(currentStudent.id);
+    }
+    return false;
+  });
+
+  // Sync solution permission and submission state across tabs/windows
   useEffect(() => {
-    const syncPermission = () => {
+    const handleStorageChange = () => {
       setSolutionEnabled(getSolutionPermission());
+      if (currentStudent?.id) {
+        setIsSubmitted(!!getStudentSubmission(currentStudent.id));
+      }
     };
-    window.addEventListener('storage', syncPermission);
-    return () => window.removeEventListener('storage', syncPermission);
-  }, []);
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [currentStudent?.id]);
+
+  // Update submission state when current student changes
+  useEffect(() => {
+    if (currentStudent?.id) {
+      setIsSubmitted(!!getStudentSubmission(currentStudent.id));
+    } else {
+      setIsSubmitted(false);
+    }
+  }, [currentStudent?.id]);
 
   // Code starts completely empty ("") - student must write from scratch
   const [code, setCode] = useState(() => {
@@ -109,6 +135,34 @@ export default function App() {
     setCode(SAMPLE_SOLUTION);
   };
 
+  // Handle student work submission (Locks code and switches to preview)
+  const handleSubmitWork = () => {
+    if (!currentStudent?.id) return;
+    const confirmSubmit = window.confirm(
+      'คุณต้องการยืนยันส่งงานใช่หรือไม่?\n\n' +
+      '• เมื่อส่งงานแล้ว พื้นที่เขียนโค้ดจะถูกล็อกเพื่อป้องกันการแก้ไขโดยไม่ตั้งใจ\n' +
+      '• ระบบจะสลับไปหน้าแสดงผลลัพธ์หน้าเว็บ (Preview) ให้คุณตรวจดูผลงานทันที\n' +
+      '• หากต้องการแก้ไขเพิ่มเติม สามารถกดปุ่ม "ยกเลิกส่งงาน" เพื่อปลดล็อกโค้ดได้ตลอดเวลา'
+    );
+    if (confirmSubmit) {
+      submitStudentWork(currentStudent.id);
+      setIsSubmitted(true);
+      setWorkspaceTab('preview');
+    }
+  };
+
+  // Handle student canceling submission (Unlocks code for re-editing)
+  const handleCancelSubmission = () => {
+    if (!currentStudent?.id) return;
+    const confirmCancel = window.confirm(
+      'คุณต้องการยกเลิกการส่งงานเพื่อปลดล็อกและกลับมาแก้ไขโค้ดใหม่ใช่หรือไม่?'
+    );
+    if (confirmCancel) {
+      cancelStudentSubmission(currentStudent.id);
+      setIsSubmitted(false);
+    }
+  };
+
   // If not logged in, show Login Screen
   if (!currentStudent) {
     return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
@@ -147,7 +201,7 @@ export default function App() {
           </div>
           <button
             onClick={() => setAdminPreviewStudentView(false)}
-            className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+            className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>กลับสู่ Admin Dashboard</span>
@@ -165,6 +219,9 @@ export default function App() {
         onLogout={handleLogout}
         passedCount={validation.passedCount}
         totalCount={validation.totalCount}
+        isSubmitted={isSubmitted}
+        onSubmitWork={handleSubmitWork}
+        onCancelSubmission={handleCancelSubmission}
       />
 
       {/* Main Content Area */}
@@ -182,7 +239,7 @@ export default function App() {
             <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-lg">
               <button
                 onClick={() => setWorkspaceTab('code')}
-                className={`px-4 py-2 rounded-md font-bold text-sm sm:text-base flex items-center gap-2 transition ${
+                className={`px-4 py-2 rounded-md font-bold text-sm sm:text-base flex items-center gap-2 transition cursor-pointer ${
                   workspaceTab === 'code'
                     ? 'bg-slate-900 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
@@ -190,10 +247,15 @@ export default function App() {
               >
                 <Code2 className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>พื้นที่เขียนโค้ด (index.html)</span>
+                {isSubmitted && (
+                  <span className="text-xs bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-bold border border-amber-400/40">
+                    🔒
+                  </span>
+                )}
               </button>
               <button
                 onClick={() => setWorkspaceTab('preview')}
-                className={`px-4 py-2 rounded-md font-bold text-sm sm:text-base flex items-center gap-2 transition ${
+                className={`px-4 py-2 rounded-md font-bold text-sm sm:text-base flex items-center gap-2 transition cursor-pointer ${
                   workspaceTab === 'preview'
                     ? 'bg-indigo-600 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
@@ -204,11 +266,39 @@ export default function App() {
               </button>
             </div>
 
-            {/* Status / Instruction text */}
-            <div className="text-xs sm:text-sm text-slate-500 font-medium px-2 hidden md:block">
-              {workspaceTab === 'code'
-                ? '💡 พื้นที่เขียนโค้ดเต็มจอ (Full Width) — กดปุ่ม "ดูผลลัพธ์หน้าเว็บ" เพื่อสลับไปดูการทำงาน'
-                : '🌐 แสดงผลหน้าเว็บจริงแบบเต็มหน้าจอ — กดปุ่ม "กลับไปเขียนโค้ด" เพื่อแก้ไขโค้ด'}
+            {/* Quick Submit & Status Controls in Workspace Toolbar */}
+            <div className="flex items-center gap-2.5 flex-wrap">
+              {!isSubmitted ? (
+                <button
+                  onClick={handleSubmitWork}
+                  className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-lg font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-xs transition cursor-pointer"
+                  title="เมื่อมั่นใจว่าโค้ดเสร็จแล้ว กดปุ่มนี้เพื่อส่งงาน ล็อกโค้ด และดูผลลัพธ์"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>ส่งงาน (เมื่อมั่นใจว่าโค้ดเสร็จแล้ว)</span>
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+                    <span>🔒</span>
+                    <span>ส่งงานแล้ว (โค้ดถูกล็อก)</span>
+                  </span>
+                  <button
+                    onClick={handleCancelSubmission}
+                    className="px-3 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded-lg text-xs font-bold transition cursor-pointer shadow-2xs"
+                    title="ยกเลิกการส่งงานเพื่อปลดล็อกและกลับมาแก้ไขโค้ด"
+                  >
+                    ↩️ ยกเลิกส่งงานเพื่อแก้ไข
+                  </button>
+                </div>
+              )}
+
+              {/* Status / Instruction text */}
+              <div className="text-xs sm:text-sm text-slate-500 font-medium px-2 hidden xl:block">
+                {workspaceTab === 'code'
+                  ? '💡 สลับไปดูผลลัพธ์หน้าเว็บได้ตลอดเวลา'
+                  : '🌐 แสดงผลลัพธ์หน้าเว็บเสมือนจริง'}
+              </div>
             </div>
           </div>
 
@@ -220,6 +310,8 @@ export default function App() {
                 onChange={setCode}
                 onClear={handleClear}
                 onSwitchToPreview={() => setWorkspaceTab('preview')}
+                isLocked={isSubmitted}
+                onCancelSubmission={handleCancelSubmission}
               />
             </div>
           ) : (
@@ -229,6 +321,8 @@ export default function App() {
                 pageTitle={validation.extractedTitle}
                 validation={validation}
                 onSwitchToCode={() => setWorkspaceTab('code')}
+                isSubmitted={isSubmitted}
+                onCancelSubmission={handleCancelSubmission}
               />
             </div>
           )}

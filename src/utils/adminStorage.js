@@ -54,6 +54,35 @@ export function recordStudentCodeUpdate(studentId, code) {
 }
 
 /**
+ * Student Submission control (Lock / Unlock code editor)
+ */
+export function getStudentSubmission(studentId) {
+  if (!studentId || studentId === 'admin') return null;
+  return safeGetItem(`ws_submitted_${studentId}`);
+}
+
+export function submitStudentWork(studentId) {
+  if (!studentId || studentId === 'admin') return;
+  const now = new Date().toISOString();
+  safeSetItem(`ws_submitted_${studentId}`, now);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('storage'));
+  }
+}
+
+export function cancelStudentSubmission(studentId) {
+  if (!studentId || studentId === 'admin') return;
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(`ws_submitted_${studentId}`);
+    }
+  } catch {}
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('storage'));
+  }
+}
+
+/**
  * Get aggregated progress and score for all students
  */
 export function getAllStudentsProgress() {
@@ -63,6 +92,8 @@ export function getAllStudentsProgress() {
     const code = rawCode || '';
     const lastLogin = safeGetItem(`ws_last_login_${student.id}`);
     const lastUpdated = safeGetItem(`ws_code_updated_${student.id}`) || lastLogin;
+    const submittedAt = safeGetItem(`ws_submitted_${student.id}`);
+    const isSubmitted = !!submittedAt;
 
     const validation = validateHtmlCode(code);
     const passedCount = validation.passedCount;
@@ -93,6 +124,8 @@ export function getAllStudentsProgress() {
       hasLoggedIn,
       lastLogin,
       lastUpdated,
+      isSubmitted,
+      submittedAt,
       validation,
       passedCount,
       totalCount,
@@ -112,7 +145,9 @@ export function exportScoresToCSV(studentsProgress) {
     'ลำดับ',
     'รหัสนักศึกษา',
     'ชื่อ-นามสกุล',
-    'สถานะ',
+    'สถานะระบบ',
+    'สถานะการส่งงาน',
+    'เวลาที่ส่งงาน',
     'คะแนน (เต็ม 5)',
     'ร้อยละ (%)',
     'ข้อ 1 (โครงสร้างพื้นฐาน)',
@@ -132,6 +167,8 @@ export function exportScoresToCSV(studentsProgress) {
     const c4 = c[3]?.passed ? 'ผ่าน' : 'ไม่ผ่าน';
     const c5 = c[4]?.passed ? 'ผ่าน' : 'ไม่ผ่าน';
     const dateStr = s.lastUpdated ? new Date(s.lastUpdated).toLocaleString('th-TH') : '-';
+    const submitStr = s.submittedAt ? new Date(s.submittedAt).toLocaleString('th-TH') : '-';
+    const submissionStatus = s.isSubmitted ? 'ส่งงานแล้ว (ล็อก)' : 'ยังไม่ส่ง';
     // Escape code for CSV by doubling double quotes
     const escapedCode = `"${(s.code || '').replace(/"/g, '""')}"`;
 
@@ -140,6 +177,8 @@ export function exportScoresToCSV(studentsProgress) {
       `="${s.id}"`, // Preserve leading zeroes in Excel
       `"${s.name}"`,
       `"${s.status}"`,
+      `"${submissionStatus}"`,
+      `"${submitStr}"`,
       s.score,
       s.scorePercent,
       c1,

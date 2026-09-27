@@ -53,14 +53,21 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
       student.id.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
       student.name.toLowerCase().includes(searchTerm.toLowerCase().trim());
 
-    const matchesStatus = 
-      statusFilter === 'all' ? true : student.status === statusFilter;
+    let matchesStatus = true;
+    if (statusFilter === 'all') {
+      matchesStatus = true;
+    } else if (statusFilter === 'submitted') {
+      matchesStatus = student.isSubmitted;
+    } else {
+      matchesStatus = student.status === statusFilter;
+    }
 
     return matchesSearch && matchesStatus;
   });
 
   // Calculate summary metrics
   const totalCount = studentsProgress.length;
+  const submittedCount = studentsProgress.filter(s => s.isSubmitted).length;
   const completedCount = studentsProgress.filter(s => s.status === 'เสร็จสมบูรณ์').length;
   const inProgressCount = studentsProgress.filter(s => s.status === 'กำลังทำ').length;
   const notStartedCount = studentsProgress.filter(s => s.status === 'ยังไม่ทำ').length;
@@ -272,6 +279,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
 
             {[
               { id: 'all', label: `ทั้งหมด (${totalCount})` },
+              { id: 'submitted', label: `ส่งงานแล้ว (${submittedCount})`, color: 'emerald' },
               { id: 'เสร็จสมบูรณ์', label: `เสร็จสมบูรณ์ (${completedCount})`, color: 'emerald' },
               { id: 'กำลังทำ', label: `กำลังทำ (${inProgressCount})`, color: 'sky' },
               { id: 'ยังไม่ทำ', label: `ยังไม่ทำ (${notStartedCount})`, color: 'amber' },
@@ -303,6 +311,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
                   <th className="py-3.5 px-4">รหัสนักศึกษา</th>
                   <th className="py-3.5 px-4">ชื่อ-นามสกุล</th>
                   <th className="py-3.5 px-4 text-center">สถานะ</th>
+                  <th className="py-3.5 px-4 text-center">การส่งงาน</th>
                   <th className="py-3.5 px-4 text-center">คะแนน</th>
                   <th className="py-3.5 px-4 text-center">เกณฑ์ 5 ข้อ</th>
                   <th className="py-3.5 px-4">อัปเดตล่าสุด</th>
@@ -312,7 +321,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
               <tbody className="divide-y divide-slate-100">
                 {filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className="py-12 text-center text-slate-400">
+                    <td colSpan="9" className="py-12 text-center text-slate-400">
                       <Search className="w-10 h-10 mx-auto mb-2 text-slate-300" />
                       <p className="font-semibold">ไม่พบข้อมูลนักศึกษาที่ตรงกับเงื่อนไขการค้นหา</p>
                     </td>
@@ -360,6 +369,22 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
                           }`}></span>
                           <span>{student.status}</span>
                         </span>
+                      </td>
+
+                      {/* Submission Status */}
+                      <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                        {student.isSubmitted ? (
+                          <span 
+                            title={`ยืนยันส่งงานเมื่อ: ${new Date(student.submittedAt).toLocaleString('th-TH')}`}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300"
+                          >
+                            <span>🔒 ส่งงานแล้ว</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">
+                            <span>ยังไม่ส่ง</span>
+                          </span>
+                        )}
                       </td>
 
                       {/* Score */}

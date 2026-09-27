@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, CheckCircle2, Lightbulb, LogOut, UserCheck } from 'lucide-react';
+import { BookOpen, CheckCircle2, Lightbulb, LogOut, UserCheck, Send, RotateCcw, Lock } from 'lucide-react';
 
 export default function Header({ 
   studentName, 
@@ -9,7 +9,10 @@ export default function Header({
   passedCount,
   totalCount,
   isSticky = true,
-  canViewSolution = false
+  canViewSolution = false,
+  isSubmitted = false,
+  onSubmitWork,
+  onCancelSubmission
 }) {
   return (
     <header className={`bg-white border-b border-slate-200 ${isSticky ? 'sticky top-0' : 'relative'} z-30 shadow-xs no-print`}>
@@ -57,6 +60,34 @@ export default function Header({
               </div>
             </div>
 
+            {/* Submit / Cancel Submission Button */}
+            {onSubmitWork && !isSubmitted && (
+              <button
+                onClick={onSubmitWork}
+                title="ยืนยันส่งงานเมื่อเขียนโค้ดเสร็จแล้ว (จะล็อกโค้ดป้องกันการแก้ไข)"
+                className="px-3 sm:px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-xl border border-emerald-500 shadow-xs transition text-xs sm:text-sm font-bold flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer"
+              >
+                <Send className="w-4 h-4" />
+                <span>ยืนยันส่งงาน</span>
+              </button>
+            )}
+
+            {onCancelSubmission && isSubmitted && (
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-2xs whitespace-nowrap">
+                  <Lock className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>ส่งงานแล้ว (ล็อก)</span>
+                </span>
+                <button
+                  onClick={onCancelSubmission}
+                  title="ยกเลิกการส่งงานเพื่อปลดล็อกและกลับมาแก้ไขโค้ดใหม่"
+                  className="px-3 py-1.5 text-amber-900 bg-amber-100 hover:bg-amber-200 active:bg-amber-300 rounded-xl border border-amber-300 transition text-xs sm:text-sm font-bold flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer shadow-xs"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-amber-700" />
+                  <span>ยกเลิกส่งงาน</span>
+                </button>
+              </div>
+            )}
 
             {/* Solution Button (Only visible if enabled by teacher) */}
             {canViewSolution && (

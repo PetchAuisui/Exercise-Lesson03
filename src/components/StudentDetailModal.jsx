@@ -54,12 +54,29 @@ export default function StudentDetailModal({ student, isOpen, onClose }) {
                 }`}>
                   {student.status}
                 </span>
+                {student.isSubmitted ? (
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold border bg-emerald-500/20 text-emerald-300 border-emerald-500/40">
+                    🔒 ส่งงานแล้ว
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold border bg-slate-800 text-slate-400 border-slate-700">
+                    📝 ยังไม่ส่งงาน
+                  </span>
+                )}
               </div>
-              <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
+              <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2 flex-wrap">
                 <Calendar className="w-3.5 h-3.5" />
                 <span>
                   อัปเดตล่าสุด: {student.lastUpdated ? new Date(student.lastUpdated).toLocaleString('th-TH') : 'ยังไม่มีข้อมูล'}
                 </span>
+                {student.submittedAt && (
+                  <>
+                    <span>•</span>
+                    <span className="text-emerald-300 font-semibold">
+                      เวลาส่งงาน: {new Date(student.submittedAt).toLocaleString('th-TH')}
+                    </span>
+                  </>
+                )}
                 <span>•</span>
                 <span className="text-amber-300 font-semibold">
                   คะแนนที่ได้: {student.score} / {student.totalCount} ข้อ ({student.scorePercent}%)

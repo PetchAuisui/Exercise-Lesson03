@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Globe, ArrowLeft, ArrowRight, RotateCw, ExternalLink, Image as ImageIcon, Eye, AlertCircle, Code2 } from 'lucide-react';
 
-export default function BrowserPreview({ code, pageTitle, validation, onSwitchToCode }) {
+export default function BrowserPreview({ 
+  code, 
+  pageTitle, 
+  validation, 
+  onSwitchToCode,
+  isSubmitted = false,
+  onCancelSubmission 
+}) {
   const [currentUrl, setCurrentUrl] = useState('http://localhost:3000/index.html');
   const [history, setHistory] = useState(['http://localhost:3000/index.html']);
   const [historyIndex, setHistoryIndex] = useState(0);
@@ -172,6 +179,28 @@ export default function BrowserPreview({ code, pageTitle, validation, onSwitchTo
           </div>
         </div>
       </div>
+
+      {/* Submission Status Banner */}
+      {isSubmitted && (
+        <div className="bg-emerald-50 border-b border-emerald-200 px-4 py-2 flex items-center justify-between text-xs text-emerald-900 shrink-0 gap-2 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-emerald-700 flex items-center gap-1.5">
+              <span>✅</span> ยืนยันส่งงานเรียบร้อยแล้ว
+            </span>
+            <span className="text-emerald-700/80 hidden sm:inline">
+              (โค้ดถูกล็อกไม่สามารถแก้ไขได้)
+            </span>
+          </div>
+          {onCancelSubmission && (
+            <button
+              onClick={onCancelSubmission}
+              className="px-3 py-1 bg-white hover:bg-amber-50 text-amber-900 border border-amber-300 font-bold rounded-md text-xs transition shadow-2xs shrink-0 cursor-pointer"
+            >
+              ↩️ ยกเลิกการส่งงานเพื่อแก้ไขโค้ด
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Simulated Browser Viewport */}
       <div className="flex-1 bg-white min-h-[460px] relative overflow-auto flex flex-col">

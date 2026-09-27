@@ -3,7 +3,14 @@ import { Code2, Copy, Check, Trash2, ZoomIn, ZoomOut, Globe } from 'lucide-react
 import Prism from 'prismjs';
 import 'prismjs/components/prism-markup';
 
-export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview }) {
+export default function CodeEditor({ 
+  code, 
+  onChange, 
+  onClear, 
+  onSwitchToPreview,
+  isLocked = false,
+  onCancelSubmission
+}) {
   const textareaRef = useRef(null);
   const preRef = useRef(null);
   const gutterRef = useRef(null);
@@ -17,12 +24,12 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
   const lineCount = Math.max(lines.length, minLines);
   const totalBodyHeightPx = lineCount * lineHeightPx + 24; // +24px for top & bottom padding (py-3)
 
-  // Auto-focus textarea on mount
+  // Auto-focus textarea on mount if not locked
   useEffect(() => {
-    if (textareaRef.current) {
+    if (textareaRef.current && !isLocked) {
       textareaRef.current.focus();
     }
-  }, []);
+  }, [isLocked]);
 
   // Sync scroll between textarea, syntax highlight pre, and line numbers gutter
   const handleScroll = (e) => {
@@ -37,6 +44,7 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
 
   // Support Tab key for proper code indentation
   const handleKeyDown = (e) => {
+    if (isLocked) return;
     if (e.key === 'Tab') {
       e.preventDefault();
       const textarea = textareaRef.current;
@@ -94,6 +102,11 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
             <span className="text-[11px] text-[#858585] ml-1 font-mono">
               ({lines.length}/14 บรรทัด)
             </span>
+            {isLocked && (
+              <span className="ml-1.5 px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
+                <span>🔒 ล็อก</span>
+              </span>
+            )}
           </div>
         </div>
 
@@ -104,7 +117,7 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
             <button
               onClick={onSwitchToPreview}
               title="สลับไปดูผลลัพธ์หน้าเว็บ (Browser Preview)"
-              className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded border border-indigo-500 transition flex items-center gap-1.5 text-xs font-semibold shadow-xs mr-1"
+              className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded border border-indigo-500 transition flex items-center gap-1.5 text-xs font-semibold shadow-xs mr-1 cursor-pointer"
             >
               <Globe className="w-3.5 h-3.5" />
               <span>ดูผลลัพธ์หน้าเว็บ (Preview)</span>
@@ -115,7 +128,7 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
           <div className="flex items-center rounded bg-[#333333] border border-[#3c3c3c] text-xs">
             <button
               onClick={() => setFontSize(Math.max(14, fontSize - 2))}
-              className="p-1 rounded text-[#858585] hover:text-[#cccccc] transition"
+              className="p-1 rounded text-[#858585] hover:text-[#cccccc] transition cursor-pointer"
               title="ลดขนาดตัวอักษร"
             >
               <ZoomOut className="w-3.5 h-3.5" />
@@ -123,7 +136,7 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
             <span className="px-1.5 font-mono text-[11px] font-medium text-[#cccccc] select-none">{fontSize}px</span>
             <button
               onClick={() => setFontSize(Math.min(22, fontSize + 2))}
-              className="p-1 rounded text-[#858585] hover:text-[#cccccc] transition"
+              className="p-1 rounded text-[#858585] hover:text-[#cccccc] transition cursor-pointer"
               title="เพิ่มขนาดตัวอักษร"
             >
               <ZoomIn className="w-3.5 h-3.5" />
@@ -134,26 +147,53 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
           <button
             onClick={handleCopy}
             title="คัดลอกโค้ดทั้งหมด"
-            className="p-1.5 bg-[#333333] hover:bg-[#3c3c3c] text-[#cccccc] hover:text-white rounded border border-[#3c3c3c] transition text-xs"
+            className="p-1.5 bg-[#333333] hover:bg-[#3c3c3c] text-[#cccccc] hover:text-white rounded border border-[#3c3c3c] transition text-xs cursor-pointer"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
 
           {/* Clear */}
           <button
-            onClick={onClear}
-            title="ล้างโค้ดทั้งหมดเพื่อเขียนใหม่"
-            className="p-1.5 bg-[#333333] hover:bg-red-950/80 text-[#cccccc] hover:text-red-300 rounded border border-[#3c3c3c] hover:border-red-800 transition text-xs"
+            onClick={isLocked ? undefined : onClear}
+            disabled={isLocked}
+            title={isLocked ? "ไม่สามารถล้างโค้ดได้เนื่องจากส่งงานแล้ว" : "ล้างโค้ดทั้งหมดเพื่อเขียนใหม่"}
+            className={`p-1.5 rounded border transition text-xs ${
+              isLocked 
+                ? 'opacity-40 cursor-not-allowed bg-[#2a2a2a] text-[#666666] border-[#333333]' 
+                : 'bg-[#333333] hover:bg-red-950/80 text-[#cccccc] hover:text-red-300 border-[#3c3c3c] hover:border-red-800 cursor-pointer'
+            }`}
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
+      {/* Submission Lock Banner */}
+      {isLocked && (
+        <div className="bg-amber-950/70 border-b border-amber-600/50 px-3 sm:px-4 py-2 flex items-center justify-between text-xs text-amber-200 shrink-0 gap-2 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-amber-400 flex items-center gap-1.5">
+              <span>🔒</span> โค้ดถูกล็อกเนื่องจากส่งงานแล้ว
+            </span>
+            <span className="text-amber-200/80 hidden sm:inline">
+              (ไม่สามารถพิมพ์แก้ไขได้จนกว่าจะกดยกเลิกการส่งงาน)
+            </span>
+          </div>
+          {onCancelSubmission && (
+            <button
+              onClick={onCancelSubmission}
+              className="px-3 py-1 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-bold rounded-md text-xs transition shadow-2xs shrink-0 cursor-pointer"
+            >
+              ↩️ ยกเลิกการส่งงานเพื่อแก้ไข
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Editor Body: Clean spacious coding area with at least 18+ lines */}
       <div 
-        onClick={() => textareaRef.current?.focus()}
-        className="flex relative bg-[#1e1e1e] flex-1 cursor-text select-text"
+        onClick={() => !isLocked && textareaRef.current?.focus()}
+        className={`flex relative bg-[#1e1e1e] flex-1 ${isLocked ? 'cursor-default' : 'cursor-text select-text'}`}
         style={{ minHeight: `${totalBodyHeightPx}px` }}
       >
         {/* Line Numbers Gutter: VS Code style #858585 */}
@@ -198,19 +238,22 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
           <textarea
             ref={textareaRef}
             value={code}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => !isLocked && onChange(e.target.value)}
             onKeyDown={handleKeyDown}
+            readOnly={isLocked}
             spellCheck="false"
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect="off"
-            autoFocus
-            className="code-editor-textarea absolute top-0 left-0 w-full h-full bg-transparent resize-none outline-none z-10"
+            autoFocus={!isLocked}
+            className={`code-editor-textarea absolute top-0 left-0 w-full h-full bg-transparent resize-none outline-none z-10 ${
+              isLocked ? 'cursor-default select-text' : ''
+            }`}
             style={{ 
               ...sharedEditorStyle,
               color: '#d4d4d4',
               WebkitTextFillColor: 'transparent',
-              caretColor: '#569cd6',
+              caretColor: isLocked ? 'transparent' : '#569cd6',
             }}
           />
         </div>
