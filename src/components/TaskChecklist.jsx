@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, XCircle, Info, ChevronDown, ChevronUp, Folder, Image as ImageIcon } from 'lucide-react';
+import { CheckCircle2, XCircle, Info, ChevronDown, ChevronUp, Folder, FolderOpen, FileCode, FileText, Image as ImageIcon } from 'lucide-react';
 
 export default function TaskChecklist({ validation, isOpen, onToggle }) {
   const { criteria, passedCount, totalCount } = validation;
@@ -32,39 +32,80 @@ export default function TaskChecklist({ validation, isOpen, onToggle }) {
 
       {isOpen && (
         <div className="p-5 space-y-4">
-          {/* สถานการณ์ และ ข้อมูลรูปภาพ */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* สถานการณ์และคำชี้แจง */}
-            <div className="md:col-span-2 bg-amber-50/80 border border-amber-200 rounded-xl p-4 text-sm sm:text-base text-amber-950 leading-relaxed shadow-2xs flex flex-col justify-center">
-              <div className="font-bold mb-1 flex items-center gap-1.5 text-base sm:text-lg text-amber-950">
+          {/* สถานการณ์ และ โครงสร้างไฟล์ Directory Tree */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            
+            {/* สถานการณ์และคำชี้แจง (7 cols) */}
+            <div className="lg:col-span-7 bg-amber-50/80 border border-amber-200 rounded-xl p-4 text-sm sm:text-base text-amber-950 leading-relaxed shadow-2xs flex flex-col justify-center">
+              <div className="font-bold mb-1.5 flex items-center gap-1.5 text-base sm:text-lg text-amber-950">
                 <span>📌 สถานการณ์:</span>
               </div>
               <p className="font-normal text-amber-900">
                 คุณกำลังสร้างหน้าเว็บแนะนำสถานที่ท่องเที่ยว เขียน HTML ให้หน้าเว็บทำงานตามเงื่อนไขทั้ง 5 ข้อด้านล่าง
               </p>
-              <p className="mt-1 text-amber-900/90 font-medium">
+              <p className="mt-2 text-amber-900/90 font-medium">
                 <strong className="text-amber-950">คำชี้แจง:</strong> เลือกใช้แท็กและ Attribute ที่เหมาะสม แล้วเขียนโค้ดด้วยตนเอง โดยไม่เติมคำลงในโครงสร้างที่เตรียมไว้
               </p>
             </div>
 
-            {/* ข้อมูลรูปภาพและไฟล์ที่กำหนดให้ */}
-            <div className="bg-sky-50/80 border border-sky-200 rounded-xl p-4 text-sm sm:text-base text-sky-950 leading-relaxed shadow-2xs flex flex-col justify-center">
-              <div className="font-bold mb-1.5 flex items-center gap-2 text-sky-950">
-                <ImageIcon className="w-5 h-5 text-sky-600" />
-                <span>ข้อมูลรูปภาพและไฟล์</span>
+            {/* โครงสร้างโฟลเดอร์แบบ Tree (5 cols) */}
+            <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-4 text-slate-200 font-mono text-xs sm:text-sm shadow-md flex flex-col justify-between">
+              <div className="font-bold text-amber-400 font-thai text-sm sm:text-base flex items-center gap-2 mb-2 pb-1.5 border-b border-slate-800">
+                <FolderOpen className="w-4 h-4 text-amber-400" />
+                <span>โครงสร้างไฟล์ (Project Directory Tree)</span>
               </div>
-              <p className="text-sky-900 text-sm">
-                🏛️ <strong>ชื่อวัด:</strong> วัดพระศรีรัตนศาสดาราม (วัดพระแก้ว)
-              </p>
-              <p className="text-sky-900 text-sm mt-1 flex items-center gap-1.5">
-                <Folder className="w-4 h-4 text-sky-600" />
-                <span><strong>ตำแหน่งไฟล์:</strong> อยู่ในโฟลเดอร์ <code className="bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded font-mono font-bold">image/temple.jpg</code></span>
-              </p>
+              
+              {/* Directory Tree Structure */}
+              <div className="space-y-1 font-mono leading-relaxed pl-1">
+                {/* Root */}
+                <div className="flex items-center gap-1.5 text-slate-300 font-semibold">
+                  <Folder className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>project/</span>
+                </div>
+
+                {/* index.html */}
+                <div className="flex items-center gap-2 pl-4 text-slate-300">
+                  <span className="text-slate-600">├──</span>
+                  <FileCode className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                  <span className="text-sky-300 font-semibold">index.html</span>
+                  <span className="text-slate-500 font-thai text-[11px] sm:text-xs font-normal">(ไฟล์หน้าเว็บที่กำลังเขียน)</span>
+                </div>
+
+                {/* detail.html */}
+                <div className="flex items-center gap-2 pl-4 text-slate-300">
+                  <span className="text-slate-600">├──</span>
+                  <FileText className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span className="text-emerald-300">detail.html</span>
+                  <span className="text-slate-500 font-thai text-[11px] sm:text-xs font-normal">(หน้ารายละเอียดเมื่อคลิก)</span>
+                </div>
+
+                {/* image folder */}
+                <div className="pl-4">
+                  <div className="flex items-center gap-2 text-slate-300">
+                    <span className="text-slate-600">└──</span>
+                    <Folder className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span className="text-amber-300 font-semibold">image/</span>
+                  </div>
+                  {/* temple.jpg */}
+                  <div className="flex items-center gap-2 pl-6 text-slate-300 mt-1">
+                    <span className="text-slate-600">└──</span>
+                    <ImageIcon className="w-3.5 h-3.5 text-pink-400 shrink-0" />
+                    <span className="text-pink-300 font-semibold">temple.jpg</span>
+                    <span className="text-amber-200 font-thai text-[11px] sm:text-xs font-medium">(วัดพระศรีรัตนศาสดาราม)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Note */}
+              <div className="mt-3 pt-2 border-t border-slate-800 text-[11px] sm:text-xs text-slate-400 font-thai">
+                💡 <strong>หมายเหตุ:</strong> รูปภาพวัดพระแก้วถูกเก็บไว้ในโฟลเดอร์ <code className="text-pink-300 bg-slate-800 px-1 py-0.5 rounded font-mono font-bold">image/temple.jpg</code>
+              </div>
             </div>
+
           </div>
 
           {/* เงื่อนไข 5 ข้อ (ไม่มีการใบ้แท็กคำสั่ง) */}
-          <div className="space-y-2.5">
+          <div className="space-y-2.5 pt-1">
             {criteria.map((item) => (
               <div 
                 key={item.id}
