@@ -25,7 +25,33 @@ export default function LessonSlides({
 }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
   const totalSlides = 12;
+
+  // Touch Swipe for iPad & Mobile
+  const minSwipeDistance = 45;
+
+  const onTouchStart = (e) => {
+    setTouchEndX(null);
+    setTouchStartX(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEndX(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStartX || !touchEndX) return;
+    const distance = touchStartX - touchEndX;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      nextSlide();
+    } else if (isRightSwipe) {
+      prevSlide();
+    }
+  };
 
   // Keyboard navigation
   useEffect(() => {
@@ -62,42 +88,42 @@ export default function LessonSlides({
   return (
     <div className={`flex flex-col ${isModal ? 'max-w-6xl w-full h-[92vh]' : 'min-h-screen'} bg-slate-950 text-slate-100 select-none`}>
       {/* Top Slide Header */}
-      <header className="bg-slate-900 border-b border-slate-800 px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-tr from-amber-500 to-amber-600 text-slate-950 rounded-xl font-bold shadow-xs">
-            <BookOpen className="w-5 h-5" />
+      <header className="bg-slate-900 border-b border-slate-800 px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-between gap-2 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="p-1.5 sm:p-2 bg-gradient-to-tr from-amber-500 to-amber-600 text-slate-950 rounded-xl font-bold shadow-xs shrink-0">
+            <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold text-white leading-tight">
-                เอกสารประกอบการสอน (Slide Presentation)
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <h2 className="text-xs sm:text-base font-bold text-white leading-tight truncate">
+                สไลด์ประกอบการสอน
               </h2>
-              <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                PDF แท้ 12 หน้า
+              <span className="hidden sm:inline-block px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 shrink-0">
+                12 หน้า
               </span>
             </div>
-            <p className="text-xs text-slate-400">
-              บทเรียนที่ 3: การแทรกรูปภาพและสร้างลิงก์เชื่อมโยงหน้าเว็บเพจ
+            <p className="text-[10px] sm:text-xs text-slate-400 truncate hidden xs:block">
+              บทเรียนที่ 3: แทรกรูปภาพและสร้างลิงก์
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           {/* Direct Link to Raw PDF */}
           <a
             href="./lesson03_slides.pdf"
             target="_blank"
             rel="noopener noreferrer"
             title="เปิดไฟล์ PDF ต้นฉบับในแท็บใหม่"
-            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5 shrink-0"
+            className="px-2 sm:px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center gap-1 shrink-0"
           >
             <FileText className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden md:inline">เปิดไฟล์ PDF เต็ม</span>
+            <span className="hidden md:inline">เปิด PDF</span>
           </a>
 
           {/* Slide Indicator */}
-          <div className="px-3 py-1 bg-slate-800 border border-slate-700 rounded-lg text-xs font-mono font-bold text-amber-300">
-            {currentSlide + 1} / {totalSlides}
+          <div className="px-2 sm:px-3 py-1 bg-slate-800 border border-slate-700 rounded-lg text-xs font-mono font-bold text-amber-300">
+            {currentSlide + 1}/{totalSlides}
           </div>
 
           {/* Fullscreen Button */}
@@ -113,26 +139,25 @@ export default function LessonSlides({
           {canAccessExercise ? (
             <button
               onClick={onGoToExercise}
-              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm flex items-center gap-1.5 shadow-md hover:shadow-lg transition cursor-pointer"
+              className="px-2.5 sm:px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm flex items-center gap-1 shadow-md hover:shadow-lg transition cursor-pointer"
             >
               <span>ไปทำแบบฝึกหัด</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           ) : (
             <div 
               title="อาจารย์ยังไม่ได้ปลดล็อกแบบฝึกหัด กรุณาศึกษาเอกสารประกอบการสอนระหว่างรอ"
-              className="px-3 py-1.5 bg-slate-800 text-amber-300/90 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-amber-500/30 select-none shadow-xs"
+              className="px-2 sm:px-3 py-1.5 bg-slate-800 text-amber-300/90 rounded-xl text-[11px] sm:text-xs font-semibold flex items-center gap-1 border border-amber-500/30 select-none shadow-xs"
             >
-              <Lock className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden sm:inline">แบบฝึกหัด: </span>
-              <span>รออาจารย์ปลดล็อก</span>
+              <Lock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
+              <span>รอปลดล็อก</span>
             </div>
           )}
 
           {isModal && onCloseModal && (
             <button
               onClick={onCloseModal}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition cursor-pointer"
+              className="px-2.5 sm:px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition cursor-pointer"
             >
               ปิด
             </button>
@@ -140,7 +165,7 @@ export default function LessonSlides({
 
           {/* Student Info & Logout (For students viewing slides) */}
           {!isModal && (
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+            <div className="flex items-center gap-1.5 sm:gap-2 pl-1.5 sm:pl-2 border-l border-slate-800">
               {student && (
                 <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/80 rounded-xl border border-slate-700/80 text-xs">
                   <UserCheck className="w-3.5 h-3.5 text-indigo-400" />
@@ -153,7 +178,7 @@ export default function LessonSlides({
                 <button
                   onClick={onLogout}
                   title="ออกจากระบบ"
-                  className="px-2.5 sm:px-3 py-1.5 bg-rose-950/70 hover:bg-rose-900 active:bg-rose-950 text-rose-300 hover:text-rose-100 rounded-xl border border-rose-800 transition text-xs sm:text-sm font-semibold flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer shadow-xs"
+                  className="p-1.5 sm:px-3 sm:py-1.5 bg-rose-950/70 hover:bg-rose-900 active:bg-rose-950 text-rose-300 hover:text-rose-100 rounded-xl border border-rose-800 transition text-xs sm:text-sm font-semibold flex items-center gap-1 shrink-0 whitespace-nowrap cursor-pointer shadow-xs"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">ออกจากระบบ</span>
@@ -168,11 +193,14 @@ export default function LessonSlides({
       <main className="flex-1 p-2 sm:p-4 lg:p-6 flex items-center justify-center overflow-hidden relative bg-slate-950">
         <div className="relative w-full max-w-5xl h-full flex flex-col items-center justify-center">
           
-          {/* Slide Image Box */}
+          {/* Slide Image Box with Click and Touch Swipe */}
           <div 
             onClick={nextSlide}
-            title="คลิกที่สไลด์เพื่อไปยังหน้าถัดไป"
-            className="relative w-full max-h-[80vh] flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-slate-900 cursor-pointer group"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+            title="คลิกหรือปัดซ้าย/ขวาเพื่อเปลี่ยนหน้าสไลด์"
+            className="relative w-full max-h-[80vh] flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-slate-900 cursor-pointer group touch-pan-y"
           >
             <img
               src={slideImagePath}
@@ -269,12 +297,12 @@ export default function LessonSlides({
       </main>
 
       {/* Bottom Navigation Toolbar */}
-      <footer className="bg-slate-900 border-t border-slate-800 px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between shrink-0 gap-2">
+      <footer className="bg-slate-900 border-t border-slate-800 px-2.5 sm:px-6 py-2 sm:py-3 flex items-center justify-between shrink-0 gap-1.5 sm:gap-2">
         {/* Previous Button */}
         <button
           onClick={prevSlide}
           disabled={currentSlide === 0}
-          className="px-3.5 sm:px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-slate-800 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer shadow-xs"
+          className="px-2.5 sm:px-4 py-1.5 sm:py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-slate-800 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-1.5 transition cursor-pointer shadow-xs shrink-0"
         >
           <ChevronLeft className="w-4 h-4" />
           <span className="hidden sm:inline">หน้าก่อนหน้า</span>
@@ -282,16 +310,16 @@ export default function LessonSlides({
         </button>
 
         {/* Slide Progress Thumbnails / Dots */}
-        <div className="flex items-center gap-1.5 overflow-x-auto max-w-[60%] py-1 px-2">
+        <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto max-w-[48%] sm:max-w-[60%] py-1 px-1">
           {Array.from({ length: totalSlides }).map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentSlide(idx)}
               title={`สไลด์หน้า ${idx + 1}`}
-              className={`h-2 sm:h-2.5 rounded-full transition-all cursor-pointer ${
+              className={`h-1.5 sm:h-2.5 rounded-full transition-all cursor-pointer shrink-0 ${
                 currentSlide === idx 
-                  ? 'w-7 sm:w-8 bg-amber-400 shadow-xs' 
-                  : 'w-2 sm:w-2.5 bg-slate-700 hover:bg-slate-500'
+                  ? 'w-5 sm:w-8 bg-amber-400 shadow-xs' 
+                  : 'w-1.5 sm:w-2.5 bg-slate-700 hover:bg-slate-500'
               }`}
             />
           ))}
@@ -301,7 +329,7 @@ export default function LessonSlides({
         {currentSlide < totalSlides - 1 ? (
           <button
             onClick={nextSlide}
-            className="px-3.5 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer shadow-xs"
+            className="px-2.5 sm:px-4 py-1.5 sm:py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-1.5 transition cursor-pointer shadow-xs shrink-0"
           >
             <span className="hidden sm:inline">หน้าถัดไป</span>
             <span className="sm:hidden">ถัดไป</span>
@@ -310,18 +338,18 @@ export default function LessonSlides({
         ) : canAccessExercise ? (
           <button
             onClick={onGoToExercise}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer shadow-md"
+            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1 transition cursor-pointer shadow-md shrink-0"
           >
             <span>ไปทำแบบฝึกหัด</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
         ) : (
           <div 
             title="รออาจารย์ผู้สอนปลดล็อกแบบฝึกหัด"
-            className="px-3.5 py-2 bg-slate-800 text-slate-400 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 border border-slate-700 select-none"
+            className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 bg-slate-800 text-slate-400 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1 border border-slate-700 select-none shrink-0"
           >
-            <Lock className="w-3.5 h-3.5 text-amber-400" />
-            <span>รออาจารย์ปลดล็อก</span>
+            <Lock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
+            <span>รอปลดล็อก</span>
           </div>
         )}
       </footer>
