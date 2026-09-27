@@ -1,10 +1,22 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getDatabase } from 'firebase/database';
 
+export const DEFAULT_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAGdKi6xW-6uDZV4lY944z_2WncSf8x9-I",
+  authDomain: "exercise-lesson03.firebaseapp.com",
+  databaseURL: "https://exercise-lesson03-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "exercise-lesson03",
+  storageBucket: "exercise-lesson03.firebasestorage.app",
+  messagingSenderId: "918836295079",
+  appId: "1:918836295079:web:55a7ffee9097feeebff282",
+  measurementId: "G-LWWRVWCZB5"
+};
+
 // Default / fallback Firebase configuration
 // Can be loaded from:
-// 1. Environment variables (VITE_FIREBASE_*)
-// 2. LocalStorage override ('ws_firebase_config') for easy dynamic setup
+// 1. LocalStorage override ('ws_firebase_config') for easy dynamic setup
+// 2. Environment variables (VITE_FIREBASE_*)
+// 3. DEFAULT_FIREBASE_CONFIG (built-in production config)
 const getStoredConfig = () => {
   try {
     const raw = localStorage.getItem('ws_firebase_config');
@@ -22,21 +34,22 @@ export const getFirebaseConfig = () => {
   }
 
   // Read from Vite environment variables if available
+  const env = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {};
   const envConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
-    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || '',
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-    appId: import.meta.env.VITE_FIREBASE_APP_ID || ''
+    apiKey: env.VITE_FIREBASE_API_KEY || '',
+    authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || '',
+    databaseURL: env.VITE_FIREBASE_DATABASE_URL || '',
+    projectId: env.VITE_FIREBASE_PROJECT_ID || '',
+    storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: env.VITE_FIREBASE_APP_ID || ''
   };
 
   if (envConfig.databaseURL || envConfig.projectId) {
     return envConfig;
   }
 
-  return null;
+  return DEFAULT_FIREBASE_CONFIG;
 };
 
 export const saveFirebaseConfig = (config) => {
