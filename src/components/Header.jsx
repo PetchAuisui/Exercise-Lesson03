@@ -39,14 +39,21 @@ export default function Header({
 
             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               {/* Score Pill */}
-              <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 border shrink-0 ${
-                passedCount === totalCount 
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
-                  : 'bg-amber-50 text-amber-800 border-amber-300'
-              }`}>
-                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                <span>{passedCount}/{totalCount} <span className="hidden sm:inline">ข้อ</span></span>
-              </div>
+              {isSubmitted ? (
+                <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 border shrink-0 ${
+                  passedCount === totalCount 
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
+                    : 'bg-amber-50 text-amber-800 border-amber-300'
+                }`}>
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                  <span>{passedCount}/{totalCount} <span className="hidden sm:inline">ข้อ</span></span>
+                </div>
+              ) : (
+                <div className="px-2 sm:px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 border border-slate-200 bg-slate-100 text-slate-600 shrink-0">
+                  <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+                  <span>รอส่งงาน <span className="hidden sm:inline">({totalCount} ข้อ)</span></span>
+                </div>
+              )}
 
               {/* Logout button visible on mobile/iPad right next to score */}
               <button

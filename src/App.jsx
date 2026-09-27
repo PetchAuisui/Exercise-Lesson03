@@ -189,17 +189,17 @@ export default function App() {
   // Validate code
   const validation = validateHtmlCode(code);
 
-  // Celebrate with confetti when user completes all 5 criteria!
+  // Celebrate with confetti when user submits and completes all 5 criteria!
   useEffect(() => {
-    if (validation.isAllPassed && !prevPassedRef.current) {
+    if (isSubmitted && validation.isAllPassed && !prevPassedRef.current) {
       confetti({
-        particleCount: 100,
-        spread: 70,
+        particleCount: 120,
+        spread: 80,
         origin: { y: 0.6 }
       });
     }
-    prevPassedRef.current = validation.isAllPassed;
-  }, [validation.isAllPassed]);
+    prevPassedRef.current = isSubmitted && validation.isAllPassed;
+  }, [isSubmitted, validation.isAllPassed]);
 
   const handleClear = () => {
     if (window.confirm('คุณต้องการล้างโค้ดทั้งหมดในพื้นที่เขียนใช่หรือไม่?')) {
@@ -397,6 +397,7 @@ export default function App() {
             validation={validation}
             isOpen={checklistOpen}
             onToggle={() => setChecklistOpen(!checklistOpen)}
+            isSubmitted={isSubmitted}
           />
 
           {/* Workspace Mode Switcher (Full Width Code vs Full Width Preview) */}

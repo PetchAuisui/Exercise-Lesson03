@@ -1,7 +1,7 @@
 import React from 'react';
 import { CheckCircle2, XCircle, Info, ChevronDown, ChevronUp, Folder, FolderOpen, FileCode, FileText, Image as ImageIcon, FileCheck } from 'lucide-react';
 
-export default function TaskChecklist({ validation, isOpen, onToggle }) {
+export default function TaskChecklist({ validation, isOpen, onToggle, isSubmitted = false }) {
   const { criteria, passedCount, totalCount } = validation;
 
   return (
@@ -14,18 +14,27 @@ export default function TaskChecklist({ validation, isOpen, onToggle }) {
         <div className="flex items-center gap-2.5">
           <Info className="w-5 h-5 text-indigo-600 shrink-0" />
           <h2 className="font-bold text-slate-800 text-base sm:text-lg">
-            โจทย์และเงื่อนไขใบงาน (ผ่านแล้ว {passedCount}/{totalCount})
+            {isSubmitted 
+              ? `โจทย์และเงื่อนไขใบงาน (ผ่านแล้ว ${passedCount}/${totalCount} ข้อ)`
+              : `โจทย์และเงื่อนไขใบงาน (${totalCount} เงื่อนไข • รอส่งงานเพื่อตรวจผล)`
+            }
           </h2>
         </div>
         <div className="flex items-center gap-3">
-          <div className="w-28 sm:w-36 bg-slate-200 rounded-full h-2.5 overflow-hidden">
-            <div 
-              className={`h-full transition-all duration-500 ${
-                passedCount === totalCount ? 'bg-emerald-500' : 'bg-indigo-600'
-              }`}
-              style={{ width: `${(passedCount / totalCount) * 100}%` }}
-            />
-          </div>
+          {isSubmitted ? (
+            <div className="w-28 sm:w-36 bg-slate-200 rounded-full h-2.5 overflow-hidden">
+              <div 
+                className={`h-full transition-all duration-500 ${
+                  passedCount === totalCount ? 'bg-emerald-500' : 'bg-indigo-600'
+                }`}
+                style={{ width: `${(passedCount / totalCount) * 100}%` }}
+              />
+            </div>
+          ) : (
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 border border-slate-200">
+              รอส่งงานตรวจ
+            </span>
+          )}
           {isOpen ? <ChevronUp className="w-5 h-5 text-slate-500" /> : <ChevronDown className="w-5 h-5 text-slate-500" />}
         </div>
       </div>
@@ -113,37 +122,56 @@ export default function TaskChecklist({ validation, isOpen, onToggle }) {
 
           {/* เงื่อนไข 5 ข้อ */}
           <div className="space-y-2.5 pt-1">
-            {criteria.map((item) => (
-              <div 
-                key={item.id}
-                className={`p-3.5 sm:p-4 rounded-xl border transition-all ${
-                  item.passed 
-                    ? 'bg-emerald-50/60 border-emerald-300 text-slate-900 shadow-2xs' 
-                    : 'bg-slate-50 border-slate-200/90 text-slate-700'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    {item.passed ? (
-                      <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 shrink-0" />
-                    ) : (
-                      <XCircle className="w-5 h-5 sm:w-6 sm:h-6 text-slate-400 shrink-0" />
-                    )}
-                    <span className={`text-base sm:text-lg font-bold ${item.passed ? 'text-emerald-950' : 'text-slate-900'}`}>
-                      {item.title}
+            {criteria.map((item) => {
+              const isPass = isSubmitted && item.passed;
+              const isFail = isSubmitted && !item.passed;
+
+              return (
+                <div 
+                  key={item.id}
+                  className={`p-3.5 sm:p-4 rounded-xl border transition-all ${
+                    isPass
+                      ? 'bg-emerald-50/70 border-emerald-300 text-slate-900 shadow-2xs' 
+                      : isFail
+                      ? 'bg-rose-50/60 border-rose-200 text-slate-900 shadow-2xs'
+                      : 'bg-slate-50/90 border-slate-200/90 text-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      {isPass ? (
+                        <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 shrink-0" />
+                      ) : isFail ? (
+                        <XCircle className="w-5 h-5 sm:w-6 sm:h-6 text-rose-500 shrink-0" />
+                      ) : (
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-slate-300 flex items-center justify-center shrink-0">
+                          <span className="w-2 h-2 rounded-full bg-slate-300"></span>
+                        </div>
+                      )}
+                      <span className={`text-sm sm:text-base lg:text-lg font-bold truncate sm:whitespace-normal ${
+                        isPass 
+                          ? 'text-emerald-950' 
+                          : isFail 
+                          ? 'text-rose-950' 
+                          : 'text-slate-800'
+                      }`}>
+                        {item.title}
+                      </span>
+                    </div>
+
+                    <span className={`px-2.5 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold tracking-wide shrink-0 ${
+                      isPass 
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
+                        : isFail
+                        ? 'bg-rose-100 text-rose-700 border border-rose-200'
+                        : 'bg-slate-100 text-slate-500 border border-slate-200'
+                    }`}>
+                      {isPass ? 'ผ่านแล้ว ✓' : isFail ? 'ยังไม่ผ่าน ✕' : 'รอส่งงาน'}
                     </span>
                   </div>
-
-                  <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-semibold tracking-wide shrink-0 ${
-                    item.passed 
-                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
-                      : 'bg-slate-200 text-slate-700'
-                  }`}>
-                    {item.passed ? 'ผ่านแล้ว ✓' : 'ยังไม่สมบูรณ์'}
-                  </span>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
