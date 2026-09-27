@@ -81,7 +81,7 @@ export default function BrowserPreview({ code, pageTitle, validation, onSwitchTo
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden flex flex-col h-full">
+    <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden flex flex-col w-full min-h-[540px]">
       {/* Browser Top Window Frame */}
       <div className="bg-slate-100 border-b border-slate-200 p-2 sm:p-2.5 space-y-1.5 shrink-0">
         {/* Window controls & Tab */}
@@ -174,7 +174,7 @@ export default function BrowserPreview({ code, pageTitle, validation, onSwitchTo
       </div>
 
       {/* Simulated Browser Viewport */}
-      <div className="flex-1 bg-white min-h-0 relative overflow-auto flex flex-col">
+      <div className="flex-1 bg-white min-h-[460px] relative overflow-auto flex flex-col">
         {currentUrl.endsWith('detail.html') ? (
           <div className="max-w-md mx-auto my-auto p-5 bg-white border border-slate-200 rounded-2xl shadow-lg text-center animate-fade-in">
             <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -200,7 +200,7 @@ export default function BrowserPreview({ code, pageTitle, validation, onSwitchTo
             srcDoc={getProcessedHtml()}
             onLoad={handleIframeLoad}
             sandbox="allow-scripts allow-same-origin"
-            className="w-full flex-1 border-0 min-h-0 block bg-white"
+            className="w-full flex-1 border-0 min-h-[460px] block bg-white"
           />
         )}
       </div>

@@ -11,9 +11,11 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
   const [fontSize, setFontSize] = useState(17);
 
   const lines = code.split('\n');
-  const lineCount = Math.max(lines.length, 14);
   const lineHeightPx = Math.round(fontSize * 1.55);
-  const totalBodyHeightPx = 14 * lineHeightPx; // Strictly fits 14 lines! No excess empty space!
+  // Extend code lines down comfortably so the temple image and code have plenty of room
+  const minLines = 18;
+  const lineCount = Math.max(lines.length, minLines);
+  const totalBodyHeightPx = lineCount * lineHeightPx;
 
   // Sync scroll between textarea, syntax highlight pre, and line numbers gutter
   const handleScroll = (e) => {
@@ -44,7 +46,7 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
   const fontStack = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
 
   return (
-    <div className="rounded-xl shadow-lg overflow-hidden flex flex-col border border-[#3c3c3c] bg-[#1e1e1e] code-editor-vscode h-full">
+    <div className="rounded-xl shadow-lg overflow-hidden flex flex-col border border-[#3c3c3c] bg-[#1e1e1e] code-editor-vscode w-full min-h-[540px]">
       {/* VS Code Tab Bar */}
       <div className="bg-[#252526] border-b border-[#2d2d2d] px-2 sm:px-3 pt-1.5 flex items-center justify-between text-sm flex-wrap gap-2 shrink-0">
         {/* Active File Tab */}
@@ -111,9 +113,9 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
         </div>
       </div>
 
-      {/* Editor Body: Strictly sized to 14 lines (No excess empty void below!) */}
+      {/* Editor Body: Clean spacious coding area with at least 18+ lines */}
       <div 
-        className="flex overflow-hidden relative select-text bg-[#1e1e1e] flex-1 min-h-0"
+        className="flex overflow-hidden relative select-text bg-[#1e1e1e] flex-1 min-h-[470px]"
         style={{ height: `${totalBodyHeightPx}px` }}
       >
         {/* Line Numbers Gutter: VS Code style #858585 */}
