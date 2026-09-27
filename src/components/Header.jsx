@@ -7,10 +7,11 @@ export default function Header({
   onShowSolution,
   onLogout,
   passedCount,
-  totalCount
+  totalCount,
+  isSticky = true
 }) {
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs no-print">
+    <header className={`bg-white border-b border-slate-200 ${isSticky ? 'sticky top-0' : 'relative'} z-30 shadow-xs no-print`}>
       <div className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap xl:flex-nowrap items-center justify-between py-3 gap-3 sm:gap-4">
           

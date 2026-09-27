@@ -147,6 +147,7 @@ export default function App() {
       <Header
         studentName={displayStudentName}
         studentId={displayStudentId}
+        isSticky={!(currentStudent.role === 'admin' && adminPreviewStudentView)}
         onShowSolution={() => setShowSolution(true)}
         onLogout={handleLogout}
         passedCount={validation.passedCount}
