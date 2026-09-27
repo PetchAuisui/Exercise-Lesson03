@@ -8,56 +8,16 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
   const [simulateBrokenImage, setSimulateBrokenImage] = useState(false);
   const iframeRef = useRef(null);
 
-  // Parse code for iframe
+  // Render raw HTML code exactly according to real browser behavior
   const getProcessedHtml = () => {
     let processed = code;
     if (simulateBrokenImage) {
-      // Intentionally break the image source to let student see alt text
+      // Intentionally break the image source to let student see native browser alt text
       processed = processed.replace(/src\s*=\s*["'](?:\.\/)?(?:image\/)?temple\.jpg["']/gi, 'src="broken_temple.jpg"');
     }
-
-    // Inject responsive preview helper style
-    const previewHelperStyle = `
-      <style>
-        body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Sarabun', sans-serif;
-          margin: 16px;
-          background: #ffffff;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: flex-start;
-          min-height: 100%;
-        }
-        img {
-          max-width: 100%;
-          max-height: 220px;
-          object-fit: contain;
-          display: block;
-          margin: 6px auto;
-          border-radius: 12px;
-          box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.12);
-          border: 1px solid #e2e8f0;
-          transition: transform 0.2s, box-shadow 0.2s;
-        }
-        a {
-          display: inline-block;
-          text-decoration: none;
-        }
-        a:hover img {
-          transform: scale(1.02);
-          box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2);
-        }
-      </style>
-    `;
-
-    if (processed.includes('</head>')) {
-      return processed.replace('</head>', `${previewHelperStyle}</head>`);
-    } else if (processed.includes('<body>')) {
-      return processed.replace('<body>', `<head>${previewHelperStyle}</head><body>`);
-    }
-    return `${previewHelperStyle}${processed}`;
+    return processed;
   };
+
 
   const navigateTo = (url) => {
     const newHistory = history.slice(0, historyIndex + 1);
@@ -202,7 +162,7 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
       </div>
 
       {/* Simulated Browser Viewport */}
-      <div className="flex-1 bg-white min-h-0 relative overflow-auto p-3 flex flex-col">
+      <div className="flex-1 bg-white min-h-0 relative overflow-auto flex flex-col">
         {currentUrl.endsWith('detail.html') ? (
           <div className="max-w-md mx-auto my-auto p-5 bg-white border border-slate-200 rounded-2xl shadow-lg text-center animate-fade-in">
             <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -228,7 +188,7 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
             srcDoc={getProcessedHtml()}
             onLoad={handleIframeLoad}
             sandbox="allow-scripts allow-same-origin"
-            className="w-full flex-1 border-0 min-h-0"
+            className="w-full flex-1 border-0 min-h-0 block bg-white"
           />
         )}
       </div>
