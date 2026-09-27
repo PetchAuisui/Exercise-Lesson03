@@ -1,5 +1,21 @@
-import { STUDENTS_DATABASE } from '../data/students';
-import { validateHtmlCode } from './htmlValidator';
+import { STUDENTS_DATABASE } from '../data/students.js';
+import { validateHtmlCode } from './htmlValidator.js';
+
+const safeGetItem = (key) => {
+  try {
+    return typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null;
+  } catch {
+    return null;
+  }
+};
+
+const safeSetItem = (key, val) => {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(key, val);
+    }
+  } catch {}
+};
 
 /**
  * Record student login timestamp
@@ -7,10 +23,10 @@ import { validateHtmlCode } from './htmlValidator';
 export function recordStudentLogin(studentId) {
   if (!studentId || studentId === 'admin') return;
   const now = new Date().toISOString();
-  if (!localStorage.getItem(`ws_first_login_${studentId}`)) {
-    localStorage.setItem(`ws_first_login_${studentId}`, now);
+  if (!safeGetItem(`ws_first_login_${studentId}`)) {
+    safeSetItem(`ws_first_login_${studentId}`, now);
   }
-  localStorage.setItem(`ws_last_login_${studentId}`, now);
+  safeSetItem(`ws_last_login_${studentId}`, now);
 }
 
 /**
@@ -19,8 +35,8 @@ export function recordStudentLogin(studentId) {
 export function recordStudentCodeUpdate(studentId, code) {
   if (!studentId || studentId === 'admin') return;
   const now = new Date().toISOString();
-  localStorage.setItem(`ws_code_${studentId}`, code);
-  localStorage.setItem(`ws_code_updated_${studentId}`, now);
+  safeSetItem(`ws_code_${studentId}`, code);
+  safeSetItem(`ws_code_updated_${studentId}`, now);
 }
 
 /**
@@ -28,11 +44,11 @@ export function recordStudentCodeUpdate(studentId, code) {
  */
 export function getAllStudentsProgress() {
   return STUDENTS_DATABASE.map((student, index) => {
-    const rawCode = localStorage.getItem(`ws_code_${student.id}`);
-    const hasLoggedIn = !!localStorage.getItem(`ws_last_login_${student.id}`) || rawCode !== null;
+    const rawCode = safeGetItem(`ws_code_${student.id}`);
+    const hasLoggedIn = !!safeGetItem(`ws_last_login_${student.id}`) || rawCode !== null;
     const code = rawCode || '';
-    const lastLogin = localStorage.getItem(`ws_last_login_${student.id}`);
-    const lastUpdated = localStorage.getItem(`ws_code_updated_${student.id}`) || lastLogin;
+    const lastLogin = safeGetItem(`ws_last_login_${student.id}`);
+    const lastUpdated = safeGetItem(`ws_code_updated_${student.id}`) || lastLogin;
 
     const validation = validateHtmlCode(code);
     const passedCount = validation.passedCount;
