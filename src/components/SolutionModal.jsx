@@ -66,7 +66,7 @@ export default function SolutionModal({ isOpen, onClose, onApplySolution }) {
               <div className="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-100 flex items-start gap-2.5">
                 <span className="font-bold text-indigo-700 shrink-0">ข้อ 3 & 4:</span>
                 <div>
-                  <strong>แท็กรูปภาพ &amp; ข้อความทดแทน:</strong> ใช้แท็ก <code>&lt;img src="temple.jpg" alt="วัดไทย"&gt;</code>
+                  <strong>แท็กรูปภาพ &amp; ข้อความทดแทน:</strong> ใช้แท็ก <code>&lt;img src="image/temple.jpg" alt="วัดไทย"&gt;</code>
                 </div>
               </div>
 

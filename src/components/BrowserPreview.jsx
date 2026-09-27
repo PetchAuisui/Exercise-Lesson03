@@ -13,7 +13,7 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
     let processed = code;
     if (simulateBrokenImage) {
       // Intentionally break the image source to let student see alt text
-      processed = processed.replace(/src\s*=\s*["'](?:\.\/)?temple\.jpg["']/gi, 'src="broken_temple.jpg"');
+      processed = processed.replace(/src\s*=\s*["'](?:\.\/)?(?:image\/)?temple\.jpg["']/gi, 'src="broken_temple.jpg"');
     }
 
     // Inject responsive preview helper style
@@ -238,7 +238,7 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
           <div className="flex items-center gap-1.5">
             <span className="text-slate-500 font-medium">รูปภาพ:</span>
             <span className={validation.criteria[2].passed ? "text-emerald-700 font-bold" : "text-slate-600 font-medium"}>
-              temple.jpg {validation.criteria[2].passed ? '✓' : ''}
+              image/temple.jpg {validation.criteria[2].passed ? '✓' : ''}
             </span>
           </div>
           <div className="flex items-center gap-1.5">

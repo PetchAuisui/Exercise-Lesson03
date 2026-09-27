@@ -26,25 +26,10 @@ export default function CodeEditor({ code, onChange, onFormat, onClear }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Helper to insert snippet at cursor
-  const insertSnippet = (snippet) => {
-    if (!textareaRef.current) return;
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-    const newText = text.substring(0, start) + snippet + text.substring(end);
-    onChange(newText);
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + snippet.length, start + snippet.length);
-    }, 10);
-  };
-
   // Generate syntax highlighted HTML with Prism
   const getHighlightedHtml = () => {
     if (!code) {
-      return '<span class="text-slate-500 italic opacity-60">เริ่มเขียนโค้ด HTML ที่นี่ตั้งแต่บรรทัดที่ 1 (เช่น &lt;!DOCTYPE html&gt;...)</span>';
+      return '<span class="text-slate-600 italic select-none">เริ่มเขียนโค้ด HTML ที่นี่ตั้งแต่บรรทัดที่ 1...</span>';
     }
     // Highlight HTML with Prism
     const highlighted = Prism.highlight(code, Prism.languages.markup, 'markup');
@@ -112,46 +97,7 @@ export default function CodeEditor({ code, onChange, onFormat, onClear }) {
         </div>
       </div>
 
-      {/* Quick Insert Snippet Chips (wrap nicely without horizontal scrollbar) */}
-      <div className="px-4 py-2 bg-slate-900/70 border-b border-slate-800 flex items-center gap-2 flex-wrap text-xs">
-        <span className="text-slate-400 text-xs font-semibold whitespace-nowrap">แท็กด่วน:</span>
-        <button 
-          onClick={() => insertSnippet('<!DOCTYPE html>\n')}
-          className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-purple-300 rounded-md font-code transition text-xs border border-purple-900/50"
-        >
-          &lt;!DOCTYPE html&gt;
-        </button>
-        <button 
-          onClick={() => insertSnippet('<html>\n\n</html>')}
-          className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-sky-300 rounded-md font-code transition text-xs border border-sky-900/50"
-        >
-          &lt;html&gt;
-        </button>
-        <button 
-          onClick={() => insertSnippet('<head>\n    <title>สถานที่ท่องเที่ยว</title>\n</head>')}
-          className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-emerald-300 rounded-md font-code transition text-xs border border-emerald-900/50"
-        >
-          &lt;head&gt;+&lt;title&gt;
-        </button>
-        <button 
-          onClick={() => insertSnippet('<body>\n    \n</body>')}
-          className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-md font-code transition text-xs border border-indigo-900/50"
-        >
-          &lt;body&gt;
-        </button>
-        <button 
-          onClick={() => insertSnippet('<a href="detail.html"></a>')}
-          className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-pink-300 rounded-md font-code transition text-xs border border-pink-900/50"
-        >
-          &lt;a href="..."&gt;
-        </button>
-        <button 
-          onClick={() => insertSnippet('<img src="temple.jpg" alt="วัดไทย">')}
-          className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-md font-code transition text-xs border border-amber-900/50"
-        >
-          &lt;img ...&gt;
-        </button>
-      </div>
+
 
       {/* Editor Body with Real Syntax Highlighting Overlay */}
       <div className="flex-1 flex overflow-hidden bg-slate-950 font-code relative select-text">

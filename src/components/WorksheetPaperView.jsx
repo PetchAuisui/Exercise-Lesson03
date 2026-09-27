@@ -62,7 +62,7 @@ export default function WorksheetPaperView({
           <ol className="list-decimal list-inside space-y-1.5 pl-2 sm:pl-4">
             <li>เขียนหน้าเว็บโดยใช้ โครงสร้างพื้นฐานของเอกสาร HTML ให้ครบถ้วน</li>
             <li>กำหนดชื่อหน้าเว็บว่า "สถานที่ท่องเที่ยว"</li>
-            <li>แสดงรูปภาพจากไฟล์ temple.jpg</li>
+            <li>แสดงรูปภาพจากไฟล์ temple.jpg ในโฟลเดอร์ image</li>
             <li>กำหนดข้อความทดแทนของรูปภาพว่า "วัดไทย"</li>
             <li>เมื่อคลิกรูปภาพ ให้เปิดหน้า detail.html</li>
           </ol>
