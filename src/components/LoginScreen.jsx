@@ -22,7 +22,6 @@ export default function LoginScreen({ onLoginSuccess }) {
 
   const handleSelectStudent = (id) => {
     setStudentId(id);
-    setPassword('koson');
     setError('');
   };
 
@@ -90,14 +89,9 @@ export default function LoginScreen({ onLoginSuccess }) {
                   setPassword(e.target.value);
                   setError('');
                 }}
-                placeholder="ใส่รหัสผ่าน (koson)"
+                placeholder="กรอกรหัสผ่าน"
                 className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
               />
-            </div>
-            <div className="flex items-center justify-between mt-1 text-[11px] text-slate-500">
-              <span className="flex items-center gap-1 text-indigo-600 font-medium">
-                💡 รหัสผ่านคือ: <code className="bg-indigo-50 text-indigo-700 px-1 py-0.5 rounded font-mono font-bold">koson</code>
-              </span>
             </div>
           </div>
 

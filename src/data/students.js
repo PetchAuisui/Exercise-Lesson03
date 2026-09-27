@@ -16,7 +16,7 @@ export const STUDENTS_DATABASE = [
   { id: '67030351', name: 'นายศิวาภัทร อุยสุย' },
 ];
 
-export const AUTH_PASSWORD = 'koson';
+export const AUTH_PASSWORD = 'kmitl';
 
 export function authenticateStudent(studentId, password) {
   const cleanId = (studentId || '').trim();
@@ -32,7 +32,7 @@ export function authenticateStudent(studentId, password) {
   }
 
   if (cleanPassword !== AUTH_PASSWORD) {
-    return { success: false, message: 'รหัสผ่านไม่ถูกต้อง (รหัสผ่านคือ koson)' };
+    return { success: false, message: 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง' };
   }
 
   return { 
