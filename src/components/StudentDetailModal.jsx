@@ -63,18 +63,6 @@ export default function StudentDetailModal({ student, isOpen, onClose, onResetPa
                     📝 ยังไม่ส่งงาน
                   </span>
                 )}
-
-                {student.hasChangedPassword ? (
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold border bg-emerald-500/20 text-emerald-300 border-emerald-500/40 flex items-center gap-1">
-                    <KeyRound className="w-3 h-3 text-emerald-400" />
-                    <span>รหัส: เปลี่ยนแล้ว</span>
-                  </span>
-                ) : (
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold border bg-amber-500/20 text-amber-300 border-amber-500/40 flex items-center gap-1">
-                    <KeyRound className="w-3 h-3 text-amber-400" />
-                    <span>รหัส: kmitl (ค่าเริ่มต้น)</span>
-                  </span>
-                )}
               </div>
               <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2 flex-wrap">
                 <Calendar className="w-3.5 h-3.5" />
@@ -101,11 +89,11 @@ export default function StudentDetailModal({ student, isOpen, onClose, onResetPa
             {onResetPassword && (
               <button
                 onClick={() => onResetPassword(student)}
-                title="รีเซ็ตรหัสผ่านของนักเรียนคนนี้กลับเป็น 'kmitl'"
+                title="รีเซ็ตรหัสผ่านของนักเรียนคนนี้กลับเป็นค่าเริ่มต้น"
                 className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-xl border border-amber-500/40 transition text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <KeyRound className="w-3.5 h-3.5 text-amber-400" />
-                <span>รีเซ็ตรหัสผ่าน (kmitl)</span>
+                <span>รีเซ็ตรหัสผ่าน</span>
               </button>
             )}
 
