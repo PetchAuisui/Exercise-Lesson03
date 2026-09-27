@@ -12,7 +12,8 @@ export default function Header({
   canViewSolution = false,
   isSubmitted = false,
   onSubmitWork,
-  onCancelSubmission
+  onCancelSubmission,
+  onOpenSlides
 }) {
   return (
     <header className={`bg-white border-b border-slate-200 ${isSticky ? 'sticky top-0' : 'relative'} z-30 shadow-xs no-print`}>
@@ -87,6 +88,18 @@ export default function Header({
                   <span>ยกเลิกส่งงาน</span>
                 </button>
               </div>
+            )}
+
+            {/* View Lesson Slides Button */}
+            {onOpenSlides && (
+              <button
+                onClick={onOpenSlides}
+                title="เปิดดูสไลด์เอกสารประกอบการสอน"
+                className="px-2.5 sm:px-3 py-1.5 text-indigo-700 bg-indigo-50/80 hover:bg-indigo-100 rounded-xl border border-indigo-200 transition text-xs sm:text-sm font-semibold flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer"
+              >
+                <BookOpen className="w-4 h-4 text-indigo-600 shrink-0" />
+                <span>สไลด์บทเรียน</span>
+              </button>
             )}
 
             {/* Solution Button (Only visible if enabled by teacher) */}

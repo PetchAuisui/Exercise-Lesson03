@@ -8,6 +8,7 @@ import BrowserPreview from './components/BrowserPreview';
 import SolutionModal from './components/SolutionModal';
 import LoginScreen from './components/LoginScreen';
 import AdminDashboard from './components/AdminDashboard';
+import LessonSlides from './components/LessonSlides';
 import { validateHtmlCode, SAMPLE_SOLUTION } from './utils/htmlValidator';
 import { 
   recordStudentCodeUpdate, 
@@ -75,6 +76,8 @@ export default function App() {
   });
 
   const [workspaceTab, setWorkspaceTab] = useState('code'); // 'code' | 'preview'
+  const [activeView, setActiveView] = useState('slides'); // 'slides' | 'exercise'
+  const [showSlidesModal, setShowSlidesModal] = useState(false);
   const [checklistOpen, setChecklistOpen] = useState(true);
   const [showSolution, setShowSolution] = useState(false);
   const prevPassedRef = useRef(false);
@@ -96,10 +99,11 @@ export default function App() {
     }
   }, [code, currentStudent?.id, currentStudent?.role]);
 
-  // Handle Login Success
+  // Handle Login Success (always presents slides first)
   const handleLoginSuccess = (student) => {
     localStorage.setItem('ws_auth_student', JSON.stringify(student));
     setCurrentStudent(student);
+    setActiveView('slides');
   };
 
   // Handle Logout
@@ -171,10 +175,60 @@ export default function App() {
   // If Admin logged in and not simulating student view, show Admin Dashboard
   if (currentStudent.role === 'admin' && !adminPreviewStudentView) {
     return (
-      <AdminDashboard 
-        onLogout={handleLogout} 
-        onPreviewStudentView={() => setAdminPreviewStudentView(true)} 
-      />
+      <>
+        <AdminDashboard 
+          onLogout={handleLogout} 
+          onPreviewStudentView={() => {
+            setAdminPreviewStudentView(true);
+            setActiveView('slides');
+          }}
+          onViewSlides={() => setShowSlidesModal(true)}
+        />
+        {showSlidesModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-xs animate-fade-in no-print">
+            <div className="w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl border border-slate-700">
+              <LessonSlides 
+                isModal={true} 
+                onCloseModal={() => setShowSlidesModal(false)}
+                onGoToExercise={() => {
+                  setShowSlidesModal(false);
+                  setAdminPreviewStudentView(true);
+                  setActiveView('exercise');
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // If viewing slides (first screen students see upon entry)
+  if (activeView === 'slides') {
+    return (
+      <div className="min-h-screen flex flex-col bg-slate-950 text-white font-thai">
+        {/* Simulation Banner for Admin */}
+        {currentStudent.role === 'admin' && adminPreviewStudentView && (
+          <div className="bg-slate-900 border-b border-indigo-500/30 text-white px-4 sm:px-6 py-2.5 flex items-center justify-between shadow-lg sticky top-0 z-40 flex-wrap gap-2">
+            <div className="flex items-center gap-2.5">
+              <span className="px-2 py-0.5 bg-amber-400 text-slate-950 font-bold text-xs rounded-md uppercase tracking-wider shadow-xs">
+                โหมดจำลองมุมมองนักเรียน
+              </span>
+              <span className="text-xs sm:text-sm font-semibold text-slate-200">
+                กำลังดูสไลด์ประกอบการสอน (ขั้นตอนที่ 1 ก่อนเข้าสู่แบบฝึกหัด)
+              </span>
+            </div>
+            <button
+              onClick={() => setAdminPreviewStudentView(false)}
+              className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>กลับสู่ Admin Dashboard</span>
+            </button>
+          </div>
+        )}
+        <LessonSlides onGoToExercise={() => setActiveView('exercise')} />
+      </div>
     );
   }
 
@@ -222,6 +276,7 @@ export default function App() {
         isSubmitted={isSubmitted}
         onSubmitWork={handleSubmitWork}
         onCancelSubmission={handleCancelSubmission}
+        onOpenSlides={() => setActiveView('slides')}
       />
 
       {/* Main Content Area */}

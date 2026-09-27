@@ -21,7 +21,7 @@ import {
 import { getAllStudentsProgress, exportScoresToCSV, getSolutionPermission, setSolutionPermission } from '../utils/adminStorage';
 import StudentDetailModal from './StudentDetailModal';
 
-export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
+export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewSlides }) {
   const [studentsProgress, setStudentsProgress] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'เสร็จสมบูรณ์' | 'กำลังทำ' | 'ยังไม่ทำ' | 'ยังไม่เข้าระบบ'
@@ -149,6 +149,18 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
               >
                 <Eye className="w-3.5 h-3.5" />
                 <span>ดูแบบฝึกหัดนักเรียน</span>
+              </button>
+            )}
+
+            {/* View Slides Button for Teacher */}
+            {onViewSlides && (
+              <button
+                onClick={onViewSlides}
+                title="เปิดดูสไลด์เอกสารประกอบการสอน 14 สไลด์"
+                className="px-3 sm:px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+                <span>สไลด์บทเรียน</span>
               </button>
             )}
 
