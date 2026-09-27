@@ -5,17 +5,23 @@ import {
   BookOpen, 
   ArrowRight, 
   FileText, 
-  Download, 
   Maximize2, 
   Minimize2,
   ExternalLink,
-  Laptop
+  Laptop,
+  Lock,
+  Unlock
 } from 'lucide-react';
 
-export default function LessonSlides({ onGoToExercise, isModal = false, onCloseModal }) {
+export default function LessonSlides({ 
+  onGoToExercise, 
+  isModal = false, 
+  onCloseModal,
+  canAccessExercise = false 
+}) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const totalSlides = 14;
+  const totalSlides = 12;
 
   // Keyboard navigation
   useEffect(() => {
@@ -63,7 +69,7 @@ export default function LessonSlides({ onGoToExercise, isModal = false, onCloseM
                 เอกสารประกอบการสอน (Slide Presentation)
               </h2>
               <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                PDF แท้ 14 หน้า
+                PDF แท้ 12 หน้า
               </span>
             </div>
             <p className="text-xs text-slate-400">
@@ -99,8 +105,8 @@ export default function LessonSlides({ onGoToExercise, isModal = false, onCloseM
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
 
-          {/* Go to Exercise CTA Button */}
-          {onGoToExercise && (
+          {/* Go to Exercise CTA Button (Appears only when unlocked by teacher) */}
+          {canAccessExercise ? (
             <button
               onClick={onGoToExercise}
               className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm flex items-center gap-1.5 shadow-md hover:shadow-lg transition cursor-pointer"
@@ -108,6 +114,15 @@ export default function LessonSlides({ onGoToExercise, isModal = false, onCloseM
               <span>ไปทำแบบฝึกหัด</span>
               <ArrowRight className="w-4 h-4" />
             </button>
+          ) : (
+            <div 
+              title="อาจารย์ยังไม่ได้ปลดล็อกแบบฝึกหัด กรุณาศึกษาเอกสารประกอบการสอนระหว่างรอ"
+              className="px-3 py-1.5 bg-slate-800 text-amber-300/90 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-amber-500/30 select-none shadow-xs"
+            >
+              <Lock className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline">แบบฝึกหัด: </span>
+              <span>รออาจารย์ปลดล็อก</span>
+            </div>
           )}
 
           {isModal && onCloseModal && (
@@ -157,38 +172,68 @@ export default function LessonSlides({ onGoToExercise, isModal = false, onCloseM
             )}
           </div>
 
-          {/* Action card for the final slide (Slide 14) */}
-          {currentSlide === totalSlides - 1 && onGoToExercise && (
-            <div className="mt-4 p-4 bg-emerald-950/80 border border-emerald-500/50 rounded-2xl flex items-center justify-between gap-4 w-full max-w-3xl shadow-xl flex-wrap">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center font-bold shrink-0">
-                  <Laptop className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-white">อ่านสไลด์ครบ 14 หน้าเรียบร้อยแล้ว!</h4>
-                  <p className="text-xs text-emerald-200">
-                    นำความรู้ที่ได้ไปเริ่มเขียนโค้ด HTML ในใบงานที่ 1 ได้ทันที
-                  </p>
-                </div>
-              </div>
+          {/* Action card for the final slide (Slide 12) */}
+          {currentSlide === totalSlides - 1 && (
+            <div className="mt-4 p-4 rounded-2xl shadow-xl w-full max-w-3xl flex items-center justify-between gap-4 flex-wrap border transition-all animate-fade-in bg-slate-900/95 border-slate-800">
+              {canAccessExercise ? (
+                <>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center font-bold shrink-0">
+                      <Laptop className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-white">อ่านสไลด์ครบ 12 หน้าเรียบร้อยแล้ว!</h4>
+                      <p className="text-xs text-emerald-300">
+                        อาจารย์ปลดล็อกแบบฝึกหัดแล้ว สามารถเริ่มลงมือเขียนโค้ดได้เลย
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="flex items-center gap-2">
-                <a
-                  href="https://petchauisui.github.io/HTML-GuideWeb/lesson3.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3.5 py-2 bg-white/10 hover:bg-white/20 text-emerald-200 rounded-xl text-xs font-semibold transition flex items-center gap-1"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span>คู่มือเว็บ</span>
-                </a>
-                <button
-                  onClick={onGoToExercise}
-                  className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-sm transition shadow-md flex items-center gap-1.5 cursor-pointer"
-                >
-                  <span>เริ่มทำแบบฝึกหัดทันที ➔</span>
-                </button>
-              </div>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href="https://petchauisui.github.io/HTML-GuideWeb/lesson3.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3.5 py-2 bg-white/10 hover:bg-white/20 text-emerald-200 rounded-xl text-xs font-semibold transition flex items-center gap-1"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>คู่มือเว็บ</span>
+                    </a>
+                    <button
+                      onClick={onGoToExercise}
+                      className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-sm transition shadow-md flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span>เริ่มทำแบบฝึกหัดทันที ➔</span>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold shrink-0">
+                      <Lock className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-white">ศึกษาเอกสารครบทั้ง 12 หน้าแล้ว</h4>
+                      <p className="text-xs text-amber-300">
+                        กรุณารออาจารย์ผู้สอนปลดล็อกแบบฝึกหัด (เมื่อปลดล็อก ปุ่มจะปรากฏขึ้นทันที)
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <a
+                      href="https://petchauisui.github.io/HTML-GuideWeb/lesson3.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3.5 py-2 bg-white/10 hover:bg-white/20 text-indigo-200 rounded-xl text-xs font-semibold transition flex items-center gap-1"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>คู่มือบทเรียน</span>
+                    </a>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -234,16 +279,22 @@ export default function LessonSlides({ onGoToExercise, isModal = false, onCloseM
             <span className="sm:hidden">ถัดไป</span>
             <ChevronRight className="w-4 h-4" />
           </button>
+        ) : canAccessExercise ? (
+          <button
+            onClick={onGoToExercise}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer shadow-md"
+          >
+            <span>ไปทำแบบฝึกหัด</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
         ) : (
-          onGoToExercise && (
-            <button
-              onClick={onGoToExercise}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer shadow-md"
-            >
-              <span>ไปทำแบบฝึกหัด</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          )
+          <div 
+            title="รออาจารย์ผู้สอนปลดล็อกแบบฝึกหัด"
+            className="px-3.5 py-2 bg-slate-800 text-slate-400 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 border border-slate-700 select-none"
+          >
+            <Lock className="w-3.5 h-3.5 text-amber-400" />
+            <span>รออาจารย์ปลดล็อก</span>
+          </div>
         )}
       </footer>
     </div>

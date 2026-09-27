@@ -18,7 +18,14 @@ import {
   Lock,
   Unlock
 } from 'lucide-react';
-import { getAllStudentsProgress, exportScoresToCSV, getSolutionPermission, setSolutionPermission } from '../utils/adminStorage';
+import { 
+  getAllStudentsProgress, 
+  exportScoresToCSV, 
+  getSolutionPermission, 
+  setSolutionPermission,
+  getExercisePermission,
+  setExercisePermission
+} from '../utils/adminStorage';
 import StudentDetailModal from './StudentDetailModal';
 
 export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewSlides }) {
@@ -28,11 +35,18 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [solutionEnabled, setSolutionEnabled] = useState(getSolutionPermission);
+  const [exerciseEnabled, setExerciseEnabled] = useState(getExercisePermission);
 
   const handleToggleSolution = () => {
     const next = !solutionEnabled;
     setSolutionPermission(next);
     setSolutionEnabled(next);
+  };
+
+  const handleToggleExercise = () => {
+    const next = !exerciseEnabled;
+    setExercisePermission(next);
+    setExerciseEnabled(next);
   };
 
   // Load students progress
@@ -115,6 +129,29 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-amber-400' : ''}`} />
               <span className="hidden md:inline">{isRefreshing ? 'กำลังโหลด...' : 'รีเฟรช'}</span>
+            </button>
+
+            {/* Exercise Access Toggle Button (Teacher controls when students can start exercise) */}
+            <button
+              onClick={handleToggleExercise}
+              title={exerciseEnabled ? 'คลิกเพื่อล็อกแบบฝึกหัด (นักเรียนจะเริ่มทำไม่ได้)' : 'คลิกเพื่อปลดล็อกแบบฝึกหัดให้นักเรียนเริ่มทำได้'}
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 border shadow-xs shrink-0 whitespace-nowrap cursor-pointer ${
+                exerciseEnabled
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
+                  : 'bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/30'
+              }`}
+            >
+              {exerciseEnabled ? (
+                <>
+                  <Unlock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>แบบฝึกหัด: <span className="text-emerald-300">เปิดให้นักเรียนทำ</span></span>
+                </>
+              ) : (
+                <>
+                  <Lock className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                  <span>แบบฝึกหัด: <span className="text-rose-300">ล็อกอยู่ (รอครูเปิด)</span></span>
+                </>
+              )}
             </button>
 
             {/* Student Solution Access Toggle Button */}

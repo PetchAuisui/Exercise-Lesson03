@@ -18,6 +18,20 @@ const safeSetItem = (key, val) => {
 };
 
 /**
+ * Exercise access control (Teacher toggles exercise lock/unlock for students)
+ */
+export function getExercisePermission() {
+  return safeGetItem('ws_exercise_enabled') === 'true';
+}
+
+export function setExercisePermission(enabled) {
+  safeSetItem('ws_exercise_enabled', enabled ? 'true' : 'false');
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('storage'));
+  }
+}
+
+/**
  * Solution visibility control (Teacher toggles access for students)
  */
 export function getSolutionPermission() {

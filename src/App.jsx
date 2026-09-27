@@ -13,6 +13,7 @@ import { validateHtmlCode, SAMPLE_SOLUTION } from './utils/htmlValidator';
 import { 
   recordStudentCodeUpdate, 
   getSolutionPermission,
+  getExercisePermission,
   getStudentSubmission,
   submitStudentWork,
   cancelStudentSubmission
@@ -38,6 +39,9 @@ export default function App() {
   // Solution access controlled by teacher (default: false / locked)
   const [solutionEnabled, setSolutionEnabled] = useState(getSolutionPermission);
 
+  // Exercise access controlled by teacher (default: false / locked until unlocked by teacher)
+  const [exerciseEnabled, setExerciseEnabled] = useState(getExercisePermission);
+
   // Submission state for current student
   const [isSubmitted, setIsSubmitted] = useState(() => {
     if (currentStudent?.id) {
@@ -46,10 +50,11 @@ export default function App() {
     return false;
   });
 
-  // Sync solution permission and submission state across tabs/windows
+  // Sync solution permission, exercise unlock, and submission state across tabs/windows
   useEffect(() => {
     const handleStorageChange = () => {
       setSolutionEnabled(getSolutionPermission());
+      setExerciseEnabled(getExercisePermission());
       if (currentStudent?.id) {
         setIsSubmitted(!!getStudentSubmission(currentStudent.id));
       }
@@ -172,6 +177,16 @@ export default function App() {
     return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
   }
 
+  // Determine if exercise is unlocked for current user
+  const canAccessExercise = currentStudent?.role === 'admin' ? true : exerciseEnabled;
+
+  // If exercise gets locked by teacher, route student back to slides
+  useEffect(() => {
+    if (currentStudent && currentStudent.role !== 'admin' && !exerciseEnabled) {
+      setActiveView('slides');
+    }
+  }, [exerciseEnabled, currentStudent]);
+
   // If Admin logged in and not simulating student view, show Admin Dashboard
   if (currentStudent.role === 'admin' && !adminPreviewStudentView) {
     return (
@@ -189,6 +204,7 @@ export default function App() {
             <div className="w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl border border-slate-700">
               <LessonSlides 
                 isModal={true} 
+                canAccessExercise={true}
                 onCloseModal={() => setShowSlidesModal(false)}
                 onGoToExercise={() => {
                   setShowSlidesModal(false);
@@ -227,7 +243,16 @@ export default function App() {
             </button>
           </div>
         )}
-        <LessonSlides onGoToExercise={() => setActiveView('exercise')} />
+        <LessonSlides 
+          canAccessExercise={canAccessExercise}
+          onGoToExercise={() => {
+            if (canAccessExercise) {
+              setActiveView('exercise');
+            } else {
+              alert('แบบฝึกหัดยังไม่เปิดให้ทำ กรุณารออาจารย์ผู้สอนปลดล็อกแบบฝึกหัด');
+            }
+          }} 
+        />
       </div>
     );
   }
