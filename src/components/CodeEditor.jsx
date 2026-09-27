@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { Code2, Sparkles, Copy, Check, Trash2, ZoomIn, ZoomOut } from 'lucide-react';
+import { Code2, Copy, Check, Trash2, ZoomIn, ZoomOut } from 'lucide-react';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-markup';
 
-export default function CodeEditor({ code, onChange, onFormat, onClear }) {
+export default function CodeEditor({ code, onChange, onClear }) {
   const textareaRef = useRef(null);
   const preRef = useRef(null);
   const gutterRef = useRef(null);
@@ -78,16 +78,6 @@ export default function CodeEditor({ code, onChange, onFormat, onClear }) {
               <ZoomIn className="w-3.5 h-3.5" />
             </button>
           </div>
-
-          {/* Auto Format */}
-          <button
-            onClick={onFormat}
-            title="จัดรูปแบบโค้ดอัตโนมัติ (Format HTML)"
-            className="px-2.5 py-1 bg-[#333333] hover:bg-[#3c3c3c] text-[#cccccc] hover:text-white rounded border border-[#3c3c3c] transition flex items-center gap-1 text-xs font-medium"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden sm:inline">จัดระเบียบ</span>
-          </button>
 
           {/* Copy */}
           <button

@@ -98,38 +98,6 @@ export default function App() {
     setCode(SAMPLE_SOLUTION);
   };
 
-  // Simple clean auto-formatter
-  const handleFormat = () => {
-    const rawLines = code.split('\n');
-    let indentLevel = 0;
-    const formatted = rawLines.map(line => {
-      const trimmed = line.trim();
-      if (!trimmed) return '';
-
-      // Decrease indent for closing tags
-      if (trimmed.startsWith('</') || trimmed === '</html>' || trimmed === '</head>' || trimmed === '</body>' || trimmed === '</a>') {
-        indentLevel = Math.max(0, indentLevel - 1);
-      }
-
-      const indent = '    '.repeat(indentLevel);
-      const result = indent + trimmed;
-
-      // Increase indent for opening container tags
-      if (
-        (trimmed.startsWith('<html') && !trimmed.endsWith('</html>')) ||
-        (trimmed.startsWith('<head') && !trimmed.endsWith('</head>')) ||
-        (trimmed.startsWith('<body') && !trimmed.endsWith('</body>')) ||
-        (trimmed.startsWith('<a ') && !trimmed.endsWith('</a>'))
-      ) {
-        indentLevel++;
-      }
-
-      return result;
-    }).join('\n');
-
-    setCode(formatted);
-  };
-
   // If not logged in, show Login Screen
   if (!currentStudent) {
     return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
@@ -170,7 +138,6 @@ export default function App() {
                 <CodeEditor
                   code={code}
                   onChange={setCode}
-                  onFormat={handleFormat}
                   onClear={handleClear}
                 />
               </div>
