@@ -164,9 +164,9 @@ export default function App() {
             />
 
             {/* Split Screen Workspace: Editor (Left) & Preview (Right) */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 flex-1 min-h-[660px]">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
               {/* Code Editor */}
-              <div className="flex flex-col h-full min-h-[640px]">
+              <div className="flex flex-col">
                 <CodeEditor
                   code={code}
                   onChange={setCode}
@@ -176,7 +176,7 @@ export default function App() {
               </div>
 
               {/* Live Browser Preview */}
-              <div className="flex flex-col h-full min-h-[640px]">
+              <div className="flex flex-col">
                 <BrowserPreview
                   code={code}
                   pageTitle={validation.extractedTitle}

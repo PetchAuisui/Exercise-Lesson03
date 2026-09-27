@@ -120,7 +120,7 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col h-full min-h-[640px]">
+    <div className="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col h-full">
       {/* Browser Top Window Frame */}
       <div className="bg-slate-100 border-b border-slate-200 p-2.5 space-y-2">
         {/* Window controls & Tab */}

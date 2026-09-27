@@ -71,3 +71,43 @@
   font-style: italic;
 }
 
+/* VS Code Light Theme Syntax Colors */
+.code-editor-light .code-editor-pre,
+.code-editor-light .code-editor-pre code {
+  color: #0f172a;
+}
+
+.code-editor-light .code-editor-pre .token.doctype,
+.code-editor-light .code-editor-pre .token.doctype .token.name {
+  color: #7c3aed !important;
+  font-weight: 600;
+}
+
+.code-editor-light .code-editor-pre .token.tag {
+  color: #0284c7 !important;
+  font-weight: 500;
+}
+
+.code-editor-light .code-editor-pre .token.tag .token.tag {
+  color: #2563eb !important;
+}
+
+.code-editor-light .code-editor-pre .token.attr-name {
+  color: #ea580c !important;
+}
+
+.code-editor-light .code-editor-pre .token.attr-value,
+.code-editor-light .code-editor-pre .token.string {
+  color: #16a34a !important;
+}
+
+.code-editor-light .code-editor-pre .token.punctuation {
+  color: #64748b !important;
+}
+
+.code-editor-light .code-editor-pre .token.comment {
+  color: #64748b !important;
+  font-style: italic;
+}
+
+
