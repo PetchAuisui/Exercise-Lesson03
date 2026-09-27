@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Globe, ArrowLeft, ArrowRight, RotateCw, ExternalLink, Image as ImageIcon, Eye, AlertCircle } from 'lucide-react';
+import { Globe, ArrowLeft, ArrowRight, RotateCw, ExternalLink, Image as ImageIcon, Eye, AlertCircle, Code2 } from 'lucide-react';
 
-export default function BrowserPreview({ code, pageTitle, validation }) {
+export default function BrowserPreview({ code, pageTitle, validation, onSwitchToCode }) {
   const [currentUrl, setCurrentUrl] = useState('http://localhost:3000/index.html');
   const [history, setHistory] = useState(['http://localhost:3000/index.html']);
   const [historyIndex, setHistoryIndex] = useState(0);
@@ -103,6 +103,18 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Switch back to Code Editor Button */}
+            {onSwitchToCode && (
+              <button
+                onClick={onSwitchToCode}
+                className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 transition flex items-center gap-1.5 text-xs font-semibold shadow-xs"
+                title="สลับกลับไปพื้นที่เขียนโค้ด (Code Editor)"
+              >
+                <Code2 className="w-3.5 h-3.5 text-amber-400" />
+                <span>กลับไปเขียนโค้ด</span>
+              </button>
+            )}
+
             <button
               onClick={() => setSimulateBrokenImage(!simulateBrokenImage)}
               className={`px-2.5 py-1 rounded-lg border text-xs font-semibold transition flex items-center gap-1.5 ${

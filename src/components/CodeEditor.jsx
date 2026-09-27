@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { Code2, Copy, Check, Trash2, ZoomIn, ZoomOut } from 'lucide-react';
+import { Code2, Copy, Check, Trash2, ZoomIn, ZoomOut, Globe } from 'lucide-react';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-markup';
 
-export default function CodeEditor({ code, onChange, onClear }) {
+export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview }) {
   const textareaRef = useRef(null);
   const preRef = useRef(null);
   const gutterRef = useRef(null);
@@ -60,6 +60,18 @@ export default function CodeEditor({ code, onChange, onClear }) {
 
         {/* Action buttons */}
         <div className="flex items-center gap-1.5 pb-1">
+          {/* Switch to Preview Button */}
+          {onSwitchToPreview && (
+            <button
+              onClick={onSwitchToPreview}
+              title="สลับไปดูผลลัพธ์หน้าเว็บ (Browser Preview)"
+              className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded border border-indigo-500 transition flex items-center gap-1.5 text-xs font-semibold shadow-xs mr-1"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              <span>ดูผลลัพธ์หน้าเว็บ (Preview)</span>
+            </button>
+          )}
+
           {/* Font Size Adjusters */}
           <div className="flex items-center rounded bg-[#333333] border border-[#3c3c3c] text-xs">
             <button
