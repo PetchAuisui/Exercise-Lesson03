@@ -54,12 +54,12 @@ export default function WorksheetPaperView({
         </div>
 
         {/* Section: สถานการณ์ */}
-        <div className="mb-6 text-sm sm:text-base space-y-2">
-          <h3 className="font-bold text-slate-950">สถานการณ์</h3>
+        <div className="mb-6 text-base sm:text-lg space-y-2">
+          <h3 className="font-bold text-slate-950 text-lg sm:text-xl">สถานการณ์</h3>
           <p className="leading-relaxed">
             คุณกำลังสร้างหน้าเว็บแนะนำสถานที่ท่องเที่ยว เขียน HTML ให้หน้าเว็บทำงานตามเงื่อนไขต่อไปนี้
           </p>
-          <ol className="list-decimal list-inside space-y-1 pl-2 sm:pl-4">
+          <ol className="list-decimal list-inside space-y-1.5 pl-2 sm:pl-4">
             <li>เขียนหน้าเว็บโดยใช้ โครงสร้างพื้นฐานของเอกสาร HTML ให้ครบถ้วน</li>
             <li>กำหนดชื่อหน้าเว็บว่า "สถานที่ท่องเที่ยว"</li>
             <li>แสดงรูปภาพจากไฟล์ temple.jpg</li>
@@ -69,8 +69,8 @@ export default function WorksheetPaperView({
         </div>
 
         {/* Section: คำชี้แจง */}
-        <div className="mb-6 text-sm sm:text-base space-y-1">
-          <h3 className="font-bold text-slate-950">คำชี้แจง</h3>
+        <div className="mb-6 text-base sm:text-lg space-y-1">
+          <h3 className="font-bold text-slate-950 text-lg sm:text-xl">คำชี้แจง</h3>
           <p className="leading-relaxed">
             เลือกใช้แท็กและ Attribute ที่เหมาะสม แล้วเขียนโค้ดด้วยตนเอง โดยไม่เติมคำลงในโครงสร้างที่เตรียมไว้
           </p>
@@ -78,15 +78,15 @@ export default function WorksheetPaperView({
 
         {/* Section: พื้นที่เขียนโค้ด */}
         <div className="mb-10">
-          <h3 className="font-bold text-sm sm:text-base text-slate-950 mb-3">
+          <h3 className="font-bold text-base sm:text-xl text-slate-950 mb-3">
             พื้นที่เขียนโค้ด
           </h3>
 
           {/* Box with orange border matching the worksheet */}
-          <div className="border-2 border-orange-300/90 rounded-md p-4 bg-orange-50/10 space-y-2.5">
+          <div className="border-2 border-orange-400 rounded-lg p-5 bg-orange-50/15 space-y-3">
             {lines.map((val, idx) => (
-              <div key={idx} className="flex items-center gap-3 group">
-                <span className="w-5 text-right font-mono text-xs sm:text-sm font-semibold text-slate-700 select-none shrink-0">
+              <div key={idx} className="flex items-center gap-3.5 group">
+                <span className="w-6 text-right font-mono text-sm sm:text-base font-bold text-slate-700 select-none shrink-0">
                   {idx + 1}
                 </span>
                 <div className="flex-1 relative flex items-center">
@@ -94,7 +94,7 @@ export default function WorksheetPaperView({
                     type="text"
                     value={val}
                     onChange={(e) => handleLineChange(idx, e.target.value)}
-                    className="w-full font-code text-xs sm:text-sm border-b border-slate-600 focus:border-indigo-600 outline-none bg-transparent py-0.5 px-1 tracking-normal transition"
+                    className="w-full font-code text-sm sm:text-base border-b border-slate-600 focus:border-indigo-600 outline-none bg-transparent py-1 px-1.5 tracking-normal transition"
                     placeholder=""
                     spellCheck="false"
                   />
@@ -105,7 +105,7 @@ export default function WorksheetPaperView({
         </div>
 
         {/* Worksheet Footer */}
-        <div className="pt-6 border-t border-slate-800 flex justify-end text-xs sm:text-sm font-medium text-slate-700">
+        <div className="pt-6 border-t border-slate-800 flex justify-end text-sm sm:text-base font-medium text-slate-700">
           <span>Basic Website Design</span>
         </div>
       </div>

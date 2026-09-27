@@ -93,25 +93,25 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
             </div>
             
             {/* Browser Tab */}
-            <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-t-md border-t border-l border-r border-slate-200 text-xs font-medium text-slate-700 max-w-[200px] truncate shadow-xs">
-              <Globe className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+            <div className="flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-t-lg border-t border-l border-r border-slate-200 text-xs sm:text-sm font-semibold text-slate-800 max-w-[240px] truncate shadow-xs">
+              <Globe className="w-4 h-4 text-indigo-600 shrink-0" />
               <span className="truncate" title={pageTitle}>
                 {pageTitle || 'Untitled Document'}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setSimulateBrokenImage(!simulateBrokenImage)}
-              className={`px-2 py-1 rounded border text-[11px] font-medium transition flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 rounded-lg border text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 ${
                 simulateBrokenImage 
-                  ? 'bg-amber-100 text-amber-800 border-amber-300' 
-                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  ? 'bg-amber-100 text-amber-900 border-amber-300' 
+                  : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
               }`}
               title="ทดสอบแสดงผลเมื่อรูปภาพโหลดไม่ขึ้น เพื่อตรวจดูค่า alt='วัดไทย'"
             >
-              <Eye className="w-3 h-3" />
+              <Eye className="w-4 h-4 text-slate-500" />
               <span>{simulateBrokenImage ? 'จำลองรูปพัง: เปิดอยู่' : 'ทดสอบตรวจ Alt Text'}</span>
             </button>
           </div>
@@ -146,13 +146,13 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
           </div>
 
           {/* URL Bar */}
-          <div className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1 flex items-center justify-between text-xs text-slate-700 shadow-inner">
-            <div className="flex items-center gap-1.5 truncate">
+          <div className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1.5 flex items-center justify-between text-xs sm:text-sm text-slate-700 shadow-inner">
+            <div className="flex items-center gap-2 truncate">
               <span className="text-emerald-600 font-semibold">🔒</span>
-              <span className="font-mono text-slate-800">{currentUrl}</span>
+              <span className="font-mono text-slate-800 font-medium">{currentUrl}</span>
             </div>
             {currentUrl.endsWith('detail.html') && (
-              <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs font-bold shrink-0">
                 ✓ คลิกสำเร็จ!
               </span>
             )}
@@ -167,15 +167,15 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
             <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
               <ExternalLink className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-1">
+            <h3 className="text-xl font-bold text-slate-900 mb-1">
               เปิดหน้า detail.html สำเร็จ!
             </h3>
-            <p className="text-xs text-slate-600 mb-4 leading-relaxed">
+            <p className="text-sm text-slate-600 mb-4 leading-relaxed">
               เมื่อคลิกที่รูปภาพ <code>temple.jpg</code> ลิงก์ <code>&lt;a href="detail.html"&gt;</code> ทำงานถูกต้องตามข้อกำหนดที่ 5 แล้ว
             </p>
             <button
               onClick={() => navigateTo('http://localhost:3000/index.html')}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm transition"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow-sm transition"
             >
               ← กลับไปหน้า index.html
             </button>
@@ -193,30 +193,30 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
       </div>
 
       {/* Status Bar */}
-      <div className="px-4 py-2 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1">
-            <span className="text-slate-400">รูปภาพ:</span>
-            <span className={validation.criteria[2].passed ? "text-emerald-700 font-semibold" : "text-slate-500"}>
+      <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm text-slate-700">
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-1.5">
+            <span className="text-slate-500 font-medium">รูปภาพ:</span>
+            <span className={validation.criteria[2].passed ? "text-emerald-700 font-bold" : "text-slate-600 font-medium"}>
               temple.jpg {validation.criteria[2].passed ? '✓' : ''}
             </span>
           </div>
-          <div className="flex items-center gap-1">
-            <span className="text-slate-400">ข้อความทดแทน:</span>
-            <span className={validation.criteria[3].passed ? "text-emerald-700 font-semibold" : "text-slate-500"}>
+          <div className="flex items-center gap-1.5">
+            <span className="text-slate-500 font-medium">ข้อความทดแทน:</span>
+            <span className={validation.criteria[3].passed ? "text-emerald-700 font-bold" : "text-slate-600 font-medium"}>
               alt="วัดไทย" {validation.criteria[3].passed ? '✓' : ''}
             </span>
           </div>
-          <div className="flex items-center gap-1">
-            <span className="text-slate-400">ลิงก์ภาพ:</span>
-            <span className={validation.criteria[4].passed ? "text-emerald-700 font-semibold" : "text-slate-500"}>
+          <div className="flex items-center gap-1.5">
+            <span className="text-slate-500 font-medium">ลิงก์ภาพ:</span>
+            <span className={validation.criteria[4].passed ? "text-emerald-700 font-bold" : "text-slate-600 font-medium"}>
               href="detail.html" {validation.criteria[4].passed ? '✓' : ''}
             </span>
           </div>
         </div>
 
         {validation.isAllPassed && (
-          <span className="text-emerald-600 font-bold flex items-center gap-1">
+          <span className="text-emerald-600 font-bold flex items-center gap-1 text-sm">
             🎉 ยอดเยี่ยม! ผ่านเกณฑ์ครบทุกข้อ
           </span>
         )}

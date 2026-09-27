@@ -41,36 +41,36 @@ export default function SolutionModal({ isOpen, onClose, onApplySolution }) {
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto space-y-6 text-sm">
+        <div className="p-6 overflow-y-auto space-y-6 text-base">
           
           {/* Explanation Cards */}
           <div className="space-y-3">
-            <h4 className="font-semibold text-slate-900 text-xs uppercase tracking-wider">
+            <h4 className="font-bold text-slate-900 text-sm uppercase tracking-wider">
               การวิเคราะห์เงื่อนไข 5 ข้อ:
             </h4>
-            <div className="grid gap-2.5 text-xs">
-              <div className="p-3 rounded-lg bg-indigo-50/60 border border-indigo-100 flex items-start gap-2">
+            <div className="grid gap-3 text-sm sm:text-base">
+              <div className="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-100 flex items-start gap-2.5">
                 <span className="font-bold text-indigo-700 shrink-0">ข้อ 1:</span>
                 <div>
                   <strong>โครงสร้างพื้นฐาน:</strong> ต้องมี <code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;title&gt;</code>, <code>&lt;body&gt;</code> ครบถ้วน
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-indigo-50/60 border border-indigo-100 flex items-start gap-2">
+              <div className="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-100 flex items-start gap-2.5">
                 <span className="font-bold text-indigo-700 shrink-0">ข้อ 2:</span>
                 <div>
                   <strong>ชื่อหน้าเว็บ:</strong> ใส่ไว้ในแท็ก <code>&lt;title&gt;สถานที่ท่องเที่ยว&lt;/title&gt;</code> ภายใน <code>&lt;head&gt;</code>
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-indigo-50/60 border border-indigo-100 flex items-start gap-2">
+              <div className="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-100 flex items-start gap-2.5">
                 <span className="font-bold text-indigo-700 shrink-0">ข้อ 3 & 4:</span>
                 <div>
                   <strong>แท็กรูปภาพ &amp; ข้อความทดแทน:</strong> ใช้แท็ก <code>&lt;img src="temple.jpg" alt="วัดไทย"&gt;</code>
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-indigo-50/60 border border-indigo-100 flex items-start gap-2">
+              <div className="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-100 flex items-start gap-2.5">
                 <span className="font-bold text-indigo-700 shrink-0">ข้อ 5:</span>
                 <div>
                   <strong>ทำรูปภาพให้คลิกได้:</strong> นำแท็ก <code>&lt;a href="detail.html"&gt;</code> มาครอบแท็ก <code>&lt;img&gt;</code> ไว้
@@ -82,16 +82,16 @@ export default function SolutionModal({ isOpen, onClose, onApplySolution }) {
           {/* Code Solution */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="font-semibold text-slate-800 text-xs">โค้ดตัวอย่างที่สมบูรณ์:</span>
+              <span className="font-bold text-slate-800 text-sm sm:text-base">โค้ดตัวอย่างที่สมบูรณ์:</span>
               <button
                 onClick={handleCopy}
-                className="text-xs text-indigo-600 hover:text-indigo-700 flex items-center gap-1 font-medium"
+                className="text-xs sm:text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1 font-semibold"
               >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
                 <span>{copied ? 'คัดลอกแล้ว' : 'คัดลอกโค้ด'}</span>
               </button>
             </div>
-            <pre className="bg-slate-900 text-slate-100 p-4 rounded-xl font-code text-xs overflow-x-auto leading-relaxed border border-slate-800">
+            <pre className="bg-slate-900 text-slate-100 p-4 rounded-xl font-code text-sm sm:text-base overflow-x-auto leading-relaxed border border-slate-800">
               <code>{SAMPLE_SOLUTION}</code>
             </pre>
           </div>
