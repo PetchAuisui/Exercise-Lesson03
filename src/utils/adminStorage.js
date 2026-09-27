@@ -1,0 +1,138 @@
+import { STUDENTS_DATABASE } from '../data/students';
+import { validateHtmlCode } from './htmlValidator';
+
+/**
+ * Record student login timestamp
+ */
+export function recordStudentLogin(studentId) {
+  if (!studentId || studentId === 'admin') return;
+  const now = new Date().toISOString();
+  if (!localStorage.getItem(`ws_first_login_${studentId}`)) {
+    localStorage.setItem(`ws_first_login_${studentId}`, now);
+  }
+  localStorage.setItem(`ws_last_login_${studentId}`, now);
+}
+
+/**
+ * Record student code modification timestamp
+ */
+export function recordStudentCodeUpdate(studentId, code) {
+  if (!studentId || studentId === 'admin') return;
+  const now = new Date().toISOString();
+  localStorage.setItem(`ws_code_${studentId}`, code);
+  localStorage.setItem(`ws_code_updated_${studentId}`, now);
+}
+
+/**
+ * Get aggregated progress and score for all students
+ */
+export function getAllStudentsProgress() {
+  return STUDENTS_DATABASE.map((student, index) => {
+    const rawCode = localStorage.getItem(`ws_code_${student.id}`);
+    const hasLoggedIn = !!localStorage.getItem(`ws_last_login_${student.id}`) || rawCode !== null;
+    const code = rawCode || '';
+    const lastLogin = localStorage.getItem(`ws_last_login_${student.id}`);
+    const lastUpdated = localStorage.getItem(`ws_code_updated_${student.id}`) || lastLogin;
+
+    const validation = validateHtmlCode(code);
+    const passedCount = validation.passedCount;
+    const totalCount = validation.totalCount; // 5
+
+    let status = 'ยังไม่เข้าระบบ';
+    let statusColor = 'gray';
+
+    if (!hasLoggedIn && !code) {
+      status = 'ยังไม่เข้าระบบ';
+      statusColor = 'slate';
+    } else if (code.trim().length === 0) {
+      status = 'ยังไม่ทำ';
+      statusColor = 'amber';
+    } else if (validation.isAllPassed) {
+      status = 'เสร็จสมบูรณ์';
+      statusColor = 'emerald';
+    } else {
+      status = 'กำลังทำ';
+      statusColor = 'sky';
+    }
+
+    return {
+      no: index + 1,
+      id: student.id,
+      name: student.name,
+      code,
+      hasLoggedIn,
+      lastLogin,
+      lastUpdated,
+      validation,
+      passedCount,
+      totalCount,
+      score: passedCount, // Out of 5
+      scorePercent: Math.round((passedCount / totalCount) * 100),
+      status,
+      statusColor,
+    };
+  });
+}
+
+/**
+ * Export students score report to CSV with Thai UTF-8 BOM
+ */
+export function exportScoresToCSV(studentsProgress) {
+  const headers = [
+    'ลำดับ',
+    'รหัสนักศึกษา',
+    'ชื่อ-นามสกุล',
+    'สถานะ',
+    'คะแนน (เต็ม 5)',
+    'ร้อยละ (%)',
+    'ข้อ 1 (โครงสร้างพื้นฐาน)',
+    'ข้อ 2 (ชื่อหน้าเว็บ Title)',
+    'ข้อ 3 (แท็กรูปภาพ temple.jpg)',
+    'ข้อ 4 (ข้อความทดแทน alt)',
+    'ข้อ 5 (ลิงก์รูปภาพคลิกได้ detail.html)',
+    'เวลาอัปเดตล่าสุด',
+    'โค้ด HTML ที่เขียน'
+  ];
+
+  const rows = studentsProgress.map(s => {
+    const c = s.validation.criteria;
+    const c1 = c[0]?.passed ? 'ผ่าน' : 'ไม่ผ่าน';
+    const c2 = c[1]?.passed ? 'ผ่าน' : 'ไม่ผ่าน';
+    const c3 = c[2]?.passed ? 'ผ่าน' : 'ไม่ผ่าน';
+    const c4 = c[3]?.passed ? 'ผ่าน' : 'ไม่ผ่าน';
+    const c5 = c[4]?.passed ? 'ผ่าน' : 'ไม่ผ่าน';
+    const dateStr = s.lastUpdated ? new Date(s.lastUpdated).toLocaleString('th-TH') : '-';
+    // Escape code for CSV by doubling double quotes
+    const escapedCode = `"${(s.code || '').replace(/"/g, '""')}"`;
+
+    return [
+      s.no,
+      `="${s.id}"`, // Preserve leading zeroes in Excel
+      `"${s.name}"`,
+      `"${s.status}"`,
+      s.score,
+      s.scorePercent,
+      c1,
+      c2,
+      c3,
+      c4,
+      c5,
+      `"${dateStr}"`,
+      escapedCode
+    ].join(',');
+  });
+
+  // \uFEFF is UTF-8 Byte Order Mark for Excel compatibility
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  
+  const link = document.createElement('a');
+  const timestamp = new Date().toISOString().slice(0, 10);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `คะแนน_ใบงานที่1_Lesson03_${timestamp}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}

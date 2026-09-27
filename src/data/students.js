@@ -18,17 +18,41 @@ export const STUDENTS_DATABASE = [
 
 export const AUTH_PASSWORD = 'kmitl';
 
-export function authenticateStudent(studentId, password) {
-  const cleanId = (studentId || '').trim();
+export const ADMIN_CREDENTIALS = {
+  email: 'siwarpatauisui@gmail.com',
+  password: 'Struggle40980',
+  name: 'อาจารย์ผู้สอน (Admin)',
+  role: 'admin'
+};
+
+export function authenticateUser(identifier, password) {
+  const cleanId = (identifier || '').trim();
   const cleanPassword = (password || '').trim();
 
   if (!cleanId) {
-    return { success: false, message: 'กรุณากรอกรหัสนักศึกษา' };
+    return { success: false, message: 'กรุณากรอกรหัสนักศึกษา หรือ อีเมลอาจารย์' };
   }
 
+  // Check Admin Login
+  if (cleanId.toLowerCase() === ADMIN_CREDENTIALS.email.toLowerCase()) {
+    if (cleanPassword === ADMIN_CREDENTIALS.password) {
+      return {
+        success: true,
+        user: {
+          id: 'admin',
+          email: ADMIN_CREDENTIALS.email,
+          name: ADMIN_CREDENTIALS.name,
+          role: 'admin'
+        }
+      };
+    }
+    return { success: false, message: 'รหัสผ่านสำหรับผู้ดูแลระบบไม่ถูกต้อง' };
+  }
+
+  // Check Student Login
   const student = STUDENTS_DATABASE.find(s => s.id === cleanId);
   if (!student) {
-    return { success: false, message: 'ไม่พบรหัสนักศึกษานี้ในระบบ' };
+    return { success: false, message: 'ไม่พบรหัสนักศึกษาหรือบัญชีผู้ใช้นี้ในระบบ' };
   }
 
   if (cleanPassword !== AUTH_PASSWORD) {
@@ -37,9 +61,19 @@ export function authenticateStudent(studentId, password) {
 
   return { 
     success: true, 
-    student: {
+    user: {
       id: student.id,
-      name: student.name
+      name: student.name,
+      role: 'student'
     }
   };
+}
+
+// Backward-compatible alias
+export function authenticateStudent(studentId, password) {
+  const res = authenticateUser(studentId, password);
+  if (res.success) {
+    return { success: true, student: res.user };
+  }
+  return res;
 }
