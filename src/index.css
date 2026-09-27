@@ -29,85 +29,78 @@
   }
 }
 
-/* VS Code Real Syntax Colors */
+/* VS Code Dark+ Authentic Syntax Highlighting */
+.code-editor-vscode,
 .code-editor-pre,
 .code-editor-pre code {
-  color: #d4d4d4;
-  font-family: 'Fira Code', 'Courier New', monospace;
-  white-space: pre-wrap;
-  word-break: break-all;
+  color: #d4d4d4 !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
 }
 
-.code-editor-pre .token.doctype,
-.code-editor-pre .token.doctype .token.name {
-  color: #c586c0 !important; /* VS Code Purple */
-  font-weight: 600;
+/* 1. Base Punctuation: VS Code Gray #808080 */
+.code-editor-pre .token.punctuation {
+  color: #808080 !important;
 }
 
+/* 2. HTML Tags: VS Code Blue #569cd6 */
 .code-editor-pre .token.tag {
-  color: #4ec9b0 !important; /* VS Code Cyan/Blue */
-  font-weight: 500;
+  color: #569cd6 !important;
+  font-weight: normal !important;
 }
 
 .code-editor-pre .token.tag .token.tag {
-  color: #569cd6 !important; /* VS Code Blue for element tags */
+  color: #569cd6 !important;
 }
 
+/* 3. Brackets in tags (<, </, >): VS Code Gray #808080 */
+.code-editor-pre .token.tag .token.punctuation,
+.code-editor-pre .token.tag > .token.punctuation,
+.code-editor-pre .token.tag .token.tag .token.punctuation {
+  color: #808080 !important;
+}
+
+/* 4. HTML Attribute Names: VS Code Light Sky Blue #9cdcfe */
 .code-editor-pre .token.attr-name {
-  color: #9cdcfe !important; /* VS Code Light Blue for attributes */
+  color: #9cdcfe !important;
 }
 
+/* 5. Strings and Attribute Values: VS Code Warm Orange #ce9178 */
 .code-editor-pre .token.attr-value,
 .code-editor-pre .token.string {
-  color: #ce9178 !important; /* VS Code Warm Orange for strings */
+  color: #ce9178 !important;
 }
 
-.code-editor-pre .token.punctuation {
-  color: #808080 !important; /* VS Code Gray for <, >, =, / */
+/* Quotes in attribute values: VS Code Warm Orange #ce9178 */
+.code-editor-pre .token.attr-value .token.punctuation {
+  color: #ce9178 !important;
 }
 
+/* Equals sign = in attributes: VS Code Gray #d4d4d4 */
+.code-editor-pre .token.attr-value .token.punctuation.attr-equals {
+  color: #d4d4d4 !important;
+}
+
+/* 6. DOCTYPE: VS Code Blue #569cd6 and Gray brackets */
+.code-editor-pre .token.doctype {
+  color: #569cd6 !important;
+}
+
+.code-editor-pre .token.doctype .token.doctype-tag,
+.code-editor-pre .token.doctype .token.name {
+  color: #569cd6 !important;
+}
+
+.code-editor-pre .token.doctype .token.punctuation {
+  color: #808080 !important;
+}
+
+/* 7. HTML Comments: VS Code Olive Green #6a9955 */
 .code-editor-pre .token.comment {
-  color: #6a9955 !important; /* VS Code Green for comments */
-  font-style: italic;
+  color: #6a9955 !important;
+  font-style: italic !important;
 }
 
-/* VS Code Light Theme Syntax Colors */
-.code-editor-light .code-editor-pre,
-.code-editor-light .code-editor-pre code {
-  color: #0f172a;
-}
-
-.code-editor-light .code-editor-pre .token.doctype,
-.code-editor-light .code-editor-pre .token.doctype .token.name {
-  color: #7c3aed !important;
-  font-weight: 600;
-}
-
-.code-editor-light .code-editor-pre .token.tag {
-  color: #0284c7 !important;
-  font-weight: 500;
-}
-
-.code-editor-light .code-editor-pre .token.tag .token.tag {
-  color: #2563eb !important;
-}
-
-.code-editor-light .code-editor-pre .token.attr-name {
-  color: #ea580c !important;
-}
-
-.code-editor-light .code-editor-pre .token.attr-value,
-.code-editor-light .code-editor-pre .token.string {
-  color: #16a34a !important;
-}
-
-.code-editor-light .code-editor-pre .token.punctuation {
-  color: #64748b !important;
-}
-
-.code-editor-light .code-editor-pre .token.comment {
-  color: #64748b !important;
-  font-style: italic;
-}
 
 

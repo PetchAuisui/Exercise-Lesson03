@@ -1,25 +1,28 @@
 import React, { useRef, useState } from 'react';
-import { Code2, Sparkles, Copy, Check, Trash2, ZoomIn, ZoomOut, Sun, Moon } from 'lucide-react';
+import { Code2, Sparkles, Copy, Check, Trash2, ZoomIn, ZoomOut } from 'lucide-react';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-markup';
 
 export default function CodeEditor({ code, onChange, onFormat, onClear }) {
   const textareaRef = useRef(null);
   const preRef = useRef(null);
+  const gutterRef = useRef(null);
   const [copied, setCopied] = useState(false);
-  const [fontSize, setFontSize] = useState(18);
-  const [isDarkMode, setIsDarkMode] = useState(false); // Default to clean light theme matching the worksheet!
+  const [fontSize, setFontSize] = useState(17);
 
   const lines = code.split('\n');
   const lineCount = Math.max(lines.length, 14);
-  const lineHeightPx = Math.round(fontSize * 1.6);
-  const totalBodyHeightPx = 14 * lineHeightPx; // Exactly fits 14 lines! No excess black/white void below!
+  const lineHeightPx = Math.round(fontSize * 1.55);
+  const totalBodyHeightPx = 14 * lineHeightPx; // Strictly fits 14 lines! No excess empty space!
 
-  // Sync scroll between textarea and syntax highlight pre
+  // Sync scroll between textarea, syntax highlight pre, and line numbers gutter
   const handleScroll = (e) => {
     if (preRef.current) {
       preRef.current.scrollTop = e.target.scrollTop;
       preRef.current.scrollLeft = e.target.scrollLeft;
+    }
+    if (gutterRef.current) {
+      gutterRef.current.scrollTop = e.target.scrollTop;
     }
   };
 
@@ -29,139 +32,100 @@ export default function CodeEditor({ code, onChange, onFormat, onClear }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Generate syntax highlighted HTML with Prism
+  // Generate authentic VS Code syntax highlighted HTML with Prism
   const getHighlightedHtml = () => {
     if (!code) {
-      return `<span class="${isDarkMode ? 'text-slate-600' : 'text-slate-400'} italic select-none">เริ่มเขียนโค้ด HTML ที่นี่ตั้งแต่บรรทัดที่ 1...</span>`;
+      return '<span class="token comment select-none">&lt;!-- เริ่มเขียนโค้ด HTML ที่นี่ (บรรทัดที่ 1 - 14) --&gt;</span>';
     }
     const highlighted = Prism.highlight(code, Prism.languages.markup, 'markup');
     return code.endsWith('\n') ? highlighted + '\n' : highlighted;
   };
 
+  const fontStack = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+
   return (
-    <div className={`rounded-2xl shadow-md overflow-hidden flex flex-col transition-colors ${
-      isDarkMode 
-        ? 'bg-slate-950 border border-slate-800' 
-        : 'bg-white border-2 border-orange-400/90'
-    }`}>
-      {/* Top Bar */}
-      <div className={`px-4 sm:px-5 py-3 flex items-center justify-between border-b text-sm flex-wrap gap-2 ${
-        isDarkMode 
-          ? 'bg-slate-900 border-slate-800 text-slate-200' 
-          : 'bg-orange-50/80 border-orange-200 text-slate-800'
-      }`}>
-        <div className="flex items-center gap-3">
-          <Code2 className={`w-5 h-5 ${isDarkMode ? 'text-amber-400' : 'text-orange-600'} shrink-0`} />
-          <span className="font-bold text-base">
-            index.html <span className="font-normal text-xs text-slate-500">(พื้นที่เขียนโค้ด)</span>
-          </span>
-          <span className={`px-2.5 py-0.5 rounded-full text-xs font-mono font-bold border ${
-            isDarkMode 
-              ? 'bg-slate-800 text-amber-400 border-slate-700' 
-              : 'bg-white text-orange-700 border-orange-200'
-          }`}>
-            {lines.length} / 14 บรรทัด
-          </span>
+    <div className="rounded-xl shadow-lg overflow-hidden flex flex-col border border-[#3c3c3c] bg-[#1e1e1e] code-editor-vscode">
+      {/* VS Code Tab Bar */}
+      <div className="bg-[#252526] border-b border-[#2d2d2d] px-2 sm:px-3 pt-1.5 flex items-center justify-between text-sm flex-wrap gap-2">
+        {/* Active File Tab */}
+        <div className="flex items-center gap-1">
+          <div className="bg-[#1e1e1e] border-t-2 border-t-[#007acc] text-white px-3.5 py-1.5 rounded-t flex items-center gap-2 text-xs sm:text-sm font-medium select-none shadow-xs">
+            <Code2 className="w-4 h-4 text-[#e44d26] shrink-0" />
+            <span className="tracking-wide">index.html</span>
+            <span className="text-[11px] text-[#858585] ml-1 font-mono">
+              ({lines.length}/14 บรรทัด)
+            </span>
+          </div>
         </div>
 
         {/* Action buttons */}
-        <div className="flex items-center gap-2">
-          {/* Theme Toggle (Light / Dark) */}
-          <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className={`px-2.5 py-1 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition ${
-              isDarkMode 
-                ? 'bg-slate-800 border-slate-700 text-amber-300 hover:bg-slate-700' 
-                : 'bg-white border-orange-200 text-slate-700 hover:bg-orange-100/50'
-            }`}
-            title="สลับธีม สว่าง / มืด"
-          >
-            {isDarkMode ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-600" />}
-            <span>{isDarkMode ? 'โหมดมืด' : 'โหมดสว่าง (ตามใบงาน)'}</span>
-          </button>
-
+        <div className="flex items-center gap-1.5 pb-1">
           {/* Font Size Adjusters */}
-          <div className={`flex items-center rounded-lg p-0.5 border text-xs ${
-            isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-orange-200'
-          }`}>
+          <div className="flex items-center rounded bg-[#333333] border border-[#3c3c3c] text-xs">
             <button
               onClick={() => setFontSize(Math.max(14, fontSize - 2))}
-              className="p-1 rounded text-slate-400 hover:text-slate-600 transition"
+              className="p-1 rounded text-[#858585] hover:text-[#cccccc] transition"
               title="ลดขนาดตัวอักษร"
             >
               <ZoomOut className="w-3.5 h-3.5" />
             </button>
-            <span className="px-1.5 font-mono text-[11px] font-semibold text-slate-500">{fontSize}px</span>
+            <span className="px-1.5 font-mono text-[11px] font-medium text-[#cccccc] select-none">{fontSize}px</span>
             <button
-              onClick={() => setFontSize(Math.min(24, fontSize + 2))}
-              className="p-1 rounded text-slate-400 hover:text-slate-600 transition"
+              onClick={() => setFontSize(Math.min(22, fontSize + 2))}
+              className="p-1 rounded text-[#858585] hover:text-[#cccccc] transition"
               title="เพิ่มขนาดตัวอักษร"
             >
               <ZoomIn className="w-3.5 h-3.5" />
             </button>
           </div>
 
+          {/* Auto Format */}
           <button
             onClick={onFormat}
-            title="จัดรูปแบบโค้ดอัตโนมัติ"
-            className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 text-xs sm:text-sm font-semibold border ${
-              isDarkMode 
-                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700' 
-                : 'bg-white hover:bg-orange-50 text-slate-700 border-orange-200 shadow-2xs'
-            }`}
+            title="จัดรูปแบบโค้ดอัตโนมัติ (Format HTML)"
+            className="px-2.5 py-1 bg-[#333333] hover:bg-[#3c3c3c] text-[#cccccc] hover:text-white rounded border border-[#3c3c3c] transition flex items-center gap-1 text-xs font-medium"
           >
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            <span>จัดระเบียบโค้ด</span>
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">จัดระเบียบ</span>
           </button>
 
+          {/* Copy */}
           <button
             onClick={handleCopy}
-            title="คัดลอกโค้ด"
-            className={`p-2 rounded-lg transition text-xs sm:text-sm border ${
-              isDarkMode 
-                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700' 
-                : 'bg-white hover:bg-orange-50 text-slate-700 border-orange-200 shadow-2xs'
-            }`}
+            title="คัดลอกโค้ดทั้งหมด"
+            className="p-1.5 bg-[#333333] hover:bg-[#3c3c3c] text-[#cccccc] hover:text-white rounded border border-[#3c3c3c] transition text-xs"
           >
-            {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
 
+          {/* Clear */}
           <button
             onClick={onClear}
-            title="ล้างโค้ดทั้งหมด"
-            className={`p-2 rounded-lg transition text-xs sm:text-sm border ${
-              isDarkMode 
-                ? 'bg-slate-800 hover:bg-red-950/70 text-slate-200 hover:text-red-300 border-slate-700' 
-                : 'bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 border-orange-200 shadow-2xs'
-            }`}
+            title="ล้างโค้ดทั้งหมดเพื่อเขียนใหม่"
+            className="p-1.5 bg-[#333333] hover:bg-red-950/80 text-[#cccccc] hover:text-red-300 rounded border border-[#3c3c3c] hover:border-red-800 transition text-xs"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
-      {/* Editor Body with EXACT height for 14 lines (No excess empty void below!) */}
+      {/* Editor Body: Strictly sized to 14 lines (No excess empty void below!) */}
       <div 
-        className={`flex overflow-hidden font-code relative select-text ${
-          isDarkMode ? 'bg-slate-950' : 'bg-white code-editor-light'
-        }`}
+        className="flex overflow-hidden relative select-text bg-[#1e1e1e]"
         style={{ height: `${totalBodyHeightPx}px` }}
       >
-        {/* Line Numbers 1 to 14 exactly filling the height */}
+        {/* Line Numbers Gutter: VS Code style #858585 */}
         <div 
-          className={`w-12 sm:w-14 py-0 select-none font-mono text-right pr-3 shrink-0 border-r ${
-            isDarkMode 
-              ? 'bg-slate-950/90 text-slate-500 border-slate-800' 
-              : 'bg-orange-50/40 text-orange-500 font-bold border-orange-200'
-          }`}
-          style={{ fontSize: `${fontSize}px`, lineHeight: `${lineHeightPx}px` }}
+          ref={gutterRef}
+          className="w-12 sm:w-14 py-0 select-none font-mono text-right pr-3.5 shrink-0 border-r border-[#2d2d2d] bg-[#1e1e1e] overflow-hidden"
+          style={{ fontSize: `${fontSize}px`, lineHeight: `${lineHeightPx}px`, fontFamily: fontStack }}
         >
-          {Array.from({ length: 14 }).map((_, idx) => {
+          {Array.from({ length: lineCount }).map((_, idx) => {
             const lineNum = idx + 1;
             return (
               <div 
                 key={idx} 
-                className={`${isDarkMode ? 'text-amber-400 font-bold' : 'text-orange-600 font-bold'}`}
+                className="text-[#858585] font-normal"
                 style={{ height: `${lineHeightPx}px` }}
               >
                 {lineNum}
@@ -170,17 +134,18 @@ export default function CodeEditor({ code, onChange, onFormat, onClear }) {
           })}
         </div>
 
-        {/* Code Content Area (Overlay Container strictly sized to 14 lines) */}
-        <div className="relative flex-1 h-full overflow-hidden">
-          {/* Syntax Highlighted Background */}
+        {/* Code Content Area: Exact 1:1 Overlay */}
+        <div className="relative flex-1 h-full overflow-hidden bg-[#1e1e1e]">
+          {/* Syntax Highlighted Background (Prism VS Code Dark+) */}
           <pre
             ref={preRef}
             aria-hidden="true"
-            className="code-editor-pre absolute inset-0 px-3 py-0 m-0 overflow-y-auto pointer-events-none z-0 whitespace-pre-wrap break-all"
+            className="code-editor-pre absolute inset-0 px-3 py-0 m-0 overflow-y-auto pointer-events-none z-0 whitespace-pre-wrap break-all select-none"
             style={{ 
               fontSize: `${fontSize}px`, 
               lineHeight: `${lineHeightPx}px`,
-              tabSize: 4
+              tabSize: 4,
+              fontFamily: fontStack,
             }}
             dangerouslySetInnerHTML={{ __html: getHighlightedHtml() }}
           />
@@ -195,15 +160,12 @@ export default function CodeEditor({ code, onChange, onFormat, onClear }) {
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect="off"
-            className={`absolute inset-0 w-full h-full px-3 py-0 m-0 bg-transparent text-transparent resize-none outline-none z-10 whitespace-pre-wrap break-all ${
-              isDarkMode 
-                ? 'caret-sky-400 selection:bg-indigo-500/40' 
-                : 'caret-indigo-600 selection:bg-indigo-100'
-            }`}
+            className="absolute inset-0 w-full h-full px-3 py-0 m-0 bg-transparent text-transparent resize-none outline-none z-10 whitespace-pre-wrap break-all caret-[#aeafad] selection:bg-[#264f78]/70"
             style={{ 
               fontSize: `${fontSize}px`, 
               lineHeight: `${lineHeightPx}px`,
-              tabSize: 4
+              tabSize: 4,
+              fontFamily: fontStack,
             }}
           />
         </div>
@@ -211,3 +173,4 @@ export default function CodeEditor({ code, onChange, onFormat, onClear }) {
     </div>
   );
 }
+
