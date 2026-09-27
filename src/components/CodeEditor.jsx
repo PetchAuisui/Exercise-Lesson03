@@ -46,21 +46,159 @@ export default function CodeEditor({
     }
   };
 
-  // Support Tab key for proper code indentation
+// HTML Void elements that do not have a closing tag
+const VOID_TAGS = new Set([
+  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 
+  'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'
+]);
+
+// Helper to find the most recent unclosed opening tag
+function findLastUnclosedTag(text) {
+  if (!text) return null;
+  const clean = text.replace(/<!--[\s\S]*?-->/g, '');
+  const tagRegex = /<\/?([a-zA-Z][a-zA-Z0-9_-]*)(?:\s+[^<>]*)?\/?>/g;
+  const stack = [];
+  let match;
+  while ((match = tagRegex.exec(clean)) !== null) {
+    const full = match[0];
+    const tagName = match[1].toLowerCase();
+    if (VOID_TAGS.has(tagName) || full.endsWith('/>')) continue;
+    if (full.startsWith('</')) {
+      if (stack.length > 0 && stack[stack.length - 1] === tagName) {
+        stack.pop();
+      }
+    } else {
+      stack.push(tagName);
+    }
+  }
+  return stack.length > 0 ? stack[stack.length - 1] : null;
+}
+
+  // Handle advanced keystrokes: Tab, Auto-closing tags (VS Code style), and Smart Indentation
   const handleKeyDown = (e) => {
     if (isLocked) return;
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    // 1. Support Tab key for 2-space indentation
     if (e.key === 'Tab') {
       e.preventDefault();
-      const textarea = textareaRef.current;
-      if (!textarea) return;
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
       const newValue = code.substring(0, start) + '  ' + code.substring(end);
       onChange(newValue);
       setTimeout(() => {
-        textarea.selectionStart = textarea.selectionEnd = start + 2;
+        if (textareaRef.current) {
+          textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 2;
+        }
       }, 0);
+      return;
     }
+
+    // 2. Auto-close opening tag when typing '>' (e.g. <map> -> <map>|</map>, <div> -> <div>|</div>)
+    if (e.key === '>') {
+      const textBefore = code.substring(0, start);
+      const match = textBefore.match(/<([a-zA-Z][a-zA-Z0-9_-]*)(?:\s+[^<>]*)?$/);
+      if (match) {
+        const fullTag = match[0];
+        const tagName = match[1];
+        const lowerTag = tagName.toLowerCase();
+        
+        // If not self-closing and not a void element (like <img...>, <area...>, <br>)
+        if (!fullTag.trim().endsWith('/') && !VOID_TAGS.has(lowerTag)) {
+          e.preventDefault();
+          const closingTag = `</${tagName}>`;
+          const textAfter = code.substring(end);
+
+          // If identical closing tag isn't already immediately after cursor
+          if (!textAfter.startsWith(closingTag)) {
+            const newValue = code.substring(0, start) + '>' + closingTag + textAfter;
+            onChange(newValue);
+            setTimeout(() => {
+              if (textareaRef.current) {
+                textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 1;
+              }
+            }, 0);
+            return;
+          }
+        }
+      }
+    }
+
+    // 3. Auto-complete closing tag when typing '/' right after '<' (e.g. </ -> </map>)
+    if (e.key === '/') {
+      if (start === end && start > 0 && code[start - 1] === '<') {
+        const unclosedTag = findLastUnclosedTag(code.substring(0, start - 1));
+        if (unclosedTag) {
+          e.preventDefault();
+          const insertText = `/${unclosedTag}>`;
+          const textAfter = code.substring(end);
+          const newValue = code.substring(0, start) + insertText + textAfter;
+          onChange(newValue);
+          setTimeout(() => {
+            if (textareaRef.current) {
+              textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + insertText.length;
+            }
+          }, 0);
+          return;
+        }
+      }
+    }
+
+    // 4. Smart Enter key indentation between opening and closing tags (e.g. <map>|</map> + Enter)
+    if (e.key === 'Enter') {
+      if (start === end && start > 0 && code[start - 1] === '>' && code.substring(end, end + 2) === '</') {
+        e.preventDefault();
+        const lineStart = code.lastIndexOf('\n', start - 1) + 1;
+        const currentLine = code.substring(lineStart, start);
+        const indentMatch = currentLine.match(/^\s*/);
+        const currentIndent = indentMatch ? indentMatch[0] : '';
+        const innerIndent = currentIndent + '  ';
+
+        const insertText = '\n' + innerIndent + '\n' + currentIndent;
+        const newValue = code.substring(0, start) + insertText + code.substring(end);
+        onChange(newValue);
+        setTimeout(() => {
+          if (textareaRef.current) {
+            textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 1 + innerIndent.length;
+          }
+        }, 0);
+        return;
+      }
+    }
+  };
+
+  // Textarea input handler with fallback for mobile/virtual keyboards
+  const handleTextareaChange = (e) => {
+    if (isLocked) return;
+    const newText = e.target.value;
+    const cursor = e.target.selectionStart;
+
+    // Mobile/Touch keyboard fallback: user typed '>' after opening tag
+    if (newText.length === code.length + 1 && cursor > 0 && newText[cursor - 1] === '>') {
+      const textBefore = newText.substring(0, cursor - 1);
+      const match = textBefore.match(/<([a-zA-Z][a-zA-Z0-9_-]*)(?:\s+[^<>]*)?$/);
+      if (match) {
+        const fullTag = match[0];
+        const tagName = match[1];
+        const lowerTag = tagName.toLowerCase();
+        const textAfter = newText.substring(cursor);
+
+        if (!fullTag.trim().endsWith('/') && !VOID_TAGS.has(lowerTag) && !textAfter.startsWith(`</${tagName}>`)) {
+          const closingTag = `</${tagName}>`;
+          const autoValue = newText.substring(0, cursor) + closingTag + textAfter;
+          onChange(autoValue);
+          setTimeout(() => {
+            if (textareaRef.current) {
+              textareaRef.current.selectionStart = textareaRef.current.selectionEnd = cursor;
+            }
+          }, 0);
+          return;
+        }
+      }
+    }
+
+    onChange(newText);
   };
 
   const handleCopy = () => {
@@ -242,7 +380,7 @@ export default function CodeEditor({
           <textarea
             ref={textareaRef}
             value={code}
-            onChange={(e) => !isLocked && onChange(e.target.value)}
+            onChange={handleTextareaChange}
             onKeyDown={handleKeyDown}
             readOnly={isLocked}
             spellCheck="false"
