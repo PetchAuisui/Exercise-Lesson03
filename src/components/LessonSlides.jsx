@@ -10,14 +10,18 @@ import {
   ExternalLink,
   Laptop,
   Lock,
-  Unlock
+  Unlock,
+  LogOut,
+  UserCheck
 } from 'lucide-react';
 
 export default function LessonSlides({ 
   onGoToExercise, 
   isModal = false, 
   onCloseModal,
-  canAccessExercise = false 
+  canAccessExercise = false,
+  student,
+  onLogout
 }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -132,6 +136,30 @@ export default function LessonSlides({
             >
               ปิด
             </button>
+          )}
+
+          {/* Student Info & Logout (For students viewing slides) */}
+          {!isModal && (
+            <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+              {student && (
+                <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/80 rounded-xl border border-slate-700/80 text-xs">
+                  <UserCheck className="w-3.5 h-3.5 text-indigo-400" />
+                  <span className="font-mono text-indigo-300 font-bold">{student.id}</span>
+                  <span className="text-slate-300 font-medium truncate max-w-[120px]">{student.name}</span>
+                </div>
+              )}
+
+              {onLogout && (
+                <button
+                  onClick={onLogout}
+                  title="ออกจากระบบ"
+                  className="px-2.5 sm:px-3 py-1.5 bg-rose-950/70 hover:bg-rose-900 active:bg-rose-950 text-rose-300 hover:text-rose-100 rounded-xl border border-rose-800 transition text-xs sm:text-sm font-semibold flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer shadow-xs"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">ออกจากระบบ</span>
+                </button>
+              )}
+            </div>
           )}
         </div>
       </header>

@@ -16,7 +16,8 @@ import {
   UserX,
   BookOpen,
   Lock,
-  Unlock
+  Unlock,
+  KeyRound
 } from 'lucide-react';
 import { 
   getAllStudentsProgress, 
@@ -26,6 +27,7 @@ import {
   getExercisePermission,
   setExercisePermission
 } from '../utils/adminStorage';
+import { resetStudentPassword } from '../data/students';
 import StudentDetailModal from './StudentDetailModal';
 
 export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewSlides }) {
@@ -47,6 +49,25 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
     const next = !exerciseEnabled;
     setExercisePermission(next);
     setExerciseEnabled(next);
+  };
+
+  // Reset student password back to default 'kmitl'
+  const handleResetPassword = (student) => {
+    if (!student?.id) return;
+    const confirmReset = window.confirm(
+      `คุณต้องการรีเซ็ตรหัสผ่านของ "${student.name}" (รหัส: ${student.id}) กลับเป็น "kmitl" ใช่หรือไม่?\n\n` +
+      `• เมื่อรีเซ็ตแล้ว นักเรียนจะสามารถเข้าสู่ระบบด้วยรหัสผ่าน "kmitl"\n` +
+      `• เมื่อนักเรียนเข้าสู่ระบบสำเร็จ ระบบจะบังคับให้นักเรียนตั้งรหัสผ่านใหม่อีกครั้งทันที (ห้ามใช้ kmitl)`
+    );
+
+    if (confirmReset) {
+      resetStudentPassword(student.id);
+      loadData();
+      if (selectedStudent && selectedStudent.id === student.id) {
+        setSelectedStudent(prev => prev ? { ...prev, hasChangedPassword: false } : null);
+      }
+      alert(`รีเซ็ตรหัสผ่านของ "${student.name}" กลับเป็น "kmitl" เรียบร้อยแล้ว`);
+    }
   };
 
   // Load students progress
@@ -375,6 +396,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
                   <th className="py-3.5 px-4">ชื่อ-นามสกุล</th>
                   <th className="py-3.5 px-4 text-center">สถานะ</th>
                   <th className="py-3.5 px-4 text-center">การส่งงาน</th>
+                  <th className="py-3.5 px-4 text-center">รหัสผ่าน</th>
                   <th className="py-3.5 px-4 text-center">คะแนน</th>
                   <th className="py-3.5 px-4 text-center">เกณฑ์ 5 ข้อ</th>
                   <th className="py-3.5 px-4">อัปเดตล่าสุด</th>
@@ -384,7 +406,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
               <tbody className="divide-y divide-slate-100">
                 {filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan="9" className="py-12 text-center text-slate-400">
+                    <td colSpan="10" className="py-12 text-center text-slate-400">
                       <Search className="w-10 h-10 mx-auto mb-2 text-slate-300" />
                       <p className="font-semibold">ไม่พบข้อมูลนักศึกษาที่ตรงกับเงื่อนไขการค้นหา</p>
                     </td>
@@ -450,6 +472,27 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
                         )}
                       </td>
 
+                      {/* Password Status */}
+                      <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                        {student.hasChangedPassword ? (
+                          <span 
+                            title="นักเรียนเปลี่ยนรหัสผ่านจากค่าเริ่มต้นแล้ว"
+                            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          >
+                            <KeyRound className="w-3 h-3 text-emerald-600" />
+                            <span>เปลี่ยนแล้ว</span>
+                          </span>
+                        ) : (
+                          <span 
+                            title="ยังเป็นรหัสผ่านเริ่มต้น (kmitl)"
+                            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-300"
+                          >
+                            <KeyRound className="w-3 h-3 text-amber-600" />
+                            <span>kmitl</span>
+                          </span>
+                        )}
+                      </td>
+
                       {/* Score */}
                       <td className="py-3.5 px-4 text-center">
                         <div className="inline-flex flex-col items-center">
@@ -495,15 +538,27 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
                         }
                       </td>
 
-                      {/* Action: Inspect Code */}
+                      {/* Action: Inspect Code & Reset Password */}
                       <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                        <button
-                          onClick={() => setSelectedStudent(student)}
-                          className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 hover:text-indigo-900 rounded-lg text-xs font-bold border border-indigo-200 transition flex items-center gap-1.5 mx-auto shadow-2xs"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>ดูโค้ดและผลงาน</span>
-                        </button>
+                        <div className="flex items-center justify-center gap-1.5 flex-nowrap">
+                          <button
+                            onClick={() => setSelectedStudent(student)}
+                            title="ดูโค้ดและผลงานของนักศึกษา"
+                            className="px-2.5 sm:px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 hover:text-indigo-900 rounded-lg text-xs font-bold border border-indigo-200 transition flex items-center gap-1 cursor-pointer shadow-2xs"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>ดูโค้ด</span>
+                          </button>
+
+                          <button
+                            onClick={() => handleResetPassword(student)}
+                            title={`คลิกเพื่อรีเซ็ตรหัสผ่านของ ${student.name} กลับเป็น 'kmitl'`}
+                            className="px-2.5 sm:px-3 py-1.5 bg-slate-50 hover:bg-amber-50 active:bg-amber-100 text-slate-700 hover:text-amber-800 rounded-lg text-xs font-semibold border border-slate-200 hover:border-amber-300 transition flex items-center gap-1 cursor-pointer shadow-2xs"
+                          >
+                            <KeyRound className="w-3.5 h-3.5 text-amber-600" />
+                            <span className="hidden xl:inline">รีเซ็ตรหัส</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -532,6 +587,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
         student={selectedStudent}
         isOpen={!!selectedStudent}
         onClose={() => setSelectedStudent(null)}
+        onResetPassword={handleResetPassword}
       />
 
     </div>

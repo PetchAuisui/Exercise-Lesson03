@@ -1,4 +1,4 @@
-import { STUDENTS_DATABASE } from '../data/students.js';
+import { STUDENTS_DATABASE, isPasswordChanged, resetStudentPassword } from '../data/students.js';
 import { validateHtmlCode } from './htmlValidator.js';
 
 const safeGetItem = (key) => {
@@ -145,6 +145,7 @@ export function getAllStudentsProgress() {
       totalCount,
       score: passedCount, // Out of 5
       scorePercent: Math.round((passedCount / totalCount) * 100),
+      hasChangedPassword: isPasswordChanged(student.id),
       status,
       statusColor,
     };

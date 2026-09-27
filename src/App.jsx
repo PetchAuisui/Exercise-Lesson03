@@ -9,7 +9,9 @@ import SolutionModal from './components/SolutionModal';
 import LoginScreen from './components/LoginScreen';
 import AdminDashboard from './components/AdminDashboard';
 import LessonSlides from './components/LessonSlides';
+import ForcePasswordChangeModal from './components/ForcePasswordChangeModal';
 import { validateHtmlCode, SAMPLE_SOLUTION } from './utils/htmlValidator';
+import { isPasswordChanged } from './data/students';
 import { 
   recordStudentCodeUpdate, 
   getSolutionPermission,
@@ -50,27 +52,44 @@ export default function App() {
     return false;
   });
 
-  // Sync solution permission, exercise unlock, and submission state across tabs/windows
+  // Password change enforcement state (Forces change if still default 'kmitl')
+  const [mustChangePassword, setMustChangePassword] = useState(() => {
+    if (currentStudent && currentStudent.role === 'student') {
+      return !isPasswordChanged(currentStudent.id);
+    }
+    return false;
+  });
+
+  // Sync solution permission, exercise unlock, submission, and password state across tabs
   useEffect(() => {
     const handleStorageChange = () => {
       setSolutionEnabled(getSolutionPermission());
       setExerciseEnabled(getExercisePermission());
       if (currentStudent?.id) {
         setIsSubmitted(!!getStudentSubmission(currentStudent.id));
+        if (currentStudent.role === 'student') {
+          setMustChangePassword(!isPasswordChanged(currentStudent.id));
+        }
       }
     };
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, [currentStudent?.id]);
+  }, [currentStudent?.id, currentStudent?.role]);
 
-  // Update submission state when current student changes
+  // Update submission and password state when current student changes
   useEffect(() => {
     if (currentStudent?.id) {
       setIsSubmitted(!!getStudentSubmission(currentStudent.id));
+      if (currentStudent.role === 'student') {
+        setMustChangePassword(!isPasswordChanged(currentStudent.id));
+      } else {
+        setMustChangePassword(false);
+      }
     } else {
       setIsSubmitted(false);
+      setMustChangePassword(false);
     }
-  }, [currentStudent?.id]);
+  }, [currentStudent?.id, currentStudent?.role]);
 
   // Code starts completely empty ("") - student must write from scratch
   const [code, setCode] = useState(() => {
@@ -108,6 +127,11 @@ export default function App() {
   const handleLoginSuccess = (student) => {
     localStorage.setItem('ws_auth_student', JSON.stringify(student));
     setCurrentStudent(student);
+    if (student.role === 'student') {
+      setMustChangePassword(!isPasswordChanged(student.id));
+    } else {
+      setMustChangePassword(false);
+    }
     setActiveView('slides');
   };
 
@@ -175,6 +199,19 @@ export default function App() {
   // If not logged in, show Login Screen
   if (!currentStudent) {
     return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  // Force student to change password if still using default 'kmitl'
+  if (currentStudent.role === 'student' && mustChangePassword) {
+    return (
+      <ForcePasswordChangeModal
+        student={currentStudent}
+        onPasswordChanged={() => {
+          setMustChangePassword(false);
+        }}
+        onLogout={handleLogout}
+      />
+    );
   }
 
   // Determine if exercise is unlocked for current user
@@ -252,6 +289,8 @@ export default function App() {
               alert('แบบฝึกหัดยังไม่เปิดให้ทำ กรุณารออาจารย์ผู้สอนปลดล็อกแบบฝึกหัด');
             }
           }} 
+          student={currentStudent.role === 'student' ? currentStudent : null}
+          onLogout={currentStudent.role === 'student' ? handleLogout : null}
         />
       </div>
     );
