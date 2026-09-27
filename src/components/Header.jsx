@@ -1,11 +1,9 @@
 import React from 'react';
-import { BookOpen, FileText, CheckCircle2, Lightbulb, LogOut, UserCheck } from 'lucide-react';
+import { BookOpen, CheckCircle2, Lightbulb, LogOut, UserCheck } from 'lucide-react';
 
 export default function Header({ 
   studentName, 
   studentId, 
-  viewMode, 
-  setViewMode, 
   onShowSolution,
   onLogout,
   passedCount,
@@ -57,30 +55,6 @@ export default function Header({
               </div>
             </div>
 
-            {/* View Mode Toggle */}
-            <div className="bg-slate-100 p-1 rounded-xl flex border border-slate-200 text-xs sm:text-sm font-medium shrink-0 whitespace-nowrap">
-              <button
-                onClick={() => setViewMode('interactive')}
-                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition whitespace-nowrap ${
-                  viewMode === 'interactive' 
-                    ? 'bg-white text-indigo-700 shadow-xs font-bold' 
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <span>💻 โหมดฝึกเขียนโค้ด</span>
-              </button>
-              <button
-                onClick={() => setViewMode('paper')}
-                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition whitespace-nowrap ${
-                  viewMode === 'paper' 
-                    ? 'bg-white text-indigo-700 shadow-xs font-bold' 
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <FileText className="w-4 h-4 shrink-0" />
-                <span>📄 โหมดใบงาน</span>
-              </button>
-            </div>
 
             {/* Solution Button */}
             <button
