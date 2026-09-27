@@ -118,24 +118,13 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
             </div>
           </div>
 
-          {/* Right: Action Buttons (Single Row, Never Wraps) */}
-          <div className="flex items-center gap-2 shrink-0 flex-nowrap overflow-x-auto py-1">
-            {/* Refresh Button */}
-            <button
-              onClick={loadData}
-              disabled={isRefreshing}
-              title="รีเฟรชข้อมูลล่าสุด"
-              className="px-2.5 sm:px-3 py-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-700 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-xs shrink-0 whitespace-nowrap cursor-pointer"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-amber-400' : ''}`} />
-              <span className="hidden md:inline">{isRefreshing ? 'กำลังโหลด...' : 'รีเฟรช'}</span>
-            </button>
-
+          {/* Right: Master Classroom Controls & Logout */}
+          <div className="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap ml-auto">
             {/* Exercise Access Toggle Button (Teacher controls when students can start exercise) */}
             <button
               onClick={handleToggleExercise}
               title={exerciseEnabled ? 'คลิกเพื่อล็อกแบบฝึกหัด (นักเรียนจะเริ่มทำไม่ได้)' : 'คลิกเพื่อปลดล็อกแบบฝึกหัดให้นักเรียนเริ่มทำได้'}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 border shadow-xs shrink-0 whitespace-nowrap cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 border shadow-xs shrink-0 whitespace-nowrap cursor-pointer ${
                 exerciseEnabled
                   ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
                   : 'bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/30'
@@ -149,7 +138,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
               ) : (
                 <>
                   <Lock className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                  <span>แบบฝึกหัด: <span className="text-rose-300">ล็อกอยู่ (รอครูเปิด)</span></span>
+                  <span>แบบฝึกหัด: <span className="text-rose-300">ล็อกอยู่</span></span>
                 </>
               )}
             </button>
@@ -158,7 +147,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
             <button
               onClick={handleToggleSolution}
               title={solutionEnabled ? 'คลิกเพื่อปิดเฉลยฝั่งนักเรียน' : 'คลิกเพื่อเปิดเฉลยให้นักเรียนเห็น'}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 border shadow-xs shrink-0 whitespace-nowrap cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 border shadow-xs shrink-0 whitespace-nowrap cursor-pointer ${
                 solutionEnabled
                   ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
                   : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white'
@@ -175,40 +164,6 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
                   <span>เฉลย: <span className="text-amber-300">ปิดอยู่</span></span>
                 </>
               )}
-            </button>
-
-            {/* View Student Workspace Preview Button */}
-            {onPreviewStudentView && (
-              <button
-                onClick={onPreviewStudentView}
-                title="ดูหน้าตาแบบฝึกหัดที่นักเรียนมองเห็น"
-                className="px-3 sm:px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer"
-              >
-                <Eye className="w-3.5 h-3.5" />
-                <span>ดูแบบฝึกหัดนักเรียน</span>
-              </button>
-            )}
-
-            {/* View Slides Button for Teacher */}
-            {onViewSlides && (
-              <button
-                onClick={onViewSlides}
-                title="เปิดดูสไลด์เอกสารประกอบการสอน 14 สไลด์"
-                className="px-3 sm:px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-                <span>สไลด์บทเรียน</span>
-              </button>
-            )}
-
-            {/* Export CSV Button */}
-            <button
-              onClick={handleExport}
-              title="ดาวน์โหลดคะแนนของทุกคนเป็นไฟล์ CSV / Excel"
-              className="px-3 sm:px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>ดาวน์โหลดคะแนน (CSV)</span>
             </button>
 
             {/* Logout Button */}
@@ -306,7 +261,64 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
         </div>
 
         {/* Action and Filter Bar */}
-        <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs space-y-3.5">
+          
+          {/* Top Row: Quick Teaching Tools & Data Export */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            {/* Left: Teaching Material & Student View Shortcuts */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1 hidden sm:inline">
+                เครื่องมืออาจารย์:
+              </span>
+
+              {onPreviewStudentView && (
+                <button
+                  onClick={onPreviewStudentView}
+                  title="ดูหน้าตาแบบฝึกหัดที่นักเรียนมองเห็น"
+                  className="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-700 rounded-xl border border-indigo-200 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                >
+                  <Eye className="w-4 h-4 text-indigo-600" />
+                  <span>ดูแบบฝึกหัดนักเรียน</span>
+                </button>
+              )}
+
+              {onViewSlides && (
+                <button
+                  onClick={onViewSlides}
+                  title="เปิดดูสไลด์เอกสารประกอบการสอน 12 สไลด์ (PDF)"
+                  className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                >
+                  <BookOpen className="w-4 h-4 text-indigo-600" />
+                  <span>สไลด์บทเรียน (PDF)</span>
+                </button>
+              )}
+            </div>
+
+            {/* Right: Refresh & CSV Export */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={loadData}
+                disabled={isRefreshing}
+                title="รีเฟรชข้อมูลคะแนนล่าสุด"
+                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-indigo-600' : 'text-slate-500'}`} />
+                <span>{isRefreshing ? 'กำลังโหลด...' : 'รีเฟรชข้อมูล'}</span>
+              </button>
+
+              <button
+                onClick={handleExport}
+                title="ดาวน์โหลดคะแนนของทุกคนเป็นไฟล์ CSV / Excel"
+                className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+                <span>ดาวน์โหลดคะแนน (CSV)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Bottom Row: Search Box & Status Filter Pills */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
           
           {/* Search Box */}
           <div className="relative flex-1 min-w-[260px] max-w-md">
@@ -349,7 +361,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
               </button>
             ))}
           </div>
-
+          </div>
         </div>
 
         {/* Students Table */}
