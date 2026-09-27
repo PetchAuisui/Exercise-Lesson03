@@ -15,7 +15,47 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
       // Intentionally break the image source to let student see alt text
       processed = processed.replace(/src\s*=\s*["'](?:\.\/)?temple\.jpg["']/gi, 'src="broken_temple.jpg"');
     }
-    return processed;
+
+    // Inject responsive preview helper style
+    const previewHelperStyle = `
+      <style>
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Sarabun', sans-serif;
+          margin: 16px;
+          background: #ffffff;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          min-height: 100%;
+        }
+        img {
+          max-width: 100%;
+          height: auto;
+          display: block;
+          margin: 10px auto;
+          border-radius: 12px;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+          border: 1px solid #e2e8f0;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        a {
+          display: inline-block;
+          text-decoration: none;
+        }
+        a:hover img {
+          transform: scale(1.02);
+          box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2);
+        }
+      </style>
+    `;
+
+    if (processed.includes('</head>')) {
+      return processed.replace('</head>', `${previewHelperStyle}</head>`);
+    } else if (processed.includes('<body>')) {
+      return processed.replace('<body>', `<head>${previewHelperStyle}</head><body>`);
+    }
+    return `${previewHelperStyle}${processed}`;
   };
 
   const navigateTo = (url) => {
@@ -80,7 +120,7 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+    <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col h-full min-h-[640px]">
       {/* Browser Top Window Frame */}
       <div className="bg-slate-100 border-b border-slate-200 p-2.5 space-y-2">
         {/* Window controls & Tab */}

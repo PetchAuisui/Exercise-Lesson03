@@ -28,3 +28,46 @@
     width: 100% !important;
   }
 }
+
+/* VS Code Real Syntax Colors */
+.code-editor-pre,
+.code-editor-pre code {
+  color: #d4d4d4;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.code-editor-pre .token.doctype,
+.code-editor-pre .token.doctype .token.name {
+  color: #c586c0 !important; /* VS Code Purple */
+  font-weight: 600;
+}
+
+.code-editor-pre .token.tag {
+  color: #4ec9b0 !important; /* VS Code Cyan/Blue */
+  font-weight: 500;
+}
+
+.code-editor-pre .token.tag .token.tag {
+  color: #569cd6 !important; /* VS Code Blue for element tags */
+}
+
+.code-editor-pre .token.attr-name {
+  color: #9cdcfe !important; /* VS Code Light Blue for attributes */
+}
+
+.code-editor-pre .token.attr-value,
+.code-editor-pre .token.string {
+  color: #ce9178 !important; /* VS Code Warm Orange for strings */
+}
+
+.code-editor-pre .token.punctuation {
+  color: #808080 !important; /* VS Code Gray for <, >, =, / */
+}
+
+.code-editor-pre .token.comment {
+  color: #6a9955 !important; /* VS Code Green for comments */
+  font-style: italic;
+}
+

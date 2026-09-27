@@ -153,9 +153,9 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 flex flex-col">
+      <main className="flex-1 max-w-[1720px] w-full mx-auto p-3 sm:p-6 lg:p-8 flex flex-col">
         {viewMode === 'interactive' ? (
-          <div className="flex flex-col gap-4 flex-1">
+          <div className="flex flex-col gap-5 flex-1">
             {/* Criteria Checklist */}
             <TaskChecklist
               validation={validation}
@@ -164,9 +164,9 @@ export default function App() {
             />
 
             {/* Split Screen Workspace: Editor (Left) & Preview (Right) */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-[560px]">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 flex-1 min-h-[660px]">
               {/* Code Editor */}
-              <div className="flex flex-col h-full min-h-[400px]">
+              <div className="flex flex-col h-full min-h-[640px]">
                 <CodeEditor
                   code={code}
                   onChange={setCode}
@@ -176,7 +176,7 @@ export default function App() {
               </div>
 
               {/* Live Browser Preview */}
-              <div className="flex flex-col h-full min-h-[400px]">
+              <div className="flex flex-col h-full min-h-[640px]">
                 <BrowserPreview
                   code={code}
                   pageTitle={validation.extractedTitle}
