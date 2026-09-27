@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Code2, Copy, Check, Trash2, ZoomIn, ZoomOut, Globe } from 'lucide-react';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-markup';
@@ -15,7 +15,14 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
   // Extend code lines down comfortably so the temple image and code have plenty of room
   const minLines = 18;
   const lineCount = Math.max(lines.length, minLines);
-  const totalBodyHeightPx = lineCount * lineHeightPx;
+  const totalBodyHeightPx = lineCount * lineHeightPx + 24; // +24px for top & bottom padding (py-3)
+
+  // Auto-focus textarea on mount
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, []);
 
   // Sync scroll between textarea, syntax highlight pre, and line numbers gutter
   const handleScroll = (e) => {
@@ -25,6 +32,22 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
     }
     if (gutterRef.current) {
       gutterRef.current.scrollTop = e.target.scrollTop;
+    }
+  };
+
+  // Support Tab key for proper code indentation
+  const handleKeyDown = (e) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const newValue = code.substring(0, start) + '  ' + code.substring(end);
+      onChange(newValue);
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = start + 2;
+      }, 0);
     }
   };
 
@@ -115,13 +138,14 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
 
       {/* Editor Body: Clean spacious coding area with at least 18+ lines */}
       <div 
-        className="flex overflow-hidden relative select-text bg-[#1e1e1e] flex-1 min-h-[470px]"
+        onClick={() => textareaRef.current?.focus()}
+        className="flex relative bg-[#1e1e1e] flex-1 cursor-text select-text min-h-[470px]"
         style={{ height: `${totalBodyHeightPx}px` }}
       >
         {/* Line Numbers Gutter: VS Code style #858585 */}
         <div 
           ref={gutterRef}
-          className="w-12 sm:w-14 py-0 select-none font-mono text-right pr-3.5 shrink-0 border-r border-[#2d2d2d] bg-[#1e1e1e] overflow-hidden"
+          className="w-12 sm:w-14 py-3 select-none font-mono text-right pr-3.5 shrink-0 border-r border-[#2d2d2d] bg-[#1e1e1e] overflow-hidden"
           style={{ fontSize: `${fontSize}px`, lineHeight: `${lineHeightPx}px`, fontFamily: fontStack }}
         >
           {Array.from({ length: lineCount }).map((_, idx) => {
@@ -138,38 +162,49 @@ export default function CodeEditor({ code, onChange, onClear, onSwitchToPreview 
           })}
         </div>
 
-        {/* Code Content Area: Exact 1:1 Overlay */}
-        <div className="relative flex-1 h-full overflow-hidden bg-[#1e1e1e]">
+        {/* Code Content Area: Exact 1:1 Overlay with Interactive Focus */}
+        <div className="relative flex-1 bg-[#1e1e1e] overflow-hidden h-full">
           {/* Syntax Highlighted Background (Prism VS Code Dark+) */}
           <pre
             ref={preRef}
             aria-hidden="true"
-            className="code-editor-pre absolute inset-0 px-3 py-0 m-0 overflow-y-auto pointer-events-none z-0 whitespace-pre-wrap break-all select-none"
+            className="code-editor-pre absolute inset-0 p-3 m-0 overflow-hidden pointer-events-none z-0 select-none"
             style={{ 
               fontSize: `${fontSize}px`, 
               lineHeight: `${lineHeightPx}px`,
-              tabSize: 4,
+              tabSize: 2,
               fontFamily: fontStack,
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
             }}
             dangerouslySetInnerHTML={{ __html: getHighlightedHtml() }}
           />
 
-          {/* Interactive Transparent Textarea */}
+          {/* Interactive Textarea with Perfect Input Handling */}
           <textarea
             ref={textareaRef}
             value={code}
             onChange={(e) => onChange(e.target.value)}
+            onKeyDown={handleKeyDown}
             onScroll={handleScroll}
             spellCheck="false"
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect="off"
-            className="absolute inset-0 w-full h-full px-3 py-0 m-0 bg-transparent text-transparent resize-none outline-none z-10 whitespace-pre-wrap break-all caret-[#aeafad] selection:bg-[#264f78]/70"
+            autoFocus
+            className="absolute inset-0 w-full h-full p-3 m-0 bg-transparent resize-none outline-none z-10 overflow-y-auto"
             style={{ 
               fontSize: `${fontSize}px`, 
               lineHeight: `${lineHeightPx}px`,
-              tabSize: 4,
+              tabSize: 2,
               fontFamily: fontStack,
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
+              color: '#d4d4d4',
+              WebkitTextFillColor: 'transparent',
+              caretColor: '#569cd6',
             }}
           />
         </div>
