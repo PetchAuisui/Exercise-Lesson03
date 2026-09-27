@@ -36,24 +36,16 @@ export default function TaskChecklist({ validation, isOpen, onToggle }) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
             
             {/* สถานการณ์และคำชี้แจง (7 cols) */}
-            <div className="lg:col-span-7 bg-amber-50/80 border border-amber-200 rounded-xl p-4 text-sm sm:text-base text-amber-950 shadow-2xs flex flex-col justify-between">
-              <div>
-                <div className="font-bold mb-1.5 flex items-center gap-2 text-base text-amber-950">
-                  <span>📌 สถานการณ์:</span>
-                </div>
-                <p className="font-normal text-amber-900 leading-relaxed">
-                  คุณกำลังสร้างหน้าเว็บแนะนำสถานที่ท่องเที่ยว เขียน HTML ให้หน้าเว็บทำงานตามเงื่อนไขทั้ง 5 ข้อด้านล่าง
-                </p>
-                <p className="mt-1.5 text-amber-900/90 font-medium text-xs sm:text-sm">
-                  <strong className="text-amber-950">คำชี้แจง:</strong> เลือกใช้แท็กและ Attribute ที่เหมาะสม แล้วเขียนโค้ดด้วยตนเอง โดยไม่เติมคำลงในโครงสร้างที่เตรียมไว้
-                </p>
+            <div className="lg:col-span-7 bg-amber-50/80 border border-amber-200 rounded-xl p-4 sm:p-5 text-base sm:text-lg text-amber-950 shadow-2xs flex flex-col justify-center space-y-2">
+              <div className="font-bold flex items-center gap-2 text-base sm:text-lg text-amber-950">
+                <span>📌 สถานการณ์:</span>
               </div>
-
-              {/* Tag ข้อมูลสถานที่ */}
-              <div className="mt-3 pt-2 border-t border-amber-200/70 flex items-center gap-2 text-xs sm:text-sm text-amber-900">
-                <span className="font-bold text-amber-950">🏛️ สถานที่:</span>
-                <span>วัดพระศรีรัตนศาสดาราม (วัดพระแก้ว)</span>
-              </div>
+              <p className="text-base sm:text-lg text-amber-950 leading-relaxed">
+                คุณกำลังสร้างหน้าเว็บแนะนำสถานที่ท่องเที่ยว เขียน HTML ให้หน้าเว็บทำงานตามเงื่อนไขทั้ง 5 ข้อด้านล่าง
+              </p>
+              <p className="text-base sm:text-lg text-amber-950 leading-relaxed">
+                <strong className="font-bold text-amber-950">คำชี้แจง:</strong> เลือกใช้แท็กและ Attribute ที่เหมาะสม แล้วเขียนโค้ดด้วยตนเอง โดยไม่เติมคำลงในโครงสร้างที่เตรียมไว้
+              </p>
             </div>
 
             {/* โครงสร้างโฟลเดอร์แบบ Tree (5 cols) */}
