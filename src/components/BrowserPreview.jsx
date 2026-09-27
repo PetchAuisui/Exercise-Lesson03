@@ -232,35 +232,6 @@ export default function BrowserPreview({ code, pageTitle, validation }) {
         )}
       </div>
 
-      {/* Status Bar */}
-      <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm text-slate-700">
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-1.5">
-            <span className="text-slate-500 font-medium">รูปภาพ:</span>
-            <span className={validation.criteria[2].passed ? "text-emerald-700 font-bold" : "text-slate-600 font-medium"}>
-              image/temple.jpg {validation.criteria[2].passed ? '✓' : ''}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-slate-500 font-medium">ข้อความทดแทน:</span>
-            <span className={validation.criteria[3].passed ? "text-emerald-700 font-bold" : "text-slate-600 font-medium"}>
-              alt="วัดไทย" {validation.criteria[3].passed ? '✓' : ''}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-slate-500 font-medium">ลิงก์ภาพ:</span>
-            <span className={validation.criteria[4].passed ? "text-emerald-700 font-bold" : "text-slate-600 font-medium"}>
-              href="detail.html" {validation.criteria[4].passed ? '✓' : ''}
-            </span>
-          </div>
-        </div>
-
-        {validation.isAllPassed && (
-          <span className="text-emerald-600 font-bold flex items-center gap-1 text-sm">
-            🎉 ยอดเยี่ยม! ผ่านเกณฑ์ครบทุกข้อ
-          </span>
-        )}
-      </div>
     </div>
   );
 }

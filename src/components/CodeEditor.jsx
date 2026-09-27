@@ -158,14 +158,6 @@ export default function CodeEditor({ code, onChange, onFormat, onClear }) {
         </div>
       </div>
 
-      {/* Footer Info */}
-      <div className="px-5 py-2.5 bg-slate-900 border-t border-slate-800 text-xs sm:text-sm text-slate-400 flex items-center justify-between">
-        <span className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-          <span>สีโค้ดจริง (HTML Syntax Highlighting • VS Code Style)</span>
-        </span>
-        <span className="text-amber-400 font-semibold">Basic Website Design</span>
-      </div>
     </div>
   );
 }
