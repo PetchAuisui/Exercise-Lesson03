@@ -34,23 +34,15 @@ export default function WorksheetPaperView({
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-sm sm:text-base font-normal mb-8">
           <div className="flex items-center flex-1 w-full sm:w-auto">
             <span className="font-semibold whitespace-nowrap mr-2">ชื่อ</span>
-            <input
-              type="text"
-              value={studentName}
-              onChange={(e) => setStudentName(e.target.value)}
-              placeholder="______________________________________"
-              className="border-b border-slate-400 focus:border-indigo-600 outline-none flex-1 px-1 bg-transparent placeholder:text-slate-300"
-            />
+            <div className="border-b border-slate-700 flex-1 px-2 py-0.5 font-medium text-slate-900">
+              {studentName || <span className="text-slate-300">______________________________________</span>}
+            </div>
           </div>
           <div className="flex items-center w-full sm:w-72">
             <span className="font-semibold whitespace-nowrap mr-2">รหัสประจำตัว</span>
-            <input
-              type="text"
-              value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
-              placeholder="___________________"
-              className="border-b border-slate-400 focus:border-indigo-600 outline-none flex-1 px-1 bg-transparent placeholder:text-slate-300"
-            />
+            <div className="border-b border-slate-700 flex-1 px-2 py-0.5 font-mono font-medium text-slate-900">
+              {studentId || <span className="text-slate-300">___________________</span>}
+            </div>
           </div>
         </div>
 

@@ -135,7 +135,7 @@ export default function CodeEditor({ code, onChange, onFormat, onClear }) {
           ref={textareaRef}
           value={code}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="<!-- เขียนโค้ด HTML ที่นี่ตามโจทย์ข้อ 1-5 -->"
+          placeholder="เริ่มเขียนโค้ด HTML ที่นี่ด้วยตนเองตั้งแต่บรรทัดที่ 1 (เช่น <!DOCTYPE html>...)"
           spellCheck="false"
           autoCapitalize="none"
           autoComplete="off"

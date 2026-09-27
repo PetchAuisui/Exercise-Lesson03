@@ -6,38 +6,69 @@ import CodeEditor from './components/CodeEditor';
 import BrowserPreview from './components/BrowserPreview';
 import WorksheetPaperView from './components/WorksheetPaperView';
 import SolutionModal from './components/SolutionModal';
-import { validateHtmlCode, STARTER_TEMPLATE, SAMPLE_SOLUTION } from './utils/htmlValidator';
+import LoginScreen from './components/LoginScreen';
+import { validateHtmlCode, SAMPLE_SOLUTION } from './utils/htmlValidator';
 
 export default function App() {
-  const [studentName, setStudentName] = useState(() => {
-    return localStorage.getItem('ws_student_name') || '';
+  // Authentication State
+  const [currentStudent, setCurrentStudent] = useState(() => {
+    const saved = localStorage.getItem('ws_auth_student');
+    try {
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
   });
-  const [studentId, setStudentId] = useState(() => {
-    return localStorage.getItem('ws_student_id') || '';
-  });
+
+  const studentName = currentStudent?.name || '';
+  const studentId = currentStudent?.id || '';
+
+  // Code starts completely empty ("") - student must write from scratch
   const [code, setCode] = useState(() => {
-    return localStorage.getItem('ws_code') || STARTER_TEMPLATE;
+    if (currentStudent?.id) {
+      return localStorage.getItem(`ws_code_${currentStudent.id}`) || '';
+    }
+    return '';
   });
+
   const [viewMode, setViewMode] = useState('interactive'); // 'interactive' | 'paper'
   const [checklistOpen, setChecklistOpen] = useState(true);
   const [showSolution, setShowSolution] = useState(false);
   const prevPassedRef = useRef(false);
 
+  // When student switches/logs in, load their code or empty string
+  useEffect(() => {
+    if (currentStudent?.id) {
+      const savedCode = localStorage.getItem(`ws_code_${currentStudent.id}`) || '';
+      setCode(savedCode);
+    } else {
+      setCode('');
+    }
+  }, [currentStudent?.id]);
+
+  // Save student code per account
+  useEffect(() => {
+    if (currentStudent?.id) {
+      localStorage.setItem(`ws_code_${currentStudent.id}`, code);
+    }
+  }, [code, currentStudent?.id]);
+
+  // Handle Login Success
+  const handleLoginSuccess = (student) => {
+    localStorage.setItem('ws_auth_student', JSON.stringify(student));
+    setCurrentStudent(student);
+  };
+
+  // Handle Logout
+  const handleLogout = () => {
+    if (window.confirm('คุณต้องการออกจากระบบใช่หรือไม่?')) {
+      localStorage.removeItem('ws_auth_student');
+      setCurrentStudent(null);
+    }
+  };
+
   // Validate code
   const validation = validateHtmlCode(code);
-
-  // Save to localStorage
-  useEffect(() => {
-    localStorage.setItem('ws_student_name', studentName);
-  }, [studentName]);
-
-  useEffect(() => {
-    localStorage.setItem('ws_student_id', studentId);
-  }, [studentId]);
-
-  useEffect(() => {
-    localStorage.setItem('ws_code', code);
-  }, [code]);
 
   // Celebrate with confetti when user completes all 5 criteria!
   useEffect(() => {
@@ -52,8 +83,8 @@ export default function App() {
   }, [validation.isAllPassed]);
 
   const handleReset = () => {
-    if (window.confirm('คุณต้องการรีเซ็ตโค้ดกลับไปเป็นค่าเริ่มต้นใช่หรือไม่?')) {
-      setCode(STARTER_TEMPLATE);
+    if (window.confirm('คุณต้องการรีเซ็ตโค้ดเพื่อเริ่มต้นเขียนใหม่ตั้งแต่ต้นใช่หรือไม่?')) {
+      setCode('');
     }
   };
 
@@ -99,18 +130,24 @@ export default function App() {
     setCode(formatted);
   };
 
+  // If not logged in, show Login Screen
+  if (!currentStudent) {
+    return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 font-thai text-slate-800">
       {/* Top Navigation */}
       <Header
         studentName={studentName}
-        setStudentName={setStudentName}
+        setStudentName={() => {}}
         studentId={studentId}
-        setStudentId={setStudentId}
+        setStudentId={() => {}}
         viewMode={viewMode}
         setViewMode={setViewMode}
         onReset={handleReset}
         onShowSolution={() => setShowSolution(true)}
+        onLogout={handleLogout}
         passedCount={validation.passedCount}
         totalCount={validation.totalCount}
       />
@@ -152,9 +189,9 @@ export default function App() {
           /* Paper Worksheet Mode */
           <WorksheetPaperView
             studentName={studentName}
-            setStudentName={setStudentName}
+            setStudentName={() => {}}
             studentId={studentId}
-            setStudentId={setStudentId}
+            setStudentId={() => {}}
             code={code}
             onChangeCode={setCode}
           />

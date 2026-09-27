@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, FileText, CheckCircle2, RotateCcw, Lightbulb, Printer } from 'lucide-react';
+import { BookOpen, FileText, CheckCircle2, RotateCcw, Lightbulb, Printer, LogOut, UserCheck } from 'lucide-react';
 
 export default function Header({ 
   studentName, 
@@ -10,6 +10,7 @@ export default function Header({
   setViewMode, 
   onReset, 
   onShowSolution,
+  onLogout,
   passedCount,
   totalCount
 }) {
@@ -45,28 +46,16 @@ export default function Header({
             </div>
           </div>
 
-          {/* Student Info Inputs */}
-          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-            <div className="flex items-center bg-slate-100 rounded-lg px-2.5 py-1.5 border border-slate-200 text-xs flex-1 sm:flex-none">
-              <span className="text-slate-500 font-medium mr-1.5 whitespace-nowrap">ชื่อ:</span>
-              <input 
-                type="text" 
-                value={studentName}
-                onChange={(e) => setStudentName(e.target.value)}
-                placeholder="ระบุชื่อ-นามสกุล..." 
-                className="bg-transparent border-none outline-none text-slate-800 w-32 sm:w-40 font-medium placeholder:text-slate-400"
-              />
-            </div>
-
-            <div className="flex items-center bg-slate-100 rounded-lg px-2.5 py-1.5 border border-slate-200 text-xs flex-1 sm:flex-none">
-              <span className="text-slate-500 font-medium mr-1.5 whitespace-nowrap">รหัสประจำตัว:</span>
-              <input 
-                type="text" 
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
-                placeholder="รหัสประจำตัว..." 
-                className="bg-transparent border-none outline-none text-slate-800 w-24 sm:w-28 font-medium placeholder:text-slate-400"
-              />
+          {/* Student Info Display */}
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="flex items-center bg-indigo-50/70 border border-indigo-200/80 rounded-lg px-3 py-1.5 text-xs text-indigo-950 font-medium">
+              <UserCheck className="w-4 h-4 text-indigo-600 mr-2 shrink-0" />
+              <div className="flex items-center gap-2">
+                <span className="font-bold font-mono bg-white px-1.5 py-0.5 rounded border border-indigo-100 text-indigo-700">
+                  {studentId}
+                </span>
+                <span className="truncate max-w-[140px] sm:max-w-none">{studentName}</span>
+              </div>
             </div>
           </div>
 
@@ -116,10 +105,19 @@ export default function Header({
 
             <button
               onClick={onReset}
-              title="รีเซ็ตโค้ดใหม่"
+              title="รีเซ็ตโค้ดใหม่ (เริ่มต้นใหม่ตั้งแต่ต้น)"
               className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg border border-slate-200 transition"
             >
               <RotateCcw className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={onLogout}
+              title="ออกจากระบบ"
+              className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg border border-rose-200 transition text-xs flex items-center gap-1"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">ออกจากระบบ</span>
             </button>
           </div>
 

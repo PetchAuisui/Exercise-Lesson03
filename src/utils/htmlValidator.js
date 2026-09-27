@@ -120,12 +120,5 @@ export const SAMPLE_SOLUTION = `<!DOCTYPE html>
 </body>
 </html>`;
 
-export const STARTER_TEMPLATE = `<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-    
-</body>
-</html>`;
+export const STARTER_TEMPLATE = '';
+
