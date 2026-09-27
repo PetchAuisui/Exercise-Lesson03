@@ -14,9 +14,11 @@ import {
   FileSpreadsheet, 
   TrendingUp,
   UserX,
-  BookOpen
+  BookOpen,
+  Lock,
+  Unlock
 } from 'lucide-react';
-import { getAllStudentsProgress, exportScoresToCSV } from '../utils/adminStorage';
+import { getAllStudentsProgress, exportScoresToCSV, getSolutionPermission, setSolutionPermission } from '../utils/adminStorage';
 import StudentDetailModal from './StudentDetailModal';
 
 export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
@@ -25,6 +27,13 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'เสร็จสมบูรณ์' | 'กำลังทำ' | 'ยังไม่ทำ' | 'ยังไม่เข้าระบบ'
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [solutionEnabled, setSolutionEnabled] = useState(getSolutionPermission);
+
+  const handleToggleSolution = () => {
+    const next = !solutionEnabled;
+    setSolutionPermission(next);
+    setSolutionEnabled(next);
+  };
 
   // Load students progress
   const loadData = () => {
@@ -97,6 +106,29 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
             >
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-amber-400' : ''}`} />
               <span>{isRefreshing ? 'กำลังโหลด...' : 'รีเฟรช'}</span>
+            </button>
+
+            {/* Student Solution Access Toggle Button */}
+            <button
+              onClick={handleToggleSolution}
+              title={solutionEnabled ? 'คลิกเพื่อปิดเฉลยฝั่งนักเรียน' : 'คลิกเพื่อเปิดเฉลยให้นักเรียนเห็น'}
+              className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 border shadow-xs ${
+                solutionEnabled
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30'
+                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white'
+              }`}
+            >
+              {solutionEnabled ? (
+                <>
+                  <Unlock className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>เฉลย: <span className="text-emerald-300">เปิดให้นักเรียนดู</span></span>
+                </>
+              ) : (
+                <>
+                  <Lock className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>เฉลย: <span className="text-amber-300">ปิดอยู่ (นักเรียนไม่เห็น)</span></span>
+                </>
+              )}
             </button>
 
             {/* View Student Workspace Preview Button */}

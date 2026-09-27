@@ -9,7 +9,7 @@ import SolutionModal from './components/SolutionModal';
 import LoginScreen from './components/LoginScreen';
 import AdminDashboard from './components/AdminDashboard';
 import { validateHtmlCode, SAMPLE_SOLUTION } from './utils/htmlValidator';
-import { recordStudentCodeUpdate } from './utils/adminStorage';
+import { recordStudentCodeUpdate, getSolutionPermission } from './utils/adminStorage';
 
 export default function App() {
   // Authentication State
@@ -27,6 +27,18 @@ export default function App() {
 
   // Admin student view simulation toggle
   const [adminPreviewStudentView, setAdminPreviewStudentView] = useState(false);
+
+  // Solution access controlled by teacher (default: false / locked)
+  const [solutionEnabled, setSolutionEnabled] = useState(getSolutionPermission);
+
+  // Sync solution permission across tabs/windows
+  useEffect(() => {
+    const syncPermission = () => {
+      setSolutionEnabled(getSolutionPermission());
+    };
+    window.addEventListener('storage', syncPermission);
+    return () => window.removeEventListener('storage', syncPermission);
+  }, []);
 
   // Code starts completely empty ("") - student must write from scratch
   const [code, setCode] = useState(() => {
@@ -148,6 +160,7 @@ export default function App() {
         studentName={displayStudentName}
         studentId={displayStudentId}
         isSticky={!(currentStudent.role === 'admin' && adminPreviewStudentView)}
+        canViewSolution={currentStudent?.role === 'admin' ? true : solutionEnabled}
         onShowSolution={() => setShowSolution(true)}
         onLogout={handleLogout}
         passedCount={validation.passedCount}
@@ -224,7 +237,7 @@ export default function App() {
 
       {/* Solution & Guide Modal */}
       <SolutionModal
-        isOpen={showSolution}
+        isOpen={showSolution && (currentStudent?.role === 'admin' || solutionEnabled)}
         onClose={() => setShowSolution(false)}
         onApplySolution={handleApplySolution}
       />

@@ -8,7 +8,8 @@ export default function Header({
   onLogout,
   passedCount,
   totalCount,
-  isSticky = true
+  isSticky = true,
+  canViewSolution = false
 }) {
   return (
     <header className={`bg-white border-b border-slate-200 ${isSticky ? 'sticky top-0' : 'relative'} z-30 shadow-xs no-print`}>
@@ -57,15 +58,17 @@ export default function Header({
             </div>
 
 
-            {/* Solution Button */}
-            <button
-              onClick={onShowSolution}
-              title="ดูแนวทางและเฉลย"
-              className="px-3 py-1.5 text-amber-700 bg-amber-50/50 hover:bg-amber-100/70 rounded-xl border border-amber-200 transition text-xs sm:text-sm font-semibold flex items-center gap-1.5 shrink-0 whitespace-nowrap"
-            >
-              <Lightbulb className="w-4 h-4 text-amber-600 shrink-0" />
-              <span>เฉลย</span>
-            </button>
+            {/* Solution Button (Only visible if enabled by teacher) */}
+            {canViewSolution && (
+              <button
+                onClick={onShowSolution}
+                title="ดูแนวทางและเฉลย"
+                className="px-3 py-1.5 text-amber-700 bg-amber-50/50 hover:bg-amber-100/70 rounded-xl border border-amber-200 transition text-xs sm:text-sm font-semibold flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+              >
+                <Lightbulb className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>เฉลย</span>
+              </button>
+            )}
 
             {/* Logout Button */}
             <button

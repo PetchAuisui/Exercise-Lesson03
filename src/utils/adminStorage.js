@@ -18,6 +18,20 @@ const safeSetItem = (key, val) => {
 };
 
 /**
+ * Solution visibility control (Teacher toggles access for students)
+ */
+export function getSolutionPermission() {
+  return safeGetItem('ws_solution_enabled') === 'true';
+}
+
+export function setSolutionPermission(enabled) {
+  safeSetItem('ws_solution_enabled', enabled ? 'true' : 'false');
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('storage'));
+  }
+}
+
+/**
  * Record student login timestamp
  */
 export function recordStudentLogin(studentId) {
