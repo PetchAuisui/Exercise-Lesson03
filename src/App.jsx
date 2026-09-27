@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { Code2, Globe } from 'lucide-react';
+import { Code2, Globe, ArrowLeft } from 'lucide-react';
 import Header from './components/Header';
 import TaskChecklist from './components/TaskChecklist';
 import CodeEditor from './components/CodeEditor';
@@ -24,6 +24,9 @@ export default function App() {
 
   const studentName = currentStudent?.name || '';
   const studentId = currentStudent?.id || '';
+
+  // Admin student view simulation toggle
+  const [adminPreviewStudentView, setAdminPreviewStudentView] = useState(false);
 
   // Code starts completely empty ("") - student must write from scratch
   const [code, setCode] = useState(() => {
@@ -99,17 +102,51 @@ export default function App() {
     return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
   }
 
-  // If Admin logged in, show Admin Dashboard
-  if (currentStudent.role === 'admin') {
-    return <AdminDashboard onLogout={handleLogout} />;
+  // If Admin logged in and not simulating student view, show Admin Dashboard
+  if (currentStudent.role === 'admin' && !adminPreviewStudentView) {
+    return (
+      <AdminDashboard 
+        onLogout={handleLogout} 
+        onPreviewStudentView={() => setAdminPreviewStudentView(true)} 
+      />
+    );
   }
+
+  // Display name and ID for Header (supports admin simulation mode)
+  const displayStudentName = currentStudent.role === 'admin' 
+    ? 'นายศิวาภัทร อุยสุย (ตัวอย่างมุมมองนักเรียน)' 
+    : studentName;
+  const displayStudentId = currentStudent.role === 'admin' 
+    ? '67030351' 
+    : studentId;
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 font-thai text-slate-800">
+      {/* Simulation Banner for Admin */}
+      {currentStudent.role === 'admin' && adminPreviewStudentView && (
+        <div className="bg-slate-900 border-b border-indigo-500/30 text-white px-4 sm:px-6 py-2.5 flex items-center justify-between shadow-lg sticky top-0 z-40 flex-wrap gap-2">
+          <div className="flex items-center gap-2.5">
+            <span className="px-2 py-0.5 bg-amber-400 text-slate-950 font-bold text-xs rounded-md uppercase tracking-wider shadow-xs">
+              โหมดจำลองมุมมองนักเรียน
+            </span>
+            <span className="text-xs sm:text-sm font-semibold text-slate-200">
+              กำลังดูหน้าจอแบบฝึกหัดจริงของนักเรียน (สามารถทดลองเขียนโค้ดและดูผลลัพธ์ได้)
+            </span>
+          </div>
+          <button
+            onClick={() => setAdminPreviewStudentView(false)}
+            className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>กลับสู่ Admin Dashboard</span>
+          </button>
+        </div>
+      )}
+
       {/* Top Navigation */}
       <Header
-        studentName={studentName}
-        studentId={studentId}
+        studentName={displayStudentName}
+        studentId={displayStudentId}
         onShowSolution={() => setShowSolution(true)}
         onLogout={handleLogout}
         passedCount={validation.passedCount}

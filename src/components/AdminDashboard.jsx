@@ -19,7 +19,7 @@ import {
 import { getAllStudentsProgress, exportScoresToCSV } from '../utils/adminStorage';
 import StudentDetailModal from './StudentDetailModal';
 
-export default function AdminDashboard({ onLogout }) {
+export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
   const [studentsProgress, setStudentsProgress] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'เสร็จสมบูรณ์' | 'กำลังทำ' | 'ยังไม่ทำ' | 'ยังไม่เข้าระบบ'
@@ -98,6 +98,18 @@ export default function AdminDashboard({ onLogout }) {
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-amber-400' : ''}`} />
               <span>{isRefreshing ? 'กำลังโหลด...' : 'รีเฟรช'}</span>
             </button>
+
+            {/* View Student Workspace Preview Button */}
+            {onPreviewStudentView && (
+              <button
+                onClick={onPreviewStudentView}
+                title="ดูหน้าตาแบบฝึกหัดที่นักเรียนมองเห็น"
+                className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition flex items-center gap-1.5"
+              >
+                <Eye className="w-4 h-4" />
+                <span>ดูหน้าแบบฝึกหัดของนักเรียน</span>
+              </button>
+            )}
 
             {/* Export CSV Button */}
             <button
