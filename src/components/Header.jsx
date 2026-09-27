@@ -17,16 +17,16 @@ export default function Header({
   return (
     <header className={`bg-white border-b border-slate-200 ${isSticky ? 'sticky top-0' : 'relative'} z-30 shadow-xs no-print`}>
       <div className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-wrap xl:flex-nowrap items-center justify-between py-3 gap-3 sm:gap-4">
+        <div className="flex items-center justify-between py-2.5 sm:py-3 gap-3 overflow-x-auto">
           
           {/* Left: Brand, Title, and Score */}
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <div className="flex items-center gap-2.5">
-              <div className="p-2.5 bg-indigo-600 text-white rounded-xl shadow-xs shrink-0">
-                <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
+              <div className="p-2 sm:p-2.5 bg-indigo-600 text-white rounded-xl shadow-xs shrink-0">
+                <BookOpen className="w-5 h-5" />
               </div>
               <div className="shrink-0">
-                <h1 className="text-base sm:text-lg font-bold text-slate-900 leading-tight whitespace-nowrap">
+                <h1 className="text-sm sm:text-base lg:text-lg font-bold text-slate-900 leading-tight whitespace-nowrap">
                   ใบงานที่ 1 รูปภาพที่คลิกได้
                 </h1>
                 <p className="text-xs text-slate-500 font-medium whitespace-nowrap">
@@ -36,7 +36,7 @@ export default function Header({
             </div>
 
             {/* Score Pill */}
-            <div className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-1.5 whitespace-nowrap shrink-0 border ${
+            <div className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-1.5 whitespace-nowrap shrink-0 border ${
               passedCount === totalCount 
                 ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
                 : 'bg-amber-50 text-amber-800 border-amber-300'
@@ -47,7 +47,7 @@ export default function Header({
           </div>
 
           {/* Center / Right: Student Info, Mode Toggles, Actions */}
-          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap sm:flex-nowrap justify-end ml-auto shrink-0">
+          <div className="flex items-center gap-2 sm:gap-2.5 flex-nowrap justify-end ml-auto shrink-0">
             
             {/* Student Info Display */}
             <div className="flex items-center bg-indigo-50/80 border border-indigo-200/90 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-indigo-950 font-medium shrink-0 whitespace-nowrap">

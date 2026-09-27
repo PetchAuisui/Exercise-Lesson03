@@ -82,58 +82,60 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
       
       {/* Admin Top Navigation */}
       <header className="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-30 shadow-md">
-        <div className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between flex-wrap gap-3">
+        <div className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-3">
           
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-tr from-amber-500 to-amber-600 text-slate-950 rounded-xl font-bold shadow-xs">
-              <ShieldCheck className="w-6 h-6" />
+          {/* Left: Brand & Admin Identity */}
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <div className="p-2 sm:p-2.5 bg-gradient-to-tr from-amber-500 to-amber-600 text-slate-950 rounded-xl font-bold shadow-xs shrink-0">
+              <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                  ระบบผู้ดูแลและตรวจคะแนนแบบฝึกหัด (Admin Dashboard)
+                <h1 className="text-sm sm:text-base lg:text-lg font-bold text-white tracking-tight whitespace-nowrap truncate">
+                  ระบบผู้ดูแล (Admin Dashboard)
                 </h1>
-                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 whitespace-nowrap hidden sm:inline-block">
                   อาจารย์ผู้สอน
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
-                ใบงานที่ 1 รูปภาพที่คลิกได้ • บัญชีผู้ดูแล: <span className="text-slate-300 font-mono">siwarpatauisui@gmail.com</span>
+              <p className="text-xs text-slate-400 whitespace-nowrap truncate">
+                ใบงานที่ 1 • <span className="text-slate-300 font-mono">siwarpatauisui@gmail.com</span>
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          {/* Right: Action Buttons (Single Row, Never Wraps) */}
+          <div className="flex items-center gap-2 shrink-0 flex-nowrap overflow-x-auto py-1">
             {/* Refresh Button */}
             <button
               onClick={loadData}
               disabled={isRefreshing}
               title="รีเฟรชข้อมูลล่าสุด"
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-700 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-xs"
+              className="px-2.5 sm:px-3 py-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-700 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-xs shrink-0 whitespace-nowrap cursor-pointer"
             >
-              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-amber-400' : ''}`} />
-              <span>{isRefreshing ? 'กำลังโหลด...' : 'รีเฟรช'}</span>
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-amber-400' : ''}`} />
+              <span className="hidden md:inline">{isRefreshing ? 'กำลังโหลด...' : 'รีเฟรช'}</span>
             </button>
 
             {/* Student Solution Access Toggle Button */}
             <button
               onClick={handleToggleSolution}
               title={solutionEnabled ? 'คลิกเพื่อปิดเฉลยฝั่งนักเรียน' : 'คลิกเพื่อเปิดเฉลยให้นักเรียนเห็น'}
-              className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 border shadow-xs ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 border shadow-xs shrink-0 whitespace-nowrap cursor-pointer ${
                 solutionEnabled
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30'
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
                   : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white'
               }`}
             >
               {solutionEnabled ? (
                 <>
-                  <Unlock className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>เฉลย: <span className="text-emerald-300">เปิดให้นักเรียนดู</span></span>
+                  <Unlock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>เฉลย: <span className="text-emerald-300">เปิดอยู่</span></span>
                 </>
               ) : (
                 <>
-                  <Lock className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>เฉลย: <span className="text-amber-300">ปิดอยู่ (นักเรียนไม่เห็น)</span></span>
+                  <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>เฉลย: <span className="text-amber-300">ปิดอยู่</span></span>
                 </>
               )}
             </button>
@@ -143,10 +145,10 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
               <button
                 onClick={onPreviewStudentView}
                 title="ดูหน้าตาแบบฝึกหัดที่นักเรียนมองเห็น"
-                className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition flex items-center gap-1.5"
+                className="px-3 sm:px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer"
               >
-                <Eye className="w-4 h-4" />
-                <span>ดูหน้าแบบฝึกหัดของนักเรียน</span>
+                <Eye className="w-3.5 h-3.5" />
+                <span>ดูแบบฝึกหัดนักเรียน</span>
               </button>
             )}
 
@@ -154,19 +156,19 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
             <button
               onClick={handleExport}
               title="ดาวน์โหลดคะแนนของทุกคนเป็นไฟล์ CSV / Excel"
-              className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition flex items-center gap-1.5"
+              className="px-3 sm:px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer"
             >
-              <Download className="w-4 h-4" />
-              <span>ดาวน์โหลดคะแนน (CSV/Excel)</span>
+              <Download className="w-3.5 h-3.5" />
+              <span>ดาวน์โหลดคะแนน (CSV)</span>
             </button>
 
             {/* Logout Button */}
             <button
               onClick={onLogout}
               title="ออกจากระบบผู้ดูแล"
-              className="px-3 py-1.5 bg-rose-950/70 hover:bg-rose-900 text-rose-300 hover:text-rose-100 rounded-xl border border-rose-800 transition text-xs sm:text-sm font-semibold flex items-center gap-1.5"
+              className="px-2.5 sm:px-3 py-1.5 bg-rose-950/70 hover:bg-rose-900 text-rose-300 hover:text-rose-100 rounded-xl border border-rose-800 transition text-xs sm:text-sm font-semibold flex items-center gap-1.5 shrink-0 whitespace-nowrap cursor-pointer"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5" />
               <span>ออกจากระบบ</span>
             </button>
           </div>
