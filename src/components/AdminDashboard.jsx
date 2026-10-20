@@ -14,7 +14,6 @@ import {
   FileSpreadsheet, 
   TrendingUp,
   UserX,
-  BookOpen,
   Lock,
   Unlock,
   KeyRound,
@@ -41,7 +40,7 @@ import { getFirebaseConfig } from '../services/firebase';
 import StudentDetailModal from './StudentDetailModal';
 import FirebaseConfigModal from './FirebaseConfigModal';
 
-export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewSlides }) {
+export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
   const [studentsProgress, setStudentsProgress] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'เสร็จสมบูรณ์' | 'กำลังทำ' | 'ยังไม่ทำ' | 'ยังไม่เข้าระบบ'
@@ -351,17 +350,6 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView, onViewS
                 >
                   <Eye className="w-4 h-4 text-indigo-600" />
                   <span>ดูแบบฝึกหัดนักเรียน</span>
-                </button>
-              )}
-
-              {onViewSlides && (
-                <button
-                  onClick={onViewSlides}
-                  title="เปิดดูสไลด์เอกสารประกอบการสอน 12 สไลด์ (PDF)"
-                  className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 shadow-2xs cursor-pointer"
-                >
-                  <BookOpen className="w-4 h-4 text-indigo-600" />
-                  <span>สไลด์บทเรียน (PDF)</span>
                 </button>
               )}
             </div>

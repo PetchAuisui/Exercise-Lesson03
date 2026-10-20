@@ -12,8 +12,7 @@ export default function Header({
   canViewSolution = false,
   isSubmitted = false,
   onSubmitWork,
-  onCancelSubmission,
-  onOpenSlides
+  onCancelSubmission
 }) {
   return (
     <header className={`bg-white border-b border-slate-200 ${isSticky ? 'sticky top-0' : 'relative'} z-30 shadow-xs no-print`}>
@@ -109,18 +108,6 @@ export default function Header({
                     <span>แก้ไข</span>
                   </button>
                 </div>
-              )}
-
-              {/* View Lesson Slides Button */}
-              {onOpenSlides && (
-                <button
-                  onClick={onOpenSlides}
-                  title="เปิดดูสไลด์เอกสารประกอบการสอน"
-                  className="px-2.5 py-1 sm:py-1.5 text-indigo-700 bg-indigo-50/80 hover:bg-indigo-100 rounded-xl border border-indigo-200 transition text-xs font-semibold flex items-center gap-1 shrink-0 cursor-pointer"
-                >
-                  <BookOpen className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                  <span>สไลด์</span>
-                </button>
               )}
 
               {/* Solution Button */}
