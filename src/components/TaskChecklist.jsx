@@ -105,7 +105,11 @@ export default function TaskChecklist({ validation, isOpen, onToggle, isSubmitte
                     <span className="text-slate-600">└──</span>
                     <Folder className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                     <span className="text-amber-300 font-semibold">image/</span>
-                    <span className="text-slate-500">└──</span>
+                  </div>
+
+                  {/* temple.jpg (nested inside image/) */}
+                  <div className="pl-16 flex items-center gap-2 text-slate-300">
+                    <span className="text-slate-600">└──</span>
                     <ImageIcon className="w-3.5 h-3.5 text-pink-400 shrink-0" />
                     <span className="text-pink-300 font-semibold">temple.jpg</span>
                   </div>
