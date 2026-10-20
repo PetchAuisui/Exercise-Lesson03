@@ -4,6 +4,7 @@ import { Code2, Globe, ArrowLeft, Send, Lock, LogOut } from 'lucide-react';
 import Header from './components/Header';
 import TaskChecklist from './components/TaskChecklist';
 import CodeEditor from './components/CodeEditor';
+import BlockBuilder from './components/BlockBuilder';
 import BrowserPreview from './components/BrowserPreview';
 import SolutionModal from './components/SolutionModal';
 import LoginScreen from './components/LoginScreen';
@@ -136,7 +137,7 @@ export default function App() {
     return '';
   });
 
-  const [workspaceTab, setWorkspaceTab] = useState('code'); // 'code' | 'preview'
+  const [workspaceTab, setWorkspaceTab] = useState('blocks'); // 'blocks' | 'code' | 'preview'
   const [checklistOpen, setChecklistOpen] = useState(true);
   const [showSolution, setShowSolution] = useState(false);
   const prevPassedRef = useRef(false);
@@ -185,7 +186,7 @@ export default function App() {
   // Validate code
   const validation = validateHtmlCode(code);
 
-  // Celebrate with confetti when user submits and completes all 5 criteria!
+  // Celebrate with confetti when user submits and completes all 6 criteria!
   useEffect(() => {
     if (isSubmitted && validation.isAllPassed && !prevPassedRef.current) {
       confetti({
@@ -362,6 +363,17 @@ export default function App() {
           <div className="flex items-center justify-between flex-wrap gap-2.5 bg-white p-2 rounded-xl border border-slate-200 shadow-xs">
             <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-slate-100 rounded-lg flex-1 sm:flex-initial">
               <button
+                onClick={() => setWorkspaceTab('blocks')}
+                className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-md font-bold text-xs sm:text-sm lg:text-base flex items-center justify-center gap-1.5 sm:gap-2 transition cursor-pointer ${
+                  workspaceTab === 'blocks'
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                }`}
+              >
+                <span className="shrink-0">🧩</span>
+                <span>เรียงบล็อก</span>
+              </button>
+              <button
                 onClick={() => setWorkspaceTab('code')}
                 className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-md font-bold text-xs sm:text-sm lg:text-base flex items-center justify-center gap-1.5 sm:gap-2 transition cursor-pointer ${
                   workspaceTab === 'code'
@@ -370,12 +382,7 @@ export default function App() {
                 }`}
               >
                 <Code2 className="w-4 h-4 text-amber-400 shrink-0" />
-                <span><span className="hidden sm:inline">เขียน</span>โค้ด (index.html)</span>
-                {isSubmitted && (
-                  <span className="text-xs bg-amber-400/20 text-amber-300 px-1 py-0.2 rounded font-bold border border-amber-400/40">
-                    🔒
-                  </span>
-                )}
+                <span><span className="hidden sm:inline">เขียน</span>โค้ด<span className="hidden md:inline"> (index.html)</span></span>
               </button>
               <button
                 onClick={() => setWorkspaceTab('preview')}
@@ -419,15 +426,27 @@ export default function App() {
 
               {/* Status / Instruction text */}
               <div className="text-xs sm:text-sm text-slate-500 font-medium px-2 hidden xl:block">
-                {workspaceTab === 'code'
-                  ? '💡 สลับไปดูผลลัพธ์หน้าเว็บได้ตลอดเวลา'
-                  : '🌐 แสดงผลลัพธ์หน้าเว็บเสมือนจริง'}
+                {workspaceTab === 'preview'
+                  ? '🌐 แสดงผลลัพธ์หน้าเว็บเสมือนจริง'
+                  : '💡 สลับไปดูผลลัพธ์หน้าเว็บได้ตลอดเวลา'}
               </div>
             </div>
           </div>
 
           {/* Full Width Workspace Display */}
-          {workspaceTab === 'code' ? (
+          {workspaceTab === 'blocks' ? (
+            <div className="w-full">
+              <BlockBuilder
+                key={currentStudent.id}
+                studentId={currentStudent.id}
+                code={code}
+                onChange={setCode}
+                onSwitchToPreview={() => setWorkspaceTab('preview')}
+                isLocked={isSubmitted}
+                onCancelSubmission={handleCancelSubmission}
+              />
+            </div>
+          ) : workspaceTab === 'code' ? (
             <div className="w-full">
               <CodeEditor
                 code={code}

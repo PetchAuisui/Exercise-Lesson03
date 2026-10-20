@@ -65,6 +65,7 @@ export default function WorksheetPaperView({
             <li>แสดงรูปภาพจากไฟล์ temple.jpg ในโฟลเดอร์ image</li>
             <li>กำหนดข้อความทดแทนของรูปภาพว่า "วัดไทย"</li>
             <li>เมื่อคลิกรูปภาพ ให้เปิดหน้า detail.html</li>
+            <li>แสดงหัวข้อใหญ่ (Heading ระดับ 1) ว่า "แนะนำวัดไทย"</li>
           </ol>
         </div>
 
@@ -72,7 +73,7 @@ export default function WorksheetPaperView({
         <div className="mb-6 text-base sm:text-lg space-y-1">
           <h3 className="font-bold text-slate-950 text-lg sm:text-xl">คำชี้แจง</h3>
           <p className="leading-relaxed">
-            เลือกใช้แท็กและ Attribute ที่เหมาะสม แล้วเขียนโค้ดด้วยตนเอง โดยไม่เติมคำลงในโครงสร้างที่เตรียมไว้
+            เขียนหน้าเว็บ index.html ให้ตรงตามเงื่อนไขทั้ง 6 ข้อ โดยเลือกแท็กและ Attribute ให้ถูกต้อง แล้วตรวจสอบผลลัพธ์บนหน้าเว็บ
           </p>
         </div>
 

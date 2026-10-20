@@ -53,7 +53,7 @@ export default function TaskChecklist({ validation, isOpen, onToggle, isSubmitte
                   <span>📌 สถานการณ์</span>
                 </div>
                 <p className="text-xs sm:text-sm lg:text-base text-amber-900 leading-relaxed font-normal">
-                  คุณกำลังสร้างหน้าเว็บแนะนำสถานที่ท่องเที่ยว เขียน HTML ให้หน้าเว็บทำงานตามเงื่อนไขทั้ง 5 ข้อด้านล่าง
+                  คุณกำลังสร้างหน้าเว็บแนะนำสถานที่ท่องเที่ยว เขียน HTML ให้หน้าเว็บทำงานตามเงื่อนไขทั้ง 6 ข้อด้านล่าง
                 </p>
               </div>
 
@@ -64,7 +64,7 @@ export default function TaskChecklist({ validation, isOpen, onToggle, isSubmitte
                   <span>คำชี้แจง</span>
                 </div>
                 <p className="text-xs sm:text-sm lg:text-base text-sky-900 leading-relaxed font-normal">
-                  เลือกใช้แท็กและ Attribute ที่เหมาะสม แล้วเขียนโค้ดด้วยตนเอง โดยไม่เติมคำลงในโครงสร้างที่เตรียมไว้
+                  เขียนหน้าเว็บ index.html ให้ตรงตามเงื่อนไขทั้ง 6 ข้อด้านล่าง โดยเลือกแท็กและ Attribute ให้ถูกต้อง เมื่อทำเสร็จให้กด “ดูผลลัพธ์” เพื่อตรวจสอบ แล้วกด “ส่งงาน”
                 </p>
               </div>
 
@@ -124,7 +124,7 @@ export default function TaskChecklist({ validation, isOpen, onToggle, isSubmitte
 
           </div>
 
-          {/* เงื่อนไข 5 ข้อ */}
+          {/* เงื่อนไข 6 ข้อ */}
           <div className="space-y-2.5 pt-1">
             {criteria.map((item) => {
               const isPass = isSubmitted && item.passed;

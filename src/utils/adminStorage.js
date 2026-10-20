@@ -111,7 +111,7 @@ export function getAllStudentsProgress() {
 
     const validation = validateHtmlCode(code);
     const passedCount = validation.passedCount;
-    const totalCount = validation.totalCount; // 5
+    const totalCount = validation.totalCount; // 6
 
     let status = 'ยังไม่เข้าระบบ';
     let statusColor = 'gray';
@@ -163,13 +163,14 @@ export function exportScoresToCSV(studentsProgress) {
     'สถานะระบบ',
     'สถานะการส่งงาน',
     'เวลาที่ส่งงาน',
-    'คะแนน (เต็ม 5)',
+    'คะแนน (เต็ม 6)',
     'ร้อยละ (%)',
     'ข้อ 1 (โครงสร้างพื้นฐาน)',
     'ข้อ 2 (ชื่อหน้าเว็บ Title)',
     'ข้อ 3 (แท็กรูปภาพ temple.jpg)',
     'ข้อ 4 (ข้อความทดแทน alt)',
     'ข้อ 5 (ลิงก์รูปภาพคลิกได้ detail.html)',
+    'ข้อ 6 (หัวข้อใหญ่ h1)',
     'เวลาอัปเดตล่าสุด',
     'โค้ด HTML ที่เขียน'
   ];
@@ -181,6 +182,7 @@ export function exportScoresToCSV(studentsProgress) {
     const c3 = c[2]?.passed ? 'ผ่าน' : 'ไม่ผ่าน';
     const c4 = c[3]?.passed ? 'ผ่าน' : 'ไม่ผ่าน';
     const c5 = c[4]?.passed ? 'ผ่าน' : 'ไม่ผ่าน';
+    const c6 = c[5]?.passed ? 'ผ่าน' : 'ไม่ผ่าน';
     const dateStr = s.lastUpdated ? new Date(s.lastUpdated).toLocaleString('th-TH') : '-';
     const submitStr = s.submittedAt ? new Date(s.submittedAt).toLocaleString('th-TH') : '-';
     const submissionStatus = s.isSubmitted ? 'ส่งงานแล้ว (ล็อก)' : 'ยังไม่ส่ง';
@@ -201,6 +203,7 @@ export function exportScoresToCSV(studentsProgress) {
       c3,
       c4,
       c5,
+      c6,
       `"${dateStr}"`,
       escapedCode
     ].join(',');

@@ -46,7 +46,7 @@ export default function SolutionModal({ isOpen, onClose, onApplySolution }) {
           {/* Explanation Cards */}
           <div className="space-y-3">
             <h4 className="font-bold text-slate-900 text-sm uppercase tracking-wider">
-              การวิเคราะห์เงื่อนไข 5 ข้อ:
+              การวิเคราะห์เงื่อนไข 6 ข้อ:
             </h4>
             <div className="grid gap-3 text-sm sm:text-base">
               <div className="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-100 flex items-start gap-2.5">
@@ -74,6 +74,13 @@ export default function SolutionModal({ isOpen, onClose, onApplySolution }) {
                 <span className="font-bold text-indigo-700 shrink-0">ข้อ 5:</span>
                 <div>
                   <strong>ทำรูปภาพให้คลิกได้:</strong> นำแท็ก <code>&lt;a href="detail.html"&gt;</code> มาครอบแท็ก <code>&lt;img&gt;</code> ไว้
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-100 flex items-start gap-2.5">
+                <span className="font-bold text-indigo-700 shrink-0">ข้อ 6:</span>
+                <div>
+                  <strong>หัวข้อใหญ่:</strong> ใช้แท็ก <code>&lt;h1&gt;แนะนำวัดไทย&lt;/h1&gt;</code> ภายใน <code>&lt;body&gt;</code>
                 </div>
               </div>
             </div>

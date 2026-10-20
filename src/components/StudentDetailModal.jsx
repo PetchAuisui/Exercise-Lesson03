@@ -143,7 +143,7 @@ export default function StudentDetailModal({ student, isOpen, onClose, onResetPa
               }`}
             >
               <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500" />
-              <span><span className="hidden sm:inline">ผลการตรวจ 5 ข้อ</span><span className="sm:hidden">ตรวจ</span> ({student.score}/5)</span>
+              <span><span className="hidden sm:inline">ผลการตรวจ 6 ข้อ</span><span className="sm:hidden">ตรวจ</span> ({student.score}/6)</span>
             </button>
           </div>
 
@@ -226,7 +226,7 @@ export default function StudentDetailModal({ student, isOpen, onClose, onResetPa
           {activeTab === 'criteria' && (
             <div className="space-y-3">
               <h4 className="font-bold text-slate-900 text-sm mb-3">
-                ผลการประเมินตามเกณฑ์ใบงานที่ 1 (5 ข้อ):
+                ผลการประเมินตามเกณฑ์ใบงานที่ 1 (6 ข้อ):
               </h4>
               <div className="grid gap-3">
                 {student.validation.criteria.map((item, idx) => (

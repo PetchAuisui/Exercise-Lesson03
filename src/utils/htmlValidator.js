@@ -6,6 +6,7 @@
  * 3. แสดงรูปภาพจากไฟล์ temple.jpg ในโฟลเดอร์ image
  * 4. กำหนดข้อความทดแทนของรูปภาพว่า "วัดไทย"
  * 5. เมื่อคลิกรูปภาพ ให้เปิดหน้า detail.html
+ * 6. แสดงหัวข้อใหญ่ (h1) ว่า "แนะนำวัดไทย"
  */
 
 export function validateHtmlCode(code) {
@@ -44,6 +45,9 @@ export function validateHtmlCode(code) {
   const hasClosingA = /<\/a>/i.test(normalized);
   const test5Passed = hasHrefDetail && hasClosingA && linkWithImgRegex.test(normalized);
 
+  // Test 6: หัวข้อใหญ่ (Heading ระดับ 1) ว่า "แนะนำวัดไทย"
+  const test6Passed = /<h1(\s+[^>]*)?>\s*แนะนำวัดไทย\s*<\/h1>/i.test(normalized);
+
   // Criteria without tag hints/spoilers
   const criteria = [
     {
@@ -70,6 +74,11 @@ export function validateHtmlCode(code) {
       id: 5,
       title: '5. เมื่อคลิกรูปภาพ ให้เปิดหน้า detail.html',
       passed: test5Passed,
+    },
+    {
+      id: 6,
+      title: '6. แสดงหัวข้อใหญ่ (Heading ระดับ 1) ว่า "แนะนำวัดไทย"',
+      passed: test6Passed,
     }
   ];
 
@@ -91,6 +100,7 @@ export const SAMPLE_SOLUTION = `<!DOCTYPE html>
     <title>สถานที่ท่องเที่ยว</title>
 </head>
 <body>
+    <h1>แนะนำวัดไทย</h1>
     <a href="detail.html">
         <img src="image/temple.jpg" alt="วัดไทย">
     </a>

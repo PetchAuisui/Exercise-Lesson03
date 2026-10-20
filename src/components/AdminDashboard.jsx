@@ -275,11 +275,11 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
             </div>
           </div>
 
-          {/* Card 2: Completed (5/5) */}
+          {/* Card 2: Completed (6/6) */}
           <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-emerald-200/90 shadow-xs flex items-center justify-between bg-gradient-to-br from-white to-emerald-50/30">
             <div className="min-w-0">
               <p className="text-[11px] sm:text-xs font-semibold text-emerald-700 uppercase tracking-wider truncate">
-                เสร็จสมบูรณ์ (5/5)
+                เสร็จสมบูรณ์ (6/6)
               </p>
               <h3 className="text-lg sm:text-2xl lg:text-3xl font-black text-emerald-600 mt-0.5 sm:mt-1">
                 {completedCount} <span className="text-xs sm:text-sm font-semibold text-emerald-700/70 font-normal">คน</span>
@@ -467,7 +467,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
                   <th className="py-3.5 px-4 text-center">สถานะ</th>
                   <th className="py-3.5 px-4 text-center">การส่งงาน</th>
                   <th className="py-3.5 px-4 text-center">คะแนน</th>
-                  <th className="py-3.5 px-4 text-center">เกณฑ์ 5 ข้อ</th>
+                  <th className="py-3.5 px-4 text-center">เกณฑ์ 6 ข้อ</th>
                   <th className="py-3.5 px-4">อัปเดตล่าสุด</th>
                   <th className="py-3.5 px-4 text-center">การจัดการ</th>
                 </tr>
@@ -623,7 +623,7 @@ export default function AdminDashboard({ onLogout, onPreviewStudentView }) {
             <span className="font-medium text-slate-600">
               คะแนนเฉลี่ยทั้งห้อง: {(
                 studentsProgress.reduce((acc, s) => acc + s.score, 0) / (totalCount || 1)
-              ).toFixed(1)} / 5 คะแนน
+              ).toFixed(1)} / 6 คะแนน
             </span>
           </div>
         </div>
